@@ -6,7 +6,7 @@ Run:
 
 import time
 from pathlib import Path
-from typing import Literal
+from typing import Dict, List, Literal, Optional, Tuple
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -22,7 +22,7 @@ client = OpenAI()
 
 ModelName = Literal["gpt-4o-mini", "gpt-4o", "o3-mini"]
 DEFAULT_MODEL: ModelName = "gpt-4o-mini"
-MODEL_PRICES_PER_1K: dict[str, tuple[float, float]] = {
+MODEL_PRICES_PER_1K: Dict[str, Tuple[float, float]] = {
     "gpt-4o": (0.0025, 0.01),
     "gpt-4o-mini": (0.00015, 0.0006),
     "o3-mini": (0.0011, 0.0044),
@@ -37,7 +37,7 @@ class Answer(BaseModel):
 
 class AskRequest(BaseModel):
     question: str = Field(min_length=1)
-    model: ModelName | None = None
+    model: Optional[ModelName] = None
     force_bad: bool = False
 
 
@@ -46,8 +46,8 @@ class AttemptResult(BaseModel):
     step: str
     ok: bool
     message: str
-    raw_output: str | None = None
-    validation_error: str | None = None
+    raw_output: Optional[str] = None
+    validation_error: Optional[str] = None
 
 
 class AskResponse(BaseModel):
@@ -56,7 +56,7 @@ class AskResponse(BaseModel):
     model: str
     latency_ms: int
     cost_usd: float
-    attempts: list[AttemptResult]
+    attempts: List[AttemptResult]
 
 
 def compute_cost_usd(model: str, prompt_tokens: int, completion_tokens: int) -> float:
@@ -68,7 +68,7 @@ def compute_cost_usd(model: str, prompt_tokens: int, completion_tokens: int) -> 
     )
 
 
-def call_structured(question: str, model: ModelName) -> tuple[Answer, int, int, int]:
+def call_structured(question: str, model: ModelName) -> Tuple[Answer, int, int, int]:
     completion = client.chat.completions.parse(
         model=model,
         messages=[{"role": "user", "content": question}],
@@ -84,7 +84,7 @@ def call_structured(question: str, model: ModelName) -> tuple[Answer, int, int, 
     return answer, usage.total_tokens, usage.prompt_tokens, usage.completion_tokens
 
 
-def call_malformed_json_once(question: str, model: ModelName) -> tuple[str, int, int, int]:
+def call_malformed_json_once(question: str, model: ModelName) -> Tuple[str, int, int, int]:
     completion = client.chat.completions.create(
         model=model,
         messages=[
@@ -109,8 +109,8 @@ def call_malformed_json_once(question: str, model: ModelName) -> tuple[str, int,
 @app.post("/ask")
 def ask(body: AskRequest) -> AskResponse:
     model = body.model or DEFAULT_MODEL
-    last_error: str | None = None
-    attempts: list[AttemptResult] = []
+    last_error: Optional[str] = None
+    attempts: List[AttemptResult] = []
     total_tokens_used = 0
     total_prompt_tokens = 0
     total_completion_tokens = 0
