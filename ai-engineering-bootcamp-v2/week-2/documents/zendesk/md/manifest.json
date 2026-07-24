@@ -1,0 +1,1112 @@
+{
+  "crawled_at": "2026-07-24T19:44:46Z",
+  "source": "https://help.zearn.org/api/v2/help_center/en-us",
+  "sample_size": 0,
+  "seed": 42,
+  "articles_total": 140,
+  "pages": [
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/41582158077975-LiveView-Report",
+      "filename": "liveview-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 326,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide",
+      "filename": "find-your-curriculum-companion-guide.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 998,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/40141912700055-How-to-Give-Students-Open-Access-to-All-Lessons-Within-a-Grade-Level",
+      "filename": "how-to-give-students-open-access-to-all-lessons-within-a-grade-level.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 355,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38959900110231-Is-Zearn-OneRoster-certified",
+      "filename": "is-zearn-oneroster-certified.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 119,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38753783704215-Preparing-Your-ClassLink-Roster-Sync-with-Zearn",
+      "filename": "preparing-your-classlink-roster-sync-with-zearn.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 509,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38741926747671-Preparing-Your-Clever-Roster-Sync-with-Zearn",
+      "filename": "preparing-your-clever-roster-sync-with-zearn.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 485,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664568523159-Preparing-a-Spreadsheet-Rostering-Template-or-OneRoster-File-for-Zearn",
+      "filename": "preparing-a-spreadsheet-rostering-template-or-oneroster-file-for-zearn.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 345,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664423529623-User-roles",
+      "filename": "user-roles.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 196,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38663714178071-Rostering-options",
+      "filename": "rostering-options.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 129,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/33459243548183-Class-Snapshot-Report",
+      "filename": "class-snapshot-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 176,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/30464877966231-School-Account-Spanish-translated-digital-content",
+      "filename": "school-account-spanish-translated-digital-content.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 254,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/29008224450967-Zearn-reporting-suite",
+      "filename": "zearn-reporting-suite.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 574,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137871123095-Orient-to-implementing-Zearn-across-a-school-or-district",
+      "filename": "orient-to-implementing-zearn-across-a-school-or-district.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 414,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137873310231-Materials-to-share-with-families",
+      "filename": "materials-to-share-with-families.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 38,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137731115159-Anchor-charts-and-posters",
+      "filename": "anchor-charts-and-posters.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 96,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137595108247-Orient-to-teacher-materials-and-student-supports",
+      "filename": "orient-to-teacher-materials-and-student-supports.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 315,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22136715215383-Roster-teacher-and-students-to-School-Accounts",
+      "filename": "roster-teacher-and-students-to-school-accounts.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 100,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/17998062213271-Print-Change-Log",
+      "filename": "print-change-log.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 34,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/14818672374295-Promoting-Teachers-Clever-or-Classlink-Rostered-Roles",
+      "filename": "promoting-teachers-clever-or-classlink-rostered-roles.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 134,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/6017910243735-Admin-and-Teacher-Account-Permission-Levels",
+      "filename": "admin-and-teacher-account-permission-levels.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 343,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/4403429503639-Assign-an-Independent-Digital-Lesson",
+      "filename": "assign-an-independent-digital-lesson.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 141,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052476333-Technology-requirements",
+      "filename": "technology-requirements.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 472,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360046427633-Orient-students-to-Zearn-Math",
+      "filename": "orient-students-to-zearn-math.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 171,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360044954914-Add-a-co-teacher",
+      "filename": "add-a-co-teacher.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 105,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360044495614-Zearn-Math-family-resources-English",
+      "filename": "zearn-math-family-resources-english.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 45,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360021586433-Share-progress-with-families",
+      "filename": "share-progress-with-families.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 357,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360007509973-Accessibility",
+      "filename": "accessibility.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 81,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015542268-Help-students-log-in-to-Zearn-org",
+      "filename": "help-students-log-in-to-zearn-org.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 62,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012712848-Overview-of-Admin-Reports",
+      "filename": "overview-of-admin-reports.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 164,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007900828-Lesson-level-assessments",
+      "filename": "lesson-level-assessments.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 394,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236218587-Create-an-Individual-Account",
+      "filename": "create-an-individual-account.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 69,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38742676410647-Managing-Your-Ongoing-Roster",
+      "filename": "managing-your-ongoing-roster.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 50,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38742464048023-Managing-your-ongoing-Zearn-roster-through-Clever",
+      "filename": "managing-your-ongoing-zearn-roster-through-clever.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 84,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38663853654423-Managing-your-ongoing-Zearn-roster-through-ClassLink",
+      "filename": "managing-your-ongoing-zearn-roster-through-classlink.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 83,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/33459201131543-Admin-Snapshot-Report",
+      "filename": "admin-snapshot-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 147,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137597596567-Orient-to-printed-materials",
+      "filename": "orient-to-printed-materials.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 362,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5719764898327-School-Account-resources",
+      "filename": "school-account-resources.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 51,
+      "error": null
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360045481033-Create-multiple-classes",
+      "filename": "create-multiple-classes.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 99,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360037057814-Support-Independent-Digital-Lesson-completion-in-your-classroom",
+      "filename": "support-independent-digital-lesson-completion-in-your-classroom.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 165,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360008267313-Closed-captioning",
+      "filename": "closed-captioning.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 78,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360007593214-School-Account-Confirm-you-re-logged-in",
+      "filename": "school-account-confirm-you-re-logged-in.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 66,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015504688-Update-your-email-address",
+      "filename": "update-your-email-address.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 68,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007927987-Compare-Zearn-Math-Accounts",
+      "filename": "compare-zearn-math-accounts.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 51,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments",
+      "filename": "mission-level-assessments.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 274,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001475288-Join-a-class-with-class-codes",
+      "filename": "join-a-class-with-class-codes.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 246,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001218087-Orient-kindergarten-students-to-Zearn-Math",
+      "filename": "orient-kindergarten-students-to-zearn-math.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 175,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236279187-Pace-Report",
+      "filename": "pace-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 275,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236238988-Independent-Digital-Lesson-components",
+      "filename": "independent-digital-lesson-components.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 161,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38667663144343-Transferring-existing-student-accounts-using-class-codes",
+      "filename": "transferring-existing-student-accounts-using-class-codes.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 77,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664687543575-Merging-existing-accounts",
+      "filename": "merging-existing-accounts-classlink.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 132,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664432460951-Merging-existing-accounts",
+      "filename": "merging-existing-accounts-clever.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 140,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137962873367-Orient-to-the-Zearn-Math-digital-platform",
+      "filename": "orient-to-the-zearn-math-digital-platform.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 77,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/7322272123671-Remove-the-timer-in-fluency-activities",
+      "filename": "remove-the-timer-in-fluency-activities.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 155,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5700246424343-Download-student-logins",
+      "filename": "download-student-logins.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 90,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5255954252311-Zearn-Student-Notes",
+      "filename": "zearn-student-notes.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 172,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052430653-School-Account-Student-Report",
+      "filename": "school-account-student-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 159,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426073-Troubleshooting-checklist",
+      "filename": "troubleshooting-checklist.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 355,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012971928-Celebrate-student-progress",
+      "filename": "celebrate-student-progress.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 241,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012198727-School-Goals-Report",
+      "filename": "school-goals-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 212,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007738847-Adaptive-fluency-Number-Gym",
+      "filename": "adaptive-fluency-number-gym.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 132,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006258507-Audio-supports-in-Independent-Digital-Lessons",
+      "filename": "audio-supports-in-independent-digital-lessons.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 198,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115005912007-Change-your-student-s-assignment",
+      "filename": "change-your-student-s-assignment.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 158,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001429467-Remove-students-from-your-class",
+      "filename": "remove-students-from-your-class.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 162,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001326127-View-my-child-s-progress",
+      "filename": "view-my-child-s-progress.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 124,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001218127-Transition-from-Zearn-Math-K-to-G1",
+      "filename": "transition-from-zearn-math-k-to-g1.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 295,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239748-Tower-Alerts-Report",
+      "filename": "tower-alerts-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 160,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38851765768215-Using-your-District-s-ClassLink-Launchpad",
+      "filename": "using-your-district-s-classlink-launchpad.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 94,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38742202657943-Using-your-district-s-Clever-Portal",
+      "filename": "using-your-district-s-clever-portal.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 116,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137367982615-Bookmark-foundational-lessons-to-the-Math-Library",
+      "filename": "bookmark-foundational-lessons-to-the-math-library.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 319,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/1500002846382-On-screen-keypad",
+      "filename": "on-screen-keypad.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 71,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360058908394-Explore-the-Student-Feed",
+      "filename": "explore-the-student-feed.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 230,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052471633-Use-Zearn-Math-digital-lessons-at-home",
+      "filename": "use-zearn-math-digital-lessons-at-home.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 124,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426493-Lesson-aligned-fluency",
+      "filename": "lesson-aligned-fluency.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 183,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426173-Use-Zearn-on-an-Android-device",
+      "filename": "use-zearn-on-an-android-device.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 102,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360036622693-Support-Independent-Digital-Lesson-completion",
+      "filename": "support-independent-digital-lesson-completion.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 151,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360002279413-Brainy-weekly-lesson-tracker",
+      "filename": "brainy-weekly-lesson-tracker.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 53,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015504888-Save-progress-in-digital-lessons",
+      "filename": "save-progress-in-digital-lessons.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 98,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115014926328-Grading-with-Zearn-Math",
+      "filename": "grading-with-zearn-math.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 259,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012352688-Completion-Tracking-Report",
+      "filename": "completion-tracking-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 99,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006261027-Print-login-cards",
+      "filename": "print-login-cards.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 71,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006124967-Getting-Started-Checklist-for-teachers",
+      "filename": "getting-started-checklist-for-teachers.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 27,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001474968-Add-students-to-your-class",
+      "filename": "add-students-to-your-class.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 184,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236279147-Progress-Report",
+      "filename": "progress-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 137,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137636472727-Orient-to-implementing-Zearn-in-the-classroom",
+      "filename": "orient-to-implementing-zearn-in-the-classroom.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 355,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22136839101975-Reset-your-password",
+      "filename": "reset-your-password.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 120,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/7887577094423-Getting-Started-Checklist-for-school-leads",
+      "filename": "getting-started-checklist-for-school-leads.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 60,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5900542678423-Manage-assignments-for-students-in-multiple-classrooms",
+      "filename": "manage-assignments-for-students-in-multiple-classrooms.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 83,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360016475674-Using-a-Zearn-org-Backup-Login",
+      "filename": "using-a-zearn-org-backup-login.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 176,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates",
+      "filename": "mission-completion-certificates.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 115,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015460167-School-Account-Help-students-log-in-with-Clever",
+      "filename": "school-account-help-students-log-in-with-clever.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 206,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007941367-Create-student-exports",
+      "filename": "create-student-exports.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 70,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006581808-Placing-students-on-Zearn",
+      "filename": "placing-students-on-zearn.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 128,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001476988-Delete-a-class",
+      "filename": "delete-a-class.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 197,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001428367-Add-your-class",
+      "filename": "add-your-class.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 117,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001373828-Log-in-away-from-school",
+      "filename": "log-in-away-from-school.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 81,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236279227-Sprint-Alerts-Report",
+      "filename": "sprint-alerts-report.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 122,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239128-Guided-practice",
+      "filename": "guided-practice.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 279,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137674192151-Use-Zearn-across-instructional-times",
+      "filename": "use-zearn-across-instructional-times.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 64,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/7727015341975-Launch-checklist-for-district-leads",
+      "filename": "launch-checklist-for-district-leads.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 49,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5896758965271-Printed-goal-tracker",
+      "filename": "printed-goal-tracker.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 59,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360051705154-Zearn-Math-for-homeschooling",
+      "filename": "zearn-math-for-homeschooling.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 85,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360051659794-Contact-Zearn-support",
+      "filename": "contact-zearn-support.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 114,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360005364333-Add-a-student-s-SIS-ID",
+      "filename": "add-a-student-s-sis-id.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 103,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015520848-Log-in-with-Google-single-sign-on",
+      "filename": "log-in-with-google-single-sign-on.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 137,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115008117448-Celebrate-school-goals",
+      "filename": "celebrate-school-goals.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 520,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001431007-Some-students-in-my-class-are-highlighted",
+      "filename": "some-students-in-my-class-are-highlighted.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 101,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001428747-Move-students-to-a-new-class",
+      "filename": "move-students-to-a-new-class.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 135,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239828-Class-Reports",
+      "filename": "class-reports.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 135,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239188-Independent-practice-Tower-of-Power",
+      "filename": "independent-practice-tower-of-power.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 132,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/7726940472727-Zearn-school-leads",
+      "filename": "zearn-school-leads.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 57,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/4421026258327-Student-Lesson-Calendar",
+      "filename": "student-lesson-calendar.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 378,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360058905054-Enter-your-child-s-class-code",
+      "filename": "enter-your-child-s-class-code.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 136,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360005750694-Clear-students-lesson-badges",
+      "filename": "clear-students-lesson-badges.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 106,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115010771028-School-Account-Two-step-authentication",
+      "filename": "school-account-two-step-authentication.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 127,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115008330968-Zearn-Math-for-Kindergarten",
+      "filename": "zearn-math-for-kindergarten.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 115,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007739967-Digital-Bonuses",
+      "filename": "digital-bonuses.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 104,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006125687-Classroom-walk-through-guide",
+      "filename": "classroom-walk-through-guide.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 37,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006034908-Add-staff-members",
+      "filename": "add-staff-members.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 122,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001477028-Edit-classroom-information",
+      "filename": "edit-classroom-information.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 64,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137920595479-Professional-development",
+      "filename": "professional-development.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 78,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360054981694-Single-sign-on-SSO-options",
+      "filename": "single-sign-on-sso-options.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 111,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360010655213-Zearn-tags-for-students",
+      "filename": "zearn-tags-for-students.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 130,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015362567-Edit-staff-accounts",
+      "filename": "edit-staff-accounts.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 97,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001477928-Delete-your-Individual-Account",
+      "filename": "delete-your-individual-account.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 89,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001428707-Edit-student-information",
+      "filename": "edit-student-information.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 96,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236174908-Omitted-digital-lessons",
+      "filename": "omitted-digital-lessons.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 230,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5373691318679-Privacy-and-third-party-sub-processors",
+      "filename": "privacy-and-third-party-sub-processors.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 137,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360000311288-Wild-Cards",
+      "filename": "wild-cards.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 96,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012648107-Clear-digital-lesson-checkpoints",
+      "filename": "clear-digital-lesson-checkpoints.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 167,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001477168-Share-classrooms-on-Zearn",
+      "filename": "share-classrooms-on-zearn.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 130,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/1500003390061-Boosts",
+      "filename": "boosts.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 139,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115013011587-School-Account-Classrooms-not-displayed-in-Admin-Reports",
+      "filename": "school-account-classrooms-not-displayed-in-admin-reports.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 198,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115008107568-Locked-student-lessons",
+      "filename": "locked-student-lessons.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 90,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236240288-Supporting-English-Learners",
+      "filename": "supporting-english-learners.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 45,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5256177704855-Enrichment-opportunities",
+      "filename": "enrichment-opportunities.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 124,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426293-Report-is-blank-or-not-printing-in-color",
+      "filename": "report-is-blank-or-not-printing-in-color.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 192,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/4409549618967-Access-printed-materials-in-Spanish",
+      "filename": "access-printed-materials-in-spanish.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 385,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007901328-Use-Zearn-as-homework",
+      "filename": "use-zearn-as-homework.md",
+      "status": "ok",
+      "extraction_method": "playwright",
+      "word_count": 109,
+      "error": null
+    }
+  ]
+}
