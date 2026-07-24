@@ -1,0 +1,721 @@
+{
+  "crawled_at": "2026-07-24T20:21:23Z",
+  "source": "https://help.zearn.org/api/v2/help_center/en-us",
+  "articles_scanned": 30,
+  "unique_pdfs": 44,
+  "removed_stale": 0,
+  "downloaded": 44,
+  "skipped_existing": 0,
+  "failed": 0,
+  "article_scans": [
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/41582158077975-LiveView-Report",
+      "title": "LiveView Report",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide",
+      "title": "Find Your Curriculum Companion Guide",
+      "status": "ok",
+      "pdf_links_found": 22,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/33459243548183-Class-Snapshot-Report",
+      "title": "Class Snapshot Report",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/30464877966231-School-Account-Spanish-translated-digital-content",
+      "title": "School Account: Spanish-translated digital content",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/17998062213271-Print-Change-Log",
+      "title": "Print Change Log",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/4403429503639-Assign-an-Independent-Digital-Lesson",
+      "title": "Assign an Independent Digital Lesson",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360007509973-Accessibility",
+      "title": "Accessibility",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012712848-Overview-of-Admin-Reports",
+      "title": "Overview of Admin Reports",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007900828-Lesson-level-assessments",
+      "title": "Lesson-level assessments",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/33459201131543-Admin-Snapshot-Report",
+      "title": "Admin Snapshot Report",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360037057814-Support-Independent-Digital-Lesson-completion-in-your-classroom",
+      "title": "Support Independent Digital Lesson completion in your classroom",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments",
+      "title": "Mission-level assessments",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664687543575-Merging-existing-accounts",
+      "title": "Merging existing accounts",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664432460951-Merging-existing-accounts",
+      "title": "Merging existing accounts",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137962873367-Orient-to-the-Zearn-Math-digital-platform",
+      "title": "Orient to the Zearn Math digital platform",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052430653-School-Account-Student-Report",
+      "title": "School Account: Student Report",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/1500002846382-On-screen-keypad",
+      "title": "On-screen keypad",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360036622693-Support-Independent-Digital-Lesson-completion",
+      "title": "Support Independent Digital Lesson completion",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006124967-Getting-Started-Checklist-for-teachers",
+      "title": "Getting Started Checklist for teachers",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137636472727-Orient-to-implementing-Zearn-in-the-classroom",
+      "title": "Orient to implementing Zearn in the classroom",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/7887577094423-Getting-Started-Checklist-for-school-leads",
+      "title": "Getting Started Checklist for school leads",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015460167-School-Account-Help-students-log-in-with-Clever",
+      "title": "School Account: Help students log in with Clever",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007941367-Create-student-exports",
+      "title": "Create student exports",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137674192151-Use-Zearn-across-instructional-times",
+      "title": "Use Zearn across instructional times",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/7727015341975-Launch-checklist-for-district-leads",
+      "title": "Launch checklist for district leads",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5896758965271-Printed-goal-tracker",
+      "title": "Printed goal tracker",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/7726940472727-Zearn-school-leads",
+      "title": "Zearn school leads",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006125687-Classroom-walk-through-guide",
+      "title": "Classroom walk-through guide",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236240288-Supporting-English-Learners",
+      "title": "Supporting English Learners",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/4409549618967-Access-printed-materials-in-Spanish",
+      "title": "Access printed materials in Spanish",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    }
+  ],
+  "pdfs": [
+    {
+      "url": "https://webassets.zearn.org/Implementation/AdminSnapshotReportNavigationGuide.pdf",
+      "filename": "AdminSnapshotReportNavigationGuide.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115012712848-Overview-of-Admin-Reports",
+        "https://help.zearn.org/hc/en-us/articles/33459201131543-Admin-Snapshot-Report"
+      ],
+      "bytes": 1700157,
+      "sha256": "18bcebc9a4477ab356d28eaf437616bedac433b981ec16d95717e8e65ed3aeea",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ClassSnapshotReportNavigationGuide.pdf",
+      "filename": "ClassSnapshotReportNavigationGuide.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/33459243548183-Class-Snapshot-Report"
+      ],
+      "bytes": 1458420,
+      "sha256": "097d3bd9258166cf6477fdcf3327c74425e8383becfe0c313a25ec457b977f47",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ClasslinkGuide.pdf",
+      "filename": "ClasslinkGuide.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/38664687543575-Merging-existing-accounts"
+      ],
+      "bytes": 223162,
+      "sha256": "e02b820ebd9562aecd30088890cbd7233288f9cf4bc06cf5876927a725a625b1",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ExportsCenterNavigationGuide.pdf",
+      "filename": "ExportsCenterNavigationGuide.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115007941367-Create-student-exports",
+        "https://help.zearn.org/hc/en-us/articles/115012712848-Overview-of-Admin-Reports"
+      ],
+      "bytes": 1043381,
+      "sha256": "cb0fbd2f312a1a1531faaccfdd515cc5962a0df64ef40bfbf87217d43d041760",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/GettingStartedChecklist.pdf",
+      "filename": "GettingStartedChecklist.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115006124967-Getting-Started-Checklist-for-teachers",
+        "https://help.zearn.org/hc/en-us/articles/22137636472727-Orient-to-implementing-Zearn-in-the-classroom",
+        "https://help.zearn.org/hc/en-us/articles/360036622693-Support-Independent-Digital-Lesson-completion",
+        "https://help.zearn.org/hc/en-us/articles/360037057814-Support-Independent-Digital-Lesson-completion-in-your-classroom"
+      ],
+      "bytes": 243595,
+      "sha256": "1cee36cce762293b369c5bf6ae842377a491376b71e5125564a46d62271215ff",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/GettingStartedChecklistForSchoolLeads.pdf",
+      "filename": "GettingStartedChecklistForSchoolLeads.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/7887577094423-Getting-Started-Checklist-for-school-leads"
+      ],
+      "bytes": 339779,
+      "sha256": "db46ebd1ed0e8b48eff95a69bd790c4700924c40580852f2f36c146886bddc7c",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Guide_to_Assistive_Tech.pdf",
+      "filename": "Guide_to_Assistive_Tech.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/1500002846382-On-screen-keypad",
+        "https://help.zearn.org/hc/en-us/articles/360007509973-Accessibility"
+      ],
+      "bytes": 685257,
+      "sha256": "62530e72ba0def4ac4f42bd8468c0ed2d3ca9de7c86582f86837dcd1ece6851d",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/IDLLookForsGuide18.pdf",
+      "filename": "IDLLookForsGuide18.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115006125687-Classroom-walk-through-guide"
+      ],
+      "bytes": 224033,
+      "sha256": "71900d7fc14f0d49a9493296d3787475b5ada02c987c5bb1cad0cfcc8c2f4116",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LaunchingChecklistForDistrictLeads.pdf",
+      "filename": "LaunchingChecklistForDistrictLeads.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/7727015341975-Launch-checklist-for-district-leads"
+      ],
+      "bytes": 265364,
+      "sha256": "dce1a0c4d4d319e2b3d4619d6b4801afeb1332462493eef0047922e4479acbf7",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LoginExperiencethroughClever.pdf",
+      "filename": "LoginExperiencethroughClever.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115015460167-School-Account-Help-students-log-in-with-Clever",
+        "https://help.zearn.org/hc/en-us/articles/38664432460951-Merging-existing-accounts"
+      ],
+      "bytes": 280621,
+      "sha256": "c541074654ddb42d11e327f4413529eb5354dfa76074c51b0887d5d2847cc6ed",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/NavigatingSpanishTranslatedContent.pdf",
+      "filename": "NavigatingSpanishTranslatedContent.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/30464877966231-School-Account-Spanish-translated-digital-content"
+      ],
+      "bytes": 3367799,
+      "sha256": "31d5c4bdc4e3418c755e8c48cf7f2a1397a8bef9a825137da92c01c0a7b04ddc",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/NavigatingYourClassroomLiveView.pdf",
+      "filename": "NavigatingYourClassroomLiveView.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/41582158077975-LiveView-Report"
+      ],
+      "bytes": 2429446,
+      "sha256": "3822ee4afe06116d0d4178d309468e9a72886c844f3ff5b76feb9c34d20e5f52",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Print%20Change%20Log%20-%20Default%20Curriculum.pdf",
+      "filename": "Print Change Log - Default Curriculum.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/17998062213271-Print-Change-Log"
+      ],
+      "bytes": 307715,
+      "sha256": "d4baffdf1525acaaefafb1ceb6e846ef35edf0c039f7c13792a06d9ce80428c5",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SchedulingZearnInYourDay.pdf",
+      "filename": "SchedulingZearnInYourDay.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/22137636472727-Orient-to-implementing-Zearn-in-the-classroom"
+      ],
+      "bytes": 81048,
+      "sha256": "d89e01d327efb7d3f2da68470ca2568d5bed56ba8d8c9aa1c596d3def10f4dc7",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingBluebonnetLearning6_8withZearnMath.pdf",
+      "filename": "SupportingBluebonnetLearning6_8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1775870,
+      "sha256": "429e1437b47371a6cca6ab442b0f213da41bb654fdb758743a0e46e5fb2da3c5",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingBluebonnetLearningK5withZearnMath.pdf",
+      "filename": "SupportingBluebonnetLearningK5withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1796542,
+      "sha256": "5ec70d7fe6fa95ca3641d37b0b5f60a09a6f1429c186d778ee8308ff10d96031",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingEnglishLearnersComplement.pdf",
+      "filename": "SupportingEnglishLearnersComplement.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/236240288-Supporting-English-Learners",
+        "https://help.zearn.org/hc/en-us/articles/30464877966231-School-Account-Spanish-translated-digital-content"
+      ],
+      "bytes": 1706149,
+      "sha256": "e5c3803a4760fa313f4847d5d34ed810323fed4cda48ac05ac9a4fa674845022",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingEurekaMath2K5withZearnMath.pdf",
+      "filename": "SupportingEurekaMath2K5withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1798094,
+      "sha256": "8bf128197d2f55c4476500c66109bb14738a29159a29d7f1398e4de0acc6d3b2",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingEurekaMath2_K8withZearnMath.pdf",
+      "filename": "SupportingEurekaMath2_K8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1861909,
+      "sha256": "abb0872053816f1e6588e4adb60d3e6de6431540757b04fac9d7746cdeeac52d",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingExperienceMathSouthCarolinawithZearnMath.pdf",
+      "filename": "SupportingExperienceMathSouthCarolinawithZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1877049,
+      "sha256": "b795de82db904e00b6e01edd04e136c7664459dd2d45358a6ae5e512e330f107",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingIM_K5withZearnMath.pdf",
+      "filename": "SupportingIM_K5withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1981482,
+      "sha256": "a2235753cb9602f97ba9d9a539bea0cc627cdf3ec0c977124e6c3ab7b6432442",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingK8MathwithZearnMath.pdf",
+      "filename": "SupportingK8MathwithZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1684167,
+      "sha256": "c857f5457cd606871e5d6c22d2a1d78d3c4f698af4d533df41907f2d5126621d",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingKiddomSouthCarolinaMathK5withZearnMath.pdf",
+      "filename": "SupportingKiddomSouthCarolinaMathK5withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1848364,
+      "sha256": "3e73e5c697d26659d42bab1a6efc0c9b821651e101d6e83ae403d2a7707faeea",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingMathNationSouthCarolina6_8withZearnMath.pdf",
+      "filename": "SupportingMathNationSouthCarolina6_8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1773815,
+      "sha256": "1afc5d681488f4555493707c4bf32ff6ff5a56a58945148492de334cf4498c4c",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingMultilingualLearnersCore.pdf",
+      "filename": "SupportingMultilingualLearnersCore.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/4409549618967-Access-printed-materials-in-Spanish"
+      ],
+      "bytes": 1706149,
+      "sha256": "e5c3803a4760fa313f4847d5d34ed810323fed4cda48ac05ac9a4fa674845022",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingReadyClassroomK8withZearnMath.pdf",
+      "filename": "SupportingReadyClassroomK8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1897488,
+      "sha256": "50e635b76c236348d4dc2282b47f3db531810f085d48a4f2b84bc58905f5bcf0",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingSouthCarolinaRevealMathK8withZearnMath.pdf",
+      "filename": "SupportingSouthCarolinaRevealMathK8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1953786,
+      "sha256": "2f612a83cd084f29c86e7c11ce5fb3dc1b1385da70ceecf3a5643bf663cf82ea",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
+      "filename": "SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1974532,
+      "sha256": "0d6fb063d651ddfda042b640bd828b8d0751daff1efe3ccb4dabf0d1017a474b",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
+      "filename": "Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1891412,
+      "sha256": "887dced1bed70c3255be284da3be74b6bcc8be2660dea87340c59d92bd694a95",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
+      "filename": "SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1894122,
+      "sha256": "2f11a917368da7413842a8d86b57106471e1a414a5018e03fc159527546d7f94",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnAmplifyK8Alignment.pdf",
+      "filename": "ZearnAmplifyK8Alignment.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1858577,
+      "sha256": "44e2b70cd84d5f224c6a60914c8bf6fd0a3db69ff8d0ed8743754d3596902cf6",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnCarnegieLearning68Alignment.pdf",
+      "filename": "ZearnCarnegieLearning68Alignment.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1726469,
+      "sha256": "ff14be97672e66556b0750cce32fa919ba5c74cf8903970e588ba9553b347853",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnEurekaK8Alignment.pdf",
+      "filename": "ZearnEurekaK8Alignment.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1848930,
+      "sha256": "c70c5e560c7d554ca1a0fe2b7ada19a4bcd9bc064c15d962b82480bd0ac2e089",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnEverydayMathematicsK6Alignment.pdf",
+      "filename": "ZearnEverydayMathematicsK6Alignment.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1853948,
+      "sha256": "72aa827c8c53025bede9ab0a1776615d91338ba7b75b32575dfbef393e904b5f",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnGoMathK6Alignment.pdf",
+      "filename": "ZearnGoMathK6Alignment.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1919682,
+      "sha256": "a3e022b1015205406be243d8dd7b1d2b8b9d4abe514a48509fcecb65d2ecbebd",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathDigitalPlatformNavigationGuide.pdf",
+      "filename": "ZearnMathDigitalPlatformNavigationGuide.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115007900828-Lesson-level-assessments",
+        "https://help.zearn.org/hc/en-us/articles/22137962873367-Orient-to-the-Zearn-Math-digital-platform",
+        "https://help.zearn.org/hc/en-us/articles/4403429503639-Assign-an-Independent-Digital-Lesson",
+        "https://help.zearn.org/hc/en-us/articles/5896758965271-Printed-goal-tracker"
+      ],
+      "bytes": 517637,
+      "sha256": "bc9ca0d63d6b38f9b3794b8f2e56b7d7075651b61093463fb52e5608868a94cf",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathOverview%5BCoreComplement%5D.pdf",
+      "filename": "ZearnMathOverview[CoreComplement].pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360037057814-Support-Independent-Digital-Lesson-completion-in-your-classroom"
+      ],
+      "bytes": 1244387,
+      "sha256": "71fa3e1ae87a1e2d119a1966cfa18184a0652c3a30fd01cdff6eab8475ffb30b",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMath_StudentReportOverview.pdf",
+      "filename": "ZearnMath_StudentReportOverview.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360052430653-School-Account-Student-Report"
+      ],
+      "bytes": 363636,
+      "sha256": "cfb1bbb8887b7dcec27e25010396e843ef22c8b1b52540ed803a8518458d0bce",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnOpenUpResourcesK8.pdf",
+      "filename": "ZearnOpenUpResourcesK8.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1921383,
+      "sha256": "cea2256236bc2cefc9b347709503b0f53f34bfa4c3c939e0c8a1b42c84269e35",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnRevealMathK8Alignment.pdf",
+      "filename": "ZearnRevealMathK8Alignment.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1956008,
+      "sha256": "bea8001e341fef41f47a7d3490c92c93b784751a22fdc6056b57796af097d4c9",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSchoolLeads.pdf",
+      "filename": "ZearnSchoolLeads.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/7726940472727-Zearn-school-leads"
+      ],
+      "bytes": 83449,
+      "sha256": "a9159de17a5c996b13a9827ab37c1d02af052698961540dcd02b30ba698c06d3",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Zearn_FlexibleMathPlatform.pdf",
+      "filename": "Zearn_FlexibleMathPlatform.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/22137674192151-Use-Zearn-across-instructional-times"
+      ],
+      "bytes": 65737,
+      "sha256": "13f1095aa250adc198b207961c0a763c51ad906d10a56ab09303a5989934197d",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnenVisionK8Alignment.pdf",
+      "filename": "ZearnenVisionK8Alignment.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1950492,
+      "sha256": "81ac81c91d092ce89607010aa6af03ad66bca01e863bb5dcfec68129017a1162",
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/G05M01_AssessmentRubric_CC.pdf",
+      "filename": "G05M01_AssessmentRubric_CC.pdf",
+      "status": "ok",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments"
+      ],
+      "bytes": 649712,
+      "sha256": "aa89754f9f2a58b6e6932b778d7d3f3840c1a7c1cdf15738194bdcbfe8c3b44b",
+      "error": null
+    }
+  ],
+  "updated_at": "2026-07-24T20:31:43Z",
+  "local_pdf_count": 44
+}

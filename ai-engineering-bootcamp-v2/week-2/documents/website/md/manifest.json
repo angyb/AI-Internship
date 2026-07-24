@@ -1,0 +1,38 @@
+{
+  "crawled_at": "2026-07-23T22:23:49Z",
+  "sitemap": "https://about.zearn.org/sitemap.xml",
+  "sample_size": 0,
+  "seed": 42,
+  "pages": [
+    {
+      "url": "https://about.zearn.org/how-zearn-math-works",
+      "filename": "how-zearn-math-works.md",
+      "status": "ok",
+      "extraction_method": "static",
+      "word_count": 1125,
+      "deduped_blocks_removed": 22,
+      "tab_sections_labeled": 9,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/curriculum",
+      "filename": "curriculum.md",
+      "status": "ok",
+      "extraction_method": "static",
+      "word_count": 295,
+      "deduped_blocks_removed": 0,
+      "tab_sections_labeled": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/tutoring-with-zearn-math",
+      "filename": "tutoring-with-zearn-math.md",
+      "status": "ok",
+      "extraction_method": "static",
+      "word_count": 273,
+      "deduped_blocks_removed": 0,
+      "tab_sections_labeled": 0,
+      "error": null
+    }
+  ]
+}

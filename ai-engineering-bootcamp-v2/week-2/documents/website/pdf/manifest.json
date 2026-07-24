@@ -1,0 +1,2870 @@
+{
+  "crawled_at": "2026-07-23T22:36:41Z",
+  "sitemap": "https://about.zearn.org/sitemap.xml",
+  "pages_scanned": 127,
+  "unique_pdfs": 184,
+  "removed_stale": 40,
+  "downloaded": 59,
+  "skipped_existing": 116,
+  "failed": 9,
+  "page_scans": [
+    {
+      "url": "https://about.zearn.org",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/case-studies",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/case-studies/aspire",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/case-studies/caddo",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/case-studies/greece",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/case-studies/mcp",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/celebration-certificates",
+      "status": "ok",
+      "pdf_links_found": 7,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/contact",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/cookie-policy",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/curriculum",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/curriculum-study-professional-development",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/digital-lessons",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+      "status": "ok",
+      "pdf_links_found": 6,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+      "status": "ok",
+      "pdf_links_found": 6,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+      "status": "ok",
+      "pdf_links_found": 6,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+      "status": "ok",
+      "pdf_links_found": 6,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+      "status": "ok",
+      "pdf_links_found": 6,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/donate",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/family-engagement-library",
+      "status": "ok",
+      "pdf_links_found": 17,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/getting-started",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/how-zearn-math-works",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/inequitable-shock-in-math-learning",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/publications-catch-up-and-move-forward",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/publications-learning-acceleration",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/zearn-impact-large-southern-district",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/zearn-impact-statewide-study-nebraska",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/zearn-impact-study-dcps",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/zearn-impact-study-louisiana",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/insights/zearn-impact-study-texas",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/kindergarten-math",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/louisiana",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/louisiana/math-challenges",
+      "status": "ok",
+      "pdf_links_found": 18,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/louisiana/using-zearn-alongside-hqim",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-1",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-2",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-3",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-4",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-5",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-6",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-7",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/grade-8",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-learning-acceleration/kindergarten",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-mind-book",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/course-guides",
+      "status": "ok",
+      "pdf_links_found": 6,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/curriculum-reviews",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/family-support",
+      "status": "ok",
+      "pdf_links_found": 4,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/featured-news-stories",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/math-motivation-supplies",
+      "status": "ok",
+      "pdf_links_found": 13,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/math-tutoring-with-zearn",
+      "status": "ok",
+      "pdf_links_found": 8,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/press-releases",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-resources/printed-materials",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/math-webinars",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/mathfam-download-categories/classroom-posters",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/mathfam-download-categories/math-puns",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/middle-school-math",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/mission",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/news",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/ohio",
+      "status": "ok",
+      "pdf_links_found": 7,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/platform-insights",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/announcing-clever-partnership",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/colorado-math-accelerator",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/colorado-math-accelerator-schools",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/dc-study",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/evidence-for-essa",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/governor-polis-study",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/kindergarten",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/louisiana-math-learning",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/louisiana-study",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/math-matters-ri",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/math-refresh-la",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/monthlong-celebration",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/nebraska-study",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/new-mexico-public-education-department-rating",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/ohio-math",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/schools-nationwide-gain-increased-access-to-top-rated-math-platform",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/south-carolina",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/tennessee-students-accelerate-their-math-learning-through-statewide-tutoring-program",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/texas-students-accelerate-their-math-learning-through-statewide-tutoring-program",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/tn-study-23",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/tn-texbook",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/tulsa-study",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/tx-imra",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/tx-imra-math-catalyst-zmt",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/tx-study-23",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/utah-state-board-of-education-rating",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/virginia",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/zearn-provides-real-time-snapshot-on-the-state-of-u-s-math-education-through-new-oi-economic-tracker-by-opportunity-insights",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/press-releases/zearns-elementary-math-curriculum-receives-top-rating-by-edreports",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/privacy",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/professional-development",
+      "status": "ok",
+      "pdf_links_found": 3,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research",
+      "status": "ok",
+      "pdf_links_found": 6,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research-library",
+      "status": "ok",
+      "pdf_links_found": 5,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research/catching-up-and-moving-forward-accelerating-math-learning-for-every-student",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research/consistent-zearn-usage-increases-texas-math-test-scores",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research/dcps-students-gain-an-additional-11-weeks-of-math-learning-with-zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research/impact-of-zearn-math-curriculum-study-professional-development",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research/louisiana-students-increase-math-scores-with-zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research/nebraska-students-experience-large-gains-in-math-learning-with-zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/research/students-who-used-zearn-math-grew-1-3-grade-levels-in-one-year-of-learning",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/reviews/edreports-review-of-zearn-math",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/reviews/louisiana-dept-of-education-review",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/reviews/new-mexico-review",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/reviews/tennessee-approved-list",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/reviews/utah-state-board-of-education-review",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/school-account-resources",
+      "status": "ok",
+      "pdf_links_found": 3,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/search",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/south-carolina",
+      "status": "ok",
+      "pdf_links_found": 9,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/state-standards-alignment",
+      "status": "ok",
+      "pdf_links_found": 51,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/summer-math",
+      "status": "ok",
+      "pdf_links_found": 3,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/terms",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/texas",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/texas/bluebonnet",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/texas/resources",
+      "status": "ok",
+      "pdf_links_found": 8,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/texas/staar",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/thank-a-teacher",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/tutoring-with-zearn-math",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/using-zearn-for-impact",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/virginia",
+      "status": "ok",
+      "pdf_links_found": 7,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/webinar-categories/using-zearn-flexibly",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/webinar-categories/zearn-for-schools-and-districts",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/webinar-categories/zearn-k-5",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/webinar-categories/zearn-middle-school",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/why-zearn-math",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/zearn-in-spanish",
+      "status": "ok",
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://about.zearn.org/zearn-math-louisiana-supplies",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    }
+  ],
+  "pdfs": [
+    {
+      "url": "https://webassets.zearn.org/Implementation/CelebrationCertificateAwesomeSauce.pdf",
+      "filename": "CelebrationCertificateAwesomeSauce.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/celebration-certificates"
+      ],
+      "bytes": 163649,
+      "sha256": "04758145b0bae5d2e511fc7c49535b16f61bea6f77a70c8ef824f141f227fdc3",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterArabic.pdf",
+      "filename": "CleverParentLetterArabic.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 214900,
+      "sha256": "b2cc1297727604014e61d82df6d2fa46cd9861ea08460c779f1e3a4ef6098c80",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterBengali.pdf",
+      "filename": "CleverParentLetterBengali.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 187573,
+      "sha256": "0222e51eb69350d5d79b2ad6e85c87552e3b6fef69a4b2b3254fec07dc6d1f2d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterChinese.pdf",
+      "filename": "CleverParentLetterChinese.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 143933,
+      "sha256": "387825868971d32f407feaedc4b25d315944077e98109f5eb2ce9be3452e5be7",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterFrench.pdf",
+      "filename": "CleverParentLetterFrench.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 141848,
+      "sha256": "b76395ba34c4e4514b61f8124c3d546398ed554f0b8e3e43425eb3cb731399da",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterGerman.pdf",
+      "filename": "CleverParentLetterGerman.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 262305,
+      "sha256": "06c90decf8d4da881bf3c08f455ffed5b7ebef195da7ad267e04e6b761473286",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterGujarati.pdf",
+      "filename": "CleverParentLetterGujarati.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 249266,
+      "sha256": "a65635d67f7a55234aedcddfb0df04eeac37729172c90a0cafdb2fbf8fd1460c",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterHaitian.pdf",
+      "filename": "CleverParentLetterHaitian.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 122367,
+      "sha256": "0af5fdad5448b75009bbbac1a996ffb4460f72af3e6b3551e242e82c32cbd966",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterHindi.pdf",
+      "filename": "CleverParentLetterHindi.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 249053,
+      "sha256": "cc4837e462ad17e4718003f9b10cb083e95fbfb8d993b5c60735756dc3f37e8a",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterKorean.pdf",
+      "filename": "CleverParentLetterKorean.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 126440,
+      "sha256": "48d4a5f72294573f2786b192bfedab7edebc99eb6b765729666ee7b885b7cdbd",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterPortuguese.pdf",
+      "filename": "CleverParentLetterPortuguese.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 248530,
+      "sha256": "ddba8e9f03278563ea8690d1ff8eea44ae83cb0359fd4b7a67c385bebee91ddf",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterRussian.pdf",
+      "filename": "CleverParentLetterRussian.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 130058,
+      "sha256": "ccd299b8258e6665653747fc18d237df0ab88bf98ebfca1a56e74d78e2ac7293",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterTagalog.pdf",
+      "filename": "CleverParentLetterTagalog.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 256155,
+      "sha256": "4f8b327bb7d3e42d4993dcc9fc3f1214d6166f30743af78762f7329616aabc9f",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterUrdu.pdf",
+      "filename": "CleverParentLetterUrdu.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 224142,
+      "sha256": "188e18f036a83d9e1c29ef2fc630595402cd011f28a37727a49539ef64f7846d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterVietnamese.pdf",
+      "filename": "CleverParentLetterVietnamese.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 258309,
+      "sha256": "e13d3561af67d5a59f29fc648eebe4f4828f5afef07641acf828132b6d6e2a4c",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Colorado_ImpactStudy.pdf",
+      "filename": "Colorado_ImpactStudy.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/research-library"
+      ],
+      "bytes": 279036,
+      "sha256": "29e468c1e99671c8a9b90d42b49a09718e4dd140af96be34feccceb06d0504f6",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/DidYourBrainJustGetBigger.pdf",
+      "filename": "DidYourBrainJustGetBigger.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/celebration-certificates"
+      ],
+      "bytes": 1492161,
+      "sha256": "95c16649b8405637b31d9ef1de8a8831dd1f080d314744d0e1c8f25089a1bf5e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/EfficacyResearch2022DistrictwideStudyDC.pdf",
+      "filename": "EfficacyResearch2022DistrictwideStudyDC.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+        "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+        "https://about.zearn.org/insights/zearn-impact-study-dcps",
+        "https://about.zearn.org/research"
+      ],
+      "bytes": 105318,
+      "sha256": "bd435676f581f733dea67c858d3d42750cb0bf8aed13233179d00db7cc8268be",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/EfficacyResearch2022DistrictwideStudyTulsa.pdf",
+      "filename": "EfficacyResearch2022DistrictwideStudyTulsa.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/research-library"
+      ],
+      "bytes": 132554,
+      "sha256": "9ecf40910aa8e619ff4cc0212b7dde932165184be1e5ddf7803b2649387ac95e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/EfficacyResearchMethodology.pdf",
+      "filename": "EfficacyResearchMethodology.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/insights/zearn-impact-large-southern-district",
+        "https://about.zearn.org/insights/zearn-impact-statewide-study-nebraska",
+        "https://about.zearn.org/insights/zearn-impact-study-dcps",
+        "https://about.zearn.org/insights/zearn-impact-study-louisiana"
+      ],
+      "bytes": 8510,
+      "sha256": "7d636e35f8f16bc04b546931b201f5472a7776e2b13b4da16d27251df92e1355",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/EfficacyResearch_2022_StatewideStudy_NE.pdf",
+      "filename": "EfficacyResearch_2022_StatewideStudy_NE.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+        "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+        "https://about.zearn.org/insights/zearn-impact-statewide-study-nebraska",
+        "https://about.zearn.org/research"
+      ],
+      "bytes": 95856,
+      "sha256": "ba992303e4aab58721bec6863cbce57453e61ebf9cdd7f5b3a7a454087e67d65",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/EfficacyResearch_2022_Zearn_Impact_in_Louisiana.pdf",
+      "filename": "EfficacyResearch_2022_Zearn_Impact_in_Louisiana.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/insights/zearn-impact-study-louisiana"
+      ],
+      "bytes": 164979,
+      "sha256": "e8edff62be024a39f2a7e22cede709601ba30a269a16e0592f2e210538ef4b85",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/EvaluationofZearnSupplementalwithDedicatedImplementationSupport.pdf",
+      "filename": "EvaluationofZearnSupplementalwithDedicatedImplementationSupport.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+        "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+        "https://about.zearn.org/press-releases/evidence-for-essa",
+        "https://about.zearn.org/research",
+        "https://about.zearn.org/research-library"
+      ],
+      "bytes": 1363242,
+      "sha256": "8e5edcef3661b65067eade15c9dff2da3567a08e67f3efba90a87d0b6072f708",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G1_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G1_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G2_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G2_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G3_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G3_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G4_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G4_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G5_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G5_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G6_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G6_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G7_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G7_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/G8_Math_Tutoring_with_Zearn.pdf",
+      "filename": "G8_Math_Tutoring_with_Zearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-tutoring-with-zearn"
+      ],
+      "bytes": 3335121,
+      "sha256": "af7703f5831a0efca5ac982595937ad534c03ba04f1b80ffac9b6968e70e6333",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/GettingStartedChecklist.pdf",
+      "filename": "GettingStartedChecklist.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/school-account-resources",
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": 138899,
+      "sha256": "2d989043fb94884fc4301a5dd82d2a238a859b1522da0f5f79a756b4af72ff38",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/InoticedYourMathWork.pdf",
+      "filename": "InoticedYourMathWork.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/celebration-certificates"
+      ],
+      "bytes": 1609969,
+      "sha256": "b135ee7894f5e92575e2aca9d78ece82962eead7a3e1b0e0bb62a8326206554c",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/KeepItGoing.pdf",
+      "filename": "KeepItGoing.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/celebration-certificates"
+      ],
+      "bytes": 1732718,
+      "sha256": "d162a99fb569e5fbbda2a4ec485042b14b7bd070eb3e4680bbc77ac6702d788d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/KindergartenNavigationGuide.pdf",
+      "filename": "KindergartenNavigationGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/kindergarten-math"
+      ],
+      "bytes": 508192,
+      "sha256": "586f64c92165dcca2547d7d61b199a68b37a3da1bc4ec8099a0c307e1265a42d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/KindergartenOverview.pdf",
+      "filename": "KindergartenOverview.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/kindergarten-math"
+      ],
+      "bytes": 2112490,
+      "sha256": "9bc286c2edfc8b7f29ed97a0b18440d201d104bc1a44d9959add4ad4bd856224",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LaunchZearnMathCurriculumPD.pdf",
+      "filename": "LaunchZearnMathCurriculumPD.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/professional-development"
+      ],
+      "bytes": 108850,
+      "sha256": "3d564f14dcb85674e7cf2ad4890cd2121138128d037d6d78629da9be88fe7f2f",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LoginExperiencethroughClever.pdf",
+      "filename": "LoginExperiencethroughClever.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/school-account-resources",
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": 280621,
+      "sha256": "c541074654ddb42d11e327f4413529eb5354dfa76074c51b0887d5d2847cc6ed",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_AllStar_BulletinBoard.pdf",
+      "filename": "LouisianaMathChallenge_AllStar_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 42886902,
+      "sha256": "c39554e1d6aeaff22b0190eb9b1fa12a1f464d4bf211eca8b9de59e7405e00f8",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_AllStar_Certificate.pdf",
+      "filename": "LouisianaMathChallenge_AllStar_Certificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 2473878,
+      "sha256": "6d8ca5f4b482071f39e4924f6023b52fdf2310ce8b0ffe5634970dc0317df97a",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_AllStar_StudentLessonTracker.pdf",
+      "filename": "LouisianaMathChallenge_AllStar_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 2530487,
+      "sha256": "974f095a5e381b5db922fd4f0916af55ed0fdea3550916cde42857087ac7476d",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EndZone_BulletinBoard.pdf",
+      "filename": "LouisianaMathChallenge_EndZone_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 3682986,
+      "sha256": "93c38ea4f11c4d2a1f3e6d9999d93a8cfc57fe76c28196e2ce34522ef4da2723",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EndZone_Certificate.pdf",
+      "filename": "LouisianaMathChallenge_EndZone_Certificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 482790,
+      "sha256": "8447ea8f4e621a985df18554c9cce70ee6d94bf7522f6eedb98214fd0940e938",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EndZone_StudentLessonTracker.pdf",
+      "filename": "LouisianaMathChallenge_EndZone_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 677044,
+      "sha256": "cb3dce03195467482f2f6eed80057e8aa4b827b5c07a2b399546192b3cfac499",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EnglishFamilyFlyer.pdf",
+      "filename": "LouisianaMathChallenge_EnglishFamilyFlyer.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 264802,
+      "sha256": "60ecbca9fc047b4badf859c0a9dcb4dffca3a79a2f2bbbd30cff274172c69d17",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_MardiGras_BulletinBoard.pdf",
+      "filename": "LouisianaMathChallenge_MardiGras_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 2337844,
+      "sha256": "34978d5cc01fb8db83e5c79998b957ae715ffe0f269388a728eaa4833fa287b8",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_MardiGras_Certificate.pdf",
+      "filename": "LouisianaMathChallenge_MardiGras_Certificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 178214,
+      "sha256": "e848baa3512880bd5930a17a2119d197207fbc8e6c3085afe6536d0217cc9a87",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_MardiGras_StudentLessonTracker.pdf",
+      "filename": "LouisianaMathChallenge_MardiGras_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 1494660,
+      "sha256": "8131a7aa125e0dd8a33fd75ba19cd214711daf5027694c0a7c1de1bb3fa8ed63",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpaceRace_BulletinBoard.pdf",
+      "filename": "LouisianaMathChallenge_SpaceRace_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 704699,
+      "sha256": "f7861c5e87bb475e726ce8586863a42c942fd4b1c4f7154fe6a85879cad1c593",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpaceRace_Certificates.pdf",
+      "filename": "LouisianaMathChallenge_SpaceRace_Certificates.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 247957,
+      "sha256": "cbc0df85ba346ad2cc9da20659705989f4c537d418b9e524db7122292129ee16",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpaceRace_StudentLessonTracker.pdf",
+      "filename": "LouisianaMathChallenge_SpaceRace_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 2266457,
+      "sha256": "a5b031062c395f11c1682858b13f7c2de65d7a9d065ef95a2126f116c1ea4390",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpanishFamilyFlyer.pdf",
+      "filename": "LouisianaMathChallenge_SpanishFamilyFlyer.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 214201,
+      "sha256": "4b9f2fa81fab7c2dc288cbd6e02c665aea8cbd235e1cb0e29caef5cf198c4dfc",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_TeacherFlyer.pdf",
+      "filename": "LouisianaMathChallenge_TeacherFlyer.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 807970,
+      "sha256": "0e58029eb22bceb88463fbc0bb81a88db1c9c59ac4eae7fe2c12459dab1e143c",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_WinterGames_BulletinBoard.pdf",
+      "filename": "LouisianaMathChallenge_WinterGames_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 1286316,
+      "sha256": "9ba2591cf9ad151276d6c2e21c2d3f796e0fa6c61f690c598bb6d6dc91ed0820",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_WinterGames_Certificates.pdf",
+      "filename": "LouisianaMathChallenge_WinterGames_Certificates.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 942292,
+      "sha256": "6c2a777842b6b7f874c67f95a9084e186c11070b109ace5348c317324099ed38",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_WinterGames_StudentLessonTracker.pdf",
+      "filename": "LouisianaMathChallenge_WinterGames_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana/math-challenges"
+      ],
+      "bytes": 1042001,
+      "sha256": "f63929028349509d82d33f45a5f69a8e87d280f4f894dd6a9e8ce1a508e2a490",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Louisiana_ZearnEfficacyStudy.pdf",
+      "filename": "Louisiana_ZearnEfficacyStudy.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+        "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+        "https://about.zearn.org/research"
+      ],
+      "bytes": 474537,
+      "sha256": "cfd6dc8b459f5c3c46742faa49b534c01647d94205969f708d1d0bc49037b067",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/MathMindStudyGuide.pdf",
+      "filename": "MathMindStudyGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-mind-book"
+      ],
+      "bytes": 328554,
+      "sha256": "07fd37a536e67aa01ca511c7e635b574f5240a3f66b9fd2346a79521dc6dfd3f",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/MathTutoringWithZearn_Checklist.pdf",
+      "filename": "MathTutoringWithZearn_Checklist.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/tutoring-with-zearn-math"
+      ],
+      "bytes": 281225,
+      "sha256": "ac07f11d8c7777812fdeb68c4fb638fb6904d4a40909475a674065db8a82ebd5",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/MathTutoringWithZearn_DigitalLessonOverview.pdf",
+      "filename": "MathTutoringWithZearn_DigitalLessonOverview.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/tutoring-with-zearn-math"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/MathTutoringWithZearn_DigitalLessonOverview.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/NYCPS2023EducatorTraining.pdf",
+      "filename": "NYCPS2023EducatorTraining.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/NYCPS2023EducatorTraining.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/NYCPSAdminTraining2023.pdf",
+      "filename": "NYCPSAdminTraining2023.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/NYCPSAdminTraining2023.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/NYC_PS_ImplementationStudy.pdf",
+      "filename": "NYC_PS_ImplementationStudy.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/using-zearn-for-impact"
+      ],
+      "bytes": 110879,
+      "sha256": "b46630f29554b6fce82dd6f702ef169c986d5a64938aec46351ee6026a285610",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/NavigatingSpanishTranslatedContent.pdf",
+      "filename": "NavigatingSpanishTranslatedContent.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/zearn-in-spanish"
+      ],
+      "bytes": 3367799,
+      "sha256": "31d5c4bdc4e3418c755e8c48cf7f2a1397a8bef9a825137da92c01c0a7b04ddc",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/OhioFactSheet.pdf",
+      "filename": "OhioFactSheet.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/ohio"
+      ],
+      "bytes": 249986,
+      "sha256": "caa82f52b95ab8e3ba903554523a792c962d959cf252aa8f40cd5966dcad9f3e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/OhioHowWeLearnPoster.pdf",
+      "filename": "OhioHowWeLearnPoster.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/ohio"
+      ],
+      "bytes": 51527257,
+      "sha256": "140edb0d1b60f8a47c47b8350fa0eb1481056488bb17d5ebdf6d6d3dbca69e30",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/OhioKeepRockingPoster.pdf",
+      "filename": "OhioKeepRockingPoster.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/ohio"
+      ],
+      "bytes": 26777339,
+      "sha256": "80b5f2ce1083fdee7c951c77a529cd50455898554ddbeeee8be16d6feba71129",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/OhioMissionCertificate.pdf",
+      "filename": "OhioMissionCertificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/ohio"
+      ],
+      "bytes": 38187985,
+      "sha256": "4ca7459404c31c306cd4eb560e140ba50e012f82ae36c0b07d1c8c93b68ebd9a",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Ohio_ImpactStudy.pdf",
+      "filename": "Ohio_ImpactStudy.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/research-library"
+      ],
+      "bytes": 342962,
+      "sha256": "ff26f63dddaf4052361adb76cdfc1b8ff291f490c11cab93c776e8cd2d90cab2",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/PDCourseCatalog.pdf",
+      "filename": "PDCourseCatalog.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/professional-development"
+      ],
+      "bytes": 266414,
+      "sha256": "a3c4252a89f23dd7193c97dc535cb904a7a905881e430bd08a0d96d271640eb3",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ParentandCaregiverGuideToZearn_Spanish.pdf",
+      "filename": "ParentandCaregiverGuideToZearn_Spanish.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/family-support"
+      ],
+      "bytes": 670516,
+      "sha256": "d7c79bcade270e66d9167d0ef3c2d922932aa7bc65e0b027742d188c852b527b",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ParentandCaregiverGuidetoZearn.pdf",
+      "filename": "ParentandCaregiverGuidetoZearn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/family-support"
+      ],
+      "bytes": 646331,
+      "sha256": "8842dab7fe3c2d2e80e8672b8df1e67a608eef7ced38f0511700bca48f9a1c54",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ProudOfYouCertificate.pdf",
+      "filename": "ProudOfYouCertificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/celebration-certificates"
+      ],
+      "bytes": 1362293,
+      "sha256": "0f9ecfbdddb77f1d644e9c72177ee4c0ff7ea3bf7f0ff7db94e65f844a84ffcc",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SCDistrictLeaderImplementationGuide.pdf",
+      "filename": "SCDistrictLeaderImplementationGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 2042264,
+      "sha256": "3e1d2887f89e9cd48bd1074b4944c089abf56de710a1425bd0d64da206bc6ece",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EndZone_BulletinBoard.pdf",
+      "filename": "SouthCarolinaMathChallenge_EndZone_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 4631942,
+      "sha256": "df20b751632862922782828157e63147876b872d25dda62995c25fa0838c09bb",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EndZone_Certificate.pdf",
+      "filename": "SouthCarolinaMathChallenge_EndZone_Certificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 497340,
+      "sha256": "d83b6c2f3a7c72c0b911ffa72d87058b6e0554031310ad39c7c17d0fd7803419",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EndZone_StudentLessonTracker.pdf",
+      "filename": "SouthCarolinaMathChallenge_EndZone_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 717663,
+      "sha256": "d35150cb432bf6d40375e2fd23e2282a7fa7e36f8684f6e8a82cf8ad702150ce",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EnglishFamilyFlyer.pdf",
+      "filename": "SouthCarolinaMathChallenge_EnglishFamilyFlyer.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 202178,
+      "sha256": "d3d5af89b287b1bdc13d48d1bf7662529a1e78d27b467fab764af1734c89631d",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_SpanishFamilyFlyer.pdf",
+      "filename": "SouthCarolinaMathChallenge_SpanishFamilyFlyer.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 205478,
+      "sha256": "6fc4a2ee7913031d05b16e08e49937436db7aa809b455ef8e45ce6dd16217744",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_TeacherFlyer.pdf",
+      "filename": "SouthCarolinaMathChallenge_TeacherFlyer.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 808761,
+      "sha256": "69dcc380572420e753e9e7b0602fee0b909e2f5172aa2292fefccd8442837e54",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/StayCoolAndMathOn.pdf",
+      "filename": "StayCoolAndMathOn.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/celebration-certificates"
+      ],
+      "bytes": 1842134,
+      "sha256": "364580602bade9fe1d98866db3a1cccac7db31a0387712583c771838916bbe7a",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SummerBrainyChallenge.pdf",
+      "filename": "SummerBrainyChallenge.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-learning-acceleration/grade-1",
+        "https://about.zearn.org/math-learning-acceleration/grade-3",
+        "https://about.zearn.org/math-learning-acceleration/grade-4",
+        "https://about.zearn.org/math-learning-acceleration/grade-5",
+        "https://about.zearn.org/math-learning-acceleration/grade-6",
+        "https://about.zearn.org/math-learning-acceleration/grade-7",
+        "https://about.zearn.org/math-learning-acceleration/grade-8",
+        "https://about.zearn.org/math-learning-acceleration/kindergarten",
+        "https://about.zearn.org/math-resources/math-motivation-supplies",
+        "https://about.zearn.org/summer-math"
+      ],
+      "bytes": 2809853,
+      "sha256": "bfd8f004e40f40eba4d0e135a723a79836a99fb4f7c01656de6633e385cfc0e0",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SummerBrainyChallenge_Neutral.pdf",
+      "filename": "SummerBrainyChallenge_Neutral.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana",
+        "https://about.zearn.org/ohio",
+        "https://about.zearn.org/south-carolina",
+        "https://about.zearn.org/texas/resources",
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": 2787065,
+      "sha256": "b6bac49876be7d218d9b334401d0b026955c7bf95d488f2766a0242641aa419b",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportforBluebonnetLearningK5Math.pdf",
+      "filename": "SupportforBluebonnetLearningK5Math.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/texas/bluebonnet"
+      ],
+      "bytes": 1423774,
+      "sha256": "fc1df89f0e154a5b0ce21c8845907cb10ee6ef89f8151f0c8974888a3165f601",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingEnglishLearnersComplement.pdf",
+      "filename": "SupportingEnglishLearnersComplement.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-learning-acceleration/grade-1",
+        "https://about.zearn.org/math-learning-acceleration/grade-2",
+        "https://about.zearn.org/math-learning-acceleration/grade-3",
+        "https://about.zearn.org/math-learning-acceleration/grade-4",
+        "https://about.zearn.org/math-learning-acceleration/grade-5",
+        "https://about.zearn.org/math-learning-acceleration/grade-6",
+        "https://about.zearn.org/math-learning-acceleration/grade-7",
+        "https://about.zearn.org/math-learning-acceleration/grade-8",
+        "https://about.zearn.org/math-learning-acceleration/kindergarten",
+        "https://about.zearn.org/summer-math",
+        "https://about.zearn.org/zearn-in-spanish"
+      ],
+      "bytes": 1706149,
+      "sha256": "e5c3803a4760fa313f4847d5d34ed810323fed4cda48ac05ac9a4fa674845022",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/TexasBiggerBrainsPoster.pdf",
+      "filename": "TexasBiggerBrainsPoster.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": 11951944,
+      "sha256": "31ea76082af2d036e9c241dac33f1ff22a4eaab24844e5f27da2b951eec27022",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/TexasHowWeLearnPoster.pdf",
+      "filename": "TexasHowWeLearnPoster.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": 51137801,
+      "sha256": "3f2df34dca299c30245403dbbfedf877a050c6c31338fbdce84e7330321417ee",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/TexasMissionCertificate.pdf",
+      "filename": "TexasMissionCertificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": 38009250,
+      "sha256": "97e5008152a4d7d3164706b0a0fdd0946919ccb4e1c5a7dd4bd882fc41715b3f",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Texas_ZearnEfficacyStudy.pdf",
+      "filename": "Texas_ZearnEfficacyStudy.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+        "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+        "https://about.zearn.org/insights/zearn-impact-study-texas",
+        "https://about.zearn.org/research"
+      ],
+      "bytes": 124497,
+      "sha256": "519d3f42b36102f852e87f9cb6083479e41fd0a8b7fe72e402574752a33c18aa",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/VAZearnTrainingWinter2025.pdf",
+      "filename": "VAZearnTrainingWinter2025.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": 95531,
+      "sha256": "4e535e031416fc5c63ca9dd0ab2c6d2cb71aa4dc22160312b741f12358b5d81e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/VirginiaFactSheet.pdf",
+      "filename": "VirginiaFactSheet.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": 138839,
+      "sha256": "1028601335da223d1ec40cf337bfc5f80224e9358a07178de656dc2910465dfb",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/VisibilityIntoMathLearning.pdf",
+      "filename": "VisibilityIntoMathLearning.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/platform-insights"
+      ],
+      "bytes": 159089,
+      "sha256": "4a0000e248b6feac945d7086a5e9be6ca23b410e131fb7d1cada8255d8e84cab",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnBundle-BulletinBoard.pdf",
+      "filename": "ZearnBundle-BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 4758976,
+      "sha256": "1a05d3248123023d58e4b25c58131aa025caf04f08dc848dce1f5392eea0201d",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnBundle-CelebrationCertificatesTags.pdf",
+      "filename": "ZearnBundle-CelebrationCertificatesTags.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 11475020,
+      "sha256": "c0ccb4e8406aae73484999ee5dd192ef39535959bd9adf905f11648a6f7ad330",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnBundle-LessonTrackers.pdf",
+      "filename": "ZearnBundle-LessonTrackers.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 1951554,
+      "sha256": "f96b66b5da97bea923c8991eee4c9180029e7a7c03070c4cbe1cc418f016523e",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnDataDeepDive.pdf",
+      "filename": "ZearnDataDeepDive.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/professional-development"
+      ],
+      "bytes": 149864,
+      "sha256": "912f4b0ca39d547bba8fde3137b9683f8dd18bcb2324e74c61887234f7930d6d",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnHelpersForParents.pdf",
+      "filename": "ZearnHelpersForParents.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/family-support"
+      ],
+      "bytes": 156592,
+      "sha256": "0c1bf4aade4483a1f8e6d23f7ce9656b66beed1ce960c409ecd9091b54b83354",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnHelpersForParentsSpanish.pdf",
+      "filename": "ZearnHelpersForParentsSpanish.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/family-support"
+      ],
+      "bytes": 116640,
+      "sha256": "c2de7dd9aed009ac2b8561a68a4bc9c8a7adcc2a7bf51edba526c5e1b310dbef",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnLoginParentLetterSpanish.pdf",
+      "filename": "ZearnLoginParentLetterSpanish.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 140179,
+      "sha256": "101964d0630a856b7cc36c0528b08a1b04357e69e5b630bd35a8dd13a11d263c",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_AllStar_BulletinBoard.pdf",
+      "filename": "ZearnMathChallenge_AllStar_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 42886902,
+      "sha256": "c39554e1d6aeaff22b0190eb9b1fa12a1f464d4bf211eca8b9de59e7405e00f8",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_AllStar_Certificate.pdf",
+      "filename": "ZearnMathChallenge_AllStar_Certificate.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 2473878,
+      "sha256": "6d8ca5f4b482071f39e4924f6023b52fdf2310ce8b0ffe5634970dc0317df97a",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_AllStar_StudentLessonTracker.pdf",
+      "filename": "ZearnMathChallenge_AllStar_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 2445495,
+      "sha256": "f6b3bf02fc4a718db8e71e65bce032ebdee272a428778b406aab10d9ebaf54ea",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_SpaceRace_BulletinBoard.pdf",
+      "filename": "ZearnMathChallenge_SpaceRace_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 2213215,
+      "sha256": "de0b30a3ed85d2a7e96d648993af2765ef44e7d3740695c0961d9b6fc4007a01",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_SpaceRace_Certificates.pdf",
+      "filename": "ZearnMathChallenge_SpaceRace_Certificates.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 364232,
+      "sha256": "35f0be96e9cc913e47db73d304c7960ed4509753e2cfe80b3184f7927b3fc607",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_SpaceRace_StudentLessonTracker.pdf",
+      "filename": "ZearnMathChallenge_SpaceRace_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 1004003,
+      "sha256": "08cc82ced224471e5d6ff721fadc79cf453040f95f65963b44697afe45d629cb",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_WinterGames_BulletinBoard.pdf",
+      "filename": "ZearnMathChallenge_WinterGames_BulletinBoard.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 467126,
+      "sha256": "fa524fa22885aec2cad3a4f8b22d24d51a597f9734045c6d5fb7ea3c9fdccee5",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_WinterGames_Certificates.pdf",
+      "filename": "ZearnMathChallenge_WinterGames_Certificates.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 283953,
+      "sha256": "9a1dbf48022b8500c2bde48602663269d58b4bed6fb36e8e7a84445c288656f2",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_WinterGames_StudentLessonTracker.pdf",
+      "filename": "ZearnMathChallenge_WinterGames_StudentLessonTracker.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/math-motivation-supplies"
+      ],
+      "bytes": 184560,
+      "sha256": "13f957fa287b6c47849dfd302229c590267f376cd819bc28fe089418cb304ed7",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathDigitalPlatformNavigationGuide.pdf",
+      "filename": "ZearnMathDigitalPlatformNavigationGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources"
+      ],
+      "bytes": 1731871,
+      "sha256": "ea4bc680242986c1396f33e515e3bd2b65fb2be196d60613df413851f7eb25db",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathEfficacyResearchLargeSouthernDistrict.pdf",
+      "filename": "ZearnMathEfficacyResearchLargeSouthernDistrict.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/insights/zearn-impact-large-southern-district",
+        "https://about.zearn.org/research-library"
+      ],
+      "bytes": 336518,
+      "sha256": "114771557c26689a29400f62cdc188a79098a989e425f96b1709605adcf94e37",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathG1LessonSampleGuide.pdf",
+      "filename": "ZearnMathG1LessonSampleGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/course-guides"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/ZearnMathG1LessonSampleGuide.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathG2LessonSampleGuide.pdf",
+      "filename": "ZearnMathG2LessonSampleGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/course-guides"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/ZearnMathG2LessonSampleGuide.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathG3LessonSampleGuide.pdf",
+      "filename": "ZearnMathG3LessonSampleGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/course-guides"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/ZearnMathG3LessonSampleGuide.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathG4LessonSampleGuide.pdf",
+      "filename": "ZearnMathG4LessonSampleGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/course-guides"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/ZearnMathG4LessonSampleGuide.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathG5LessonSampleGuide.pdf",
+      "filename": "ZearnMathG5LessonSampleGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/course-guides"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/ZearnMathG5LessonSampleGuide.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathKLessonSampleGuide.pdf",
+      "filename": "ZearnMathKLessonSampleGuide.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources/course-guides"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": "403 Client Error: Forbidden for url: https://webassets.zearn.org/Implementation/ZearnMathKLessonSampleGuide.pdf",
+      "status": "error"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMSProgramOverview.pdf",
+      "filename": "ZearnMathMSProgramOverview.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/middle-school-math"
+      ],
+      "bytes": 1138144,
+      "sha256": "9806958471ca6f6df2f26a594fd0eb05ef2b7ae018a21ae6120842355f624f95",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathOverview%5BCoreComplement%5D.pdf",
+      "filename": "ZearnMathOverview[CoreComplement].pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": 1244387,
+      "sha256": "71fa3e1ae87a1e2d119a1966cfa18184a0652c3a30fd01cdff6eab8475ffb30b",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMath_FlexiblePlatform_Texas.pdf",
+      "filename": "ZearnMath_FlexiblePlatform_Texas.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": 92562,
+      "sha256": "5ac61a2461a882c8f95509b0471ce75d39d4b9d80c54d55ee676b80a87424e72",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnOrientationWebinar.pdf",
+      "filename": "ZearnOrientationWebinar.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/school-account-resources"
+      ],
+      "bytes": 61552,
+      "sha256": "02e554c868c71bdaa3c9dea9d43872f370ef0f30041657e47e1a73f1e9f708d5",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnParentLetterEnglish.pdf",
+      "filename": "ZearnParentLetterEnglish.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 152963,
+      "sha256": "d76a4114c012ecde766d60cca089fc7ce4e342d5e49b5833f0b67d688788e707",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnParentLetters.pdf",
+      "filename": "ZearnParentLetters.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": 1124784,
+      "sha256": "a0dc962e237d7fe8586e05858d680721dc331e2acb5583f2c23f0758b2382882",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_LA.pdf",
+      "filename": "ZearnSummerIntensiveSeries_LA.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana"
+      ],
+      "bytes": 251472,
+      "sha256": "1612149a0bc50b2be0a3aaefc752328396f2464daab8b28f8bd843aa8a95bab5",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_Neutral.pdf",
+      "filename": "ZearnSummerIntensiveSeries_Neutral.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/summer-math"
+      ],
+      "bytes": 384859,
+      "sha256": "057fd8c8b900a475d8422c3710c8953d9d6d7000334779cf6ec419e46a33289d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_OH.pdf",
+      "filename": "ZearnSummerIntensiveSeries_OH.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/ohio"
+      ],
+      "bytes": 252820,
+      "sha256": "5c80e42370ac34e7eac145938406e520cf1fa7b4cec57ab8dd5965d93e4d72eb",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_SC.pdf",
+      "filename": "ZearnSummerIntensiveSeries_SC.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": 342768,
+      "sha256": "f25f83e39bd4406f89528a5a5c1345e00a3f7b5e4a25b87d3d417fa4900feb94",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_TX.pdf",
+      "filename": "ZearnSummerIntensiveSeries_TX.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": 359725,
+      "sha256": "e0b89d017e0a97d4616b383adae70d6dbc5e89bec80e2065ad427fc481532235",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_VA.pdf",
+      "filename": "ZearnSummerIntensiveSeries_VA.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": 224841,
+      "sha256": "d1ab7450e5ffd1e0e003552956645b29555de2c6d55936526bbf13aa2ba0394e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Zearn_FlexibleMathPlatform.pdf",
+      "filename": "Zearn_FlexibleMathPlatform.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/ohio"
+      ],
+      "bytes": 65737,
+      "sha256": "13f1095aa250adc198b207961c0a763c51ad906d10a56ab09303a5989934197d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Zearn_LearningAccelerationStudy.pdf",
+      "filename": "Zearn_LearningAccelerationStudy.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+        "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+        "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+        "https://about.zearn.org/insights/publications-catch-up-and-move-forward",
+        "https://about.zearn.org/math-learning-acceleration",
+        "https://about.zearn.org/research"
+      ],
+      "bytes": 1357315,
+      "sha256": "1b80195060b5b4007093424c2551aa01dc1802c5a49497d56dc34c2caaabb9db",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/Zearn_factsheet.pdf",
+      "filename": "Zearn_factsheet.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/news"
+      ],
+      "bytes": 73067,
+      "sha256": "85049665d3e7f226b6c66cd679b6f266955272846dce9c0de789a44b03dbf70f",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/accelerationmethodology.pdf",
+      "filename": "accelerationmethodology.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/insights/publications-catch-up-and-move-forward"
+      ],
+      "bytes": 424709,
+      "sha256": "33a88176cc9cc41b063e36f97af03e95fed1c748874a5604a4cd3253d084f742",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/zearnmath_certificates_in_spanish_trabajo_de_matematicas.pdf",
+      "filename": "zearnmath_certificates_in_spanish_trabajo_de_matematicas.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/celebration-certificates"
+      ],
+      "bytes": 174096,
+      "sha256": "6da186449992bd364c4e3adb2acabc56a45467e0882ee73016dd49d6fe830e10",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Alabama.pdf",
+      "filename": "ZearnStateStandards_Alabama.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 612368,
+      "sha256": "98a86ad97bada60b77fd6872c7b22c64aa1762550ced30fbe2783612d1c17794",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Alaska.pdf",
+      "filename": "ZearnStateStandards_Alaska.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 640697,
+      "sha256": "30fc04ef8af465654e05f213fbcceb8bcbccef9d460619847479f36b24d6ca17",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Arizona.pdf",
+      "filename": "ZearnStateStandards_Arizona.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 616870,
+      "sha256": "f46b5b7c7cfc982f8cf600c16bdfcacb54d93f5f65b8a1a711fc6f8576c744c6",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Arkansas.pdf",
+      "filename": "ZearnStateStandards_Arkansas.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 585362,
+      "sha256": "5bb617d35a4046da85684ddd28d97706ea0b5b8f324f573ab8524cdbf81d8f2d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_California.pdf",
+      "filename": "ZearnStateStandards_California.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 702331,
+      "sha256": "896c39da3f6c93f2ee08204adb2bfc3e020ed9e844774a697976891ae6cf3418",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Colorado.pdf",
+      "filename": "ZearnStateStandards_Colorado.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 894187,
+      "sha256": "ba381c14edab343c8f3d6f3aa57da52a6f37a55e8cbe2f85c7f7822ccf79aa17",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Connecticut.pdf",
+      "filename": "ZearnStateStandards_Connecticut.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 695630,
+      "sha256": "dd63bfa4dae09921e3a64090c9a7cec45c1e042e9281785488de2a5de2cd7064",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Delaware.pdf",
+      "filename": "ZearnStateStandards_Delaware.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 689487,
+      "sha256": "77b93dcbee5c5839315e55790e106a15bc8caadc16c94c61a6c99b517f78ac0e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_District_of_Columbia.pdf",
+      "filename": "ZearnStateStandards_District_of_Columbia.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 689063,
+      "sha256": "f742120fdef97bce03abe6078515004a15522ec02ad63ff53b69f86e4d87385a",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Florida.pdf",
+      "filename": "ZearnStateStandards_Florida.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 3309662,
+      "sha256": "e2c1542799f9076594899abe17f8b59d5922f451759d2b1f74d9b1c114ec74c9",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Georgia.pdf",
+      "filename": "ZearnStateStandards_Georgia.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 563806,
+      "sha256": "977d0ebe31eccf35f67f36f651895fb43df64219e59f2dfc6a90919f95e068cd",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Hawaii.pdf",
+      "filename": "ZearnStateStandards_Hawaii.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 678610,
+      "sha256": "e6e1e03a6653eb64d806bb2b9201301e8761b2f0cbf12518a13fb6cbebef0c82",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Idaho.pdf",
+      "filename": "ZearnStateStandards_Idaho.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 586857,
+      "sha256": "4847786143aee1c96e1c9d459df2c8ea5b2f4e062539f5187e0bc0f6155bfe86",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Illinois.pdf",
+      "filename": "ZearnStateStandards_Illinois.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 707408,
+      "sha256": "92c2240771f4c6f215b86a0e4ae6efe306f169c4fc2b9760e370e2e5da18a370",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Indiana.pdf",
+      "filename": "ZearnStateStandards_Indiana.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 561278,
+      "sha256": "acf202e49cd3804806559078030d6685559a5efcb641863dbeb65f5a988a33b4",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Iowa.pdf",
+      "filename": "ZearnStateStandards_Iowa.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 727073,
+      "sha256": "77f6e46278ddb2b63689e9db69238b3223d397618ece9356deef3c27869dc91c",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Kansas.pdf",
+      "filename": "ZearnStateStandards_Kansas.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 614180,
+      "sha256": "314f57dac102011deee324bf1106f52410395bed64c82c0852cee96c1d840ecc",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Kentucky.pdf",
+      "filename": "ZearnStateStandards_Kentucky.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 628693,
+      "sha256": "38a00346e79e0d05c841ef8c86ab0314b6798f6eb6841b9422fc9383cdb034b2",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Louisiana.pdf",
+      "filename": "ZearnStateStandards_Louisiana.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 1038384,
+      "sha256": "35e702b5b31c8100fdb3dd1bdac4da222ad9243f365aa68016f8c3efbfac42c5",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Maine.pdf",
+      "filename": "ZearnStateStandards_Maine.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 698244,
+      "sha256": "aae9b268178659a23ecd83459ba07f3c69ccc3daa78df9b8057248c0d05b12f5",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Maryland.pdf",
+      "filename": "ZearnStateStandards_Maryland.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 702394,
+      "sha256": "b56f9b67a8fbb5e3c36c58697bed2943c4dcce7cd8e79d0d3619226a03a0e55e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Massachusetts.pdf",
+      "filename": "ZearnStateStandards_Massachusetts.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 713747,
+      "sha256": "592f2f6c96cd3d0060222b656896f498a336313efa0c9229a733e1d28bf31874",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Michigan.pdf",
+      "filename": "ZearnStateStandards_Michigan.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 714080,
+      "sha256": "a35c0968094a6ee7c5b8e662a6112c61b40f0219815d9a4808720cb8d7caceec",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Minnesota.pdf",
+      "filename": "ZearnStateStandards_Minnesota.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 548785,
+      "sha256": "ee1f3ae074b89830e880610677c00233223c3b2fe573a54a2baac51da8242d4d",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Mississippi.pdf",
+      "filename": "ZearnStateStandards_Mississippi.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 629317,
+      "sha256": "bc519cde1c1dc6e2b98243f9e0fd6b7bb460e913ab9a040f804bc2b19875b2d8",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Missouri.pdf",
+      "filename": "ZearnStateStandards_Missouri.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 555834,
+      "sha256": "e2fc1435232e9f6dd92df0825fd081f9b0a050742d4c13b37402d6fbd97bae19",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Montana.pdf",
+      "filename": "ZearnStateStandards_Montana.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 593197,
+      "sha256": "49b66f8de219fb2e33968fad140342f6eaff623973f434608bc11a04bfda4fa2",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Nebraska.pdf",
+      "filename": "ZearnStateStandards_Nebraska.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 523262,
+      "sha256": "4d63d19bbfdf21e56fbfff4c0c1c7e34960305738978a0b4410e720f95091fb8",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Nevada.pdf",
+      "filename": "ZearnStateStandards_Nevada.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 694075,
+      "sha256": "6a3a489b06d3ddcecb3467d97ada9c63ba4405bcc2b8faf5f97e4466c0b62064",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_New_Hampshire.pdf",
+      "filename": "ZearnStateStandards_New_Hampshire.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 686299,
+      "sha256": "515f89dfc1d8818711ee91cdb76a3f7d57821bdd4d14d3e98ebfc75fa04741a0",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_New_Jersey.pdf",
+      "filename": "ZearnStateStandards_New_Jersey.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 587818,
+      "sha256": "030d774fc6055616508aea3941080b7770358c0799a0abf1b933332cac831b61",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_New_Mexico.pdf",
+      "filename": "ZearnStateStandards_New_Mexico.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 693145,
+      "sha256": "7fa517f67c22bf14dde15644e63991b07d8049c8c1267f811c2f9abf22916740",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_New_York.pdf",
+      "filename": "ZearnStateStandards_New_York.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 606486,
+      "sha256": "ee5492876f806b3124424d413f31bcb1442422b5898290c280fab00e03bc96cf",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_North_Carolina.pdf",
+      "filename": "ZearnStateStandards_North_Carolina.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 629675,
+      "sha256": "bbc9b7da0ca23116d128ecc8bc9c870513e0a523a45883d93a6267f77d1937c3",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_North_Dakota.pdf",
+      "filename": "ZearnStateStandards_North_Dakota.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 596048,
+      "sha256": "7e7f019754b56c885b8189b89961b26b1fab1f086cbc8d61395c272522b72189",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Ohio.pdf",
+      "filename": "ZearnStateStandards_Ohio.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 593324,
+      "sha256": "1a7c01496695bdcb140e966fddac8ff4a1ce3edd833b3caffae03da3a350f94e",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Oklahoma.pdf",
+      "filename": "ZearnStateStandards_Oklahoma.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/press-releases/tulsa-study",
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 568951,
+      "sha256": "832886dbf01bc957996f59b08cd89fd06ba0e7dc55bb0b3503b732b2661673a9",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Oregon.pdf",
+      "filename": "ZearnStateStandards_Oregon.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 586817,
+      "sha256": "6b26ec25b5ea345626a94d5f7af7d1c6c830aa99825853c12fb5766e0b955198",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Pennsylvania.pdf",
+      "filename": "ZearnStateStandards_Pennsylvania.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 427945,
+      "sha256": "0503c3d740c9f6cfdb8605b6ecc2d4a7f05fcb29f66165592cd7bb4de8e05dc7",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Rhode_Island.pdf",
+      "filename": "ZearnStateStandards_Rhode_Island.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 735711,
+      "sha256": "4b0294ce3974e6e1e4877ad0372b0fc0cfef8cde4097380caba5a7590d4288cc",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_South_Carolina.pdf",
+      "filename": "ZearnStateStandards_South_Carolina.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 1002954,
+      "sha256": "ebd0df111c21fba104216ff8026329e886dafae5ba636e1835f79265f084c5c5",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_South_Dakota.pdf",
+      "filename": "ZearnStateStandards_South_Dakota.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 594003,
+      "sha256": "a4b5448bdb3e988e5d1c40b2d25791184d908eafebc3a1b06cda42f1f9cc8b90",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Tennessee.pdf",
+      "filename": "ZearnStateStandards_Tennessee.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/press-releases/monthlong-celebration",
+        "https://about.zearn.org/press-releases/tennessee-students-accelerate-their-math-learning-through-statewide-tutoring-program",
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 567136,
+      "sha256": "280c430d7a790229f53b7adb915ca2437244d31cf9d3970b94521859eaa94005",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Texas.pdf",
+      "filename": "ZearnStateStandards_Texas.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/press-releases/texas-students-accelerate-their-math-learning-through-statewide-tutoring-program",
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 1159825,
+      "sha256": "d0a99403a47a4a665f40f6bf9a399e066a5e863bc1213e4529eb0504304091f8",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Utah.pdf",
+      "filename": "ZearnStateStandards_Utah.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 686434,
+      "sha256": "7005f79c96ff5323d0dad4a6e12b4b579f9058261f01fd2604a319b87c15992c",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Vermont.pdf",
+      "filename": "ZearnStateStandards_Vermont.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 681676,
+      "sha256": "240c886b836957ac4da998335347cd30a82c45deee0b5e02dd8e8a3d78f44344",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Virginia.pdf",
+      "filename": "ZearnStateStandards_Virginia.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 1402497,
+      "sha256": "9c1a868f143defb5ba5d4a8af4503c90952e46ca720d6fbe34a3cb7c3e394bf5",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Washington.pdf",
+      "filename": "ZearnStateStandards_Washington.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 684188,
+      "sha256": "1553dd12436c5c4bf4f1f403e173460892eed82d9c3bf4e3d95358a3847e6e86",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_West%20Virginia.pdf",
+      "filename": "ZearnStateStandards_West Virginia.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 590337,
+      "sha256": "33ff99085b3689470162eeed91afe4622b1c0fcbc4f07947293f90358182fcd0",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Wisconsin.pdf",
+      "filename": "ZearnStateStandards_Wisconsin.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 721222,
+      "sha256": "4a37c43316f1f12cd638e40728e6ef022080dfecf7c192e1024b6a8b107bee99",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/ZearnStateStandards_Wyoming.pdf",
+      "filename": "ZearnStateStandards_Wyoming.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/state-standards-alignment"
+      ],
+      "bytes": 602439,
+      "sha256": "c357abd1cbed9de0fe9b6d10c3c71beb6afde005545e393e2baeedf317c8b71b",
+      "error": null,
+      "status": "skipped_existing"
+    }
+  ]
+}
