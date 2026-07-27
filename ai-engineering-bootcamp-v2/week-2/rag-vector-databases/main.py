@@ -62,10 +62,10 @@ class Answer(BaseModel):
 class AskRequest(BaseModel):
     question: str
     force_bad: bool = False
-    model: str | None = Field(
-        default=None,
-        description="OpenAI model override. Omit to use the default (gpt-4o).",
-        json_schema_extra={"examples": ["gpt-4o"]},
+    model: str = Field(
+        default=DEFAULT_MODEL,
+        description="OpenAI model to use.",
+        examples=["gpt-4o", "gpt-4o-mini", "o3-mini"],
     )
 
 
@@ -131,7 +131,7 @@ def ingest(
 
 
 def resolve_model(model: str | None) -> str:
-    """Use the default when model is omitted or Swagger's placeholder 'string'."""
+    """Normalize model name; fall back to default for empty or Swagger placeholders."""
     if not model:
         return DEFAULT_MODEL
     cleaned = model.strip()
