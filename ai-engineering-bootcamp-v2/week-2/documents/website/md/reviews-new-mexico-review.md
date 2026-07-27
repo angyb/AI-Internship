@@ -28,7 +28,7 @@ Earlier this year, content experts in New Mexico determined that Zearn Math was 
 
 New Mexico's decision to recommend Zearn Math for all grades K–5 corroborates findings from other state and third-party agencies that have reviewed the curriculum. EdReports, an independent nonprofit that delivers evidence-based reviews of instructional materials, gave Zearn Math a top rating across all review gateways. Similarly, the Louisiana Department of Education labeled Zearn Math a Tier 1 curricular resource that "exemplifies quality" across all review dimensions. Like the New Mexico Public Education Department, both institutions evaluated and ultimately affirmed the focus, coherence, and rigor of the Zearn Math curriculum.
 
-‍
+
 
 ## Read the full review from the NM Public Education Dept.
 

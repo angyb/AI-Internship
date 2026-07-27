@@ -1,0 +1,424 @@
+"""Load week-2 documents, chunk, embed, and upsert into Pinecone."""
+
+from __future__ import annotations
+
+import os
+import re
+from dataclasses import dataclass
+from pathlib import Path
+
+from langchain_core.documents import Document
+from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from pinecone import Pinecone
+from pypdf import PdfReader
+
+try:
+    import fitz  # pymupdf
+except ImportError:
+    fitz = None
+
+THIS_DIR = Path(__file__).resolve().parent
+DOCS_DIR = THIS_DIR.parent / "documents"
+
+EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_CHUNK_SIZE = 800
+DEFAULT_CHUNK_OVERLAP = 100
+UPSERT_BATCH_SIZE = 100
+METADATA_TEXT_KEY = "text"
+INVISIBLE_CHAR_RE = re.compile(r"[\u200b-\u200d\ufeff\u2060]")
+
+DOCUMENT_GLOBS = (
+    DOCS_DIR / "zendesk" / "md",
+    DOCS_DIR / "zendesk" / "pdf",
+    DOCS_DIR / "website" / "md",
+    DOCS_DIR / "website" / "pdf",
+)
+
+
+@dataclass
+class IngestResult:
+    document_id: str
+    chunks_indexed: int
+    status: str
+    vectors_cleared: int = 0
+
+
+@dataclass
+class RetrievedChunk:
+    text: str
+    source_url: str
+    title: str
+    source: str
+    chunk_id: str = ""
+    chunk_index: int = -1
+
+
+@dataclass
+class DebugRetrievedChunk:
+    score: float
+    document_id: str
+    chunk_index: int
+    source: str
+    text: str
+
+
+def _parse_markdown_frontmatter(text: str) -> tuple[dict[str, str], str]:
+    if not text.startswith("---"):
+        return {}, text
+
+    parts = text.split("---", 2)
+    if len(parts) < 3:
+        return {}, text
+
+    metadata: dict[str, str] = {}
+    for line in parts[1].strip().splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        metadata[key.strip()] = value.strip().strip("'\"")
+    return metadata, parts[2].strip()
+
+
+def _strip_invisible_chars(text: str) -> str:
+    return INVISIBLE_CHAR_RE.sub("", text)
+
+
+def _load_markdown(path: Path) -> Document | None:
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+
+    frontmatter, body = _parse_markdown_frontmatter(raw)
+    body = _strip_invisible_chars(body)
+    if not body.strip():
+        return None
+
+    document_id = frontmatter.get("doc_id", path.stem)
+    metadata = {
+        "document_id": document_id,
+        "source": str(path.relative_to(DOCS_DIR)),
+        "title": frontmatter.get("title", path.stem),
+        "source_url": frontmatter.get("source_url", ""),
+    }
+    return Document(page_content=body, metadata=metadata)
+
+
+def _normalize_pdf_text(text: str) -> str:
+    """Collapse PDF extraction whitespace so chunk boundaries land on words."""
+    text = _strip_invisible_chars(text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _extract_pdf_page_texts(path: Path) -> list[tuple[int, str]]:
+    """Return (page_number, raw_text) for each page. Uses pymupdf when available."""
+    if fitz is not None:
+        try:
+            with fitz.open(str(path)) as pdf:
+                return [
+                    (page_number, page.get_text())
+                    for page_number, page in enumerate(pdf, start=1)
+                ]
+        except OSError:
+            return []
+
+    try:
+        reader = PdfReader(str(path))
+    except OSError:
+        return []
+
+    return [
+        (page_number, page.extract_text() or "")
+        for page_number, page in enumerate(reader.pages, start=1)
+    ]
+
+
+def _load_pdf(path: Path) -> list[Document]:
+    """Load one Document per non-empty PDF page."""
+    base_metadata = {
+        "document_id": path.stem,
+        "source": str(path.relative_to(DOCS_DIR)),
+        "title": path.stem,
+        "source_url": "",
+    }
+
+    documents: list[Document] = []
+    for page_number, raw_text in _extract_pdf_page_texts(path):
+        body = _normalize_pdf_text(raw_text)
+        if not body:
+            continue
+        documents.append(
+            Document(
+                page_content=body,
+                metadata={**base_metadata, "page_number": page_number},
+            )
+        )
+    return documents
+
+
+def load_documents() -> list[Document]:
+    documents: list[Document] = []
+
+    for folder in DOCUMENT_GLOBS:
+        if not folder.exists():
+            continue
+
+        for path in sorted(folder.iterdir()):
+            if not path.is_file() or path.name == "manifest.json":
+                continue
+
+            if path.suffix.lower() == ".md":
+                doc = _load_markdown(path)
+                if doc is not None:
+                    documents.append(doc)
+            elif path.suffix.lower() == ".pdf":
+                documents.extend(_load_pdf(path))
+            else:
+                continue
+
+    return documents
+
+
+def _make_splitter(
+    chunk_size: int,
+    chunk_overlap: int,
+) -> RecursiveCharacterTextSplitter:
+    return RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        separators=["\n\n", "\n", ". ", " ", ""],
+    )
+
+
+def _is_pdf_page_document(document: Document) -> bool:
+    return "page_number" in document.metadata
+
+
+def chunk_text(
+    text: str,
+    document_id: str,
+    source: str,
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+) -> list[Document]:
+    splitter = _make_splitter(chunk_size, chunk_overlap)
+    doc = Document(
+        page_content=text,
+        metadata={"document_id": document_id, "source": source},
+    )
+    return splitter.split_documents([doc])
+
+
+def chunk_documents(
+    documents: list[Document],
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+) -> list[Document]:
+    splitter = _make_splitter(chunk_size, chunk_overlap)
+
+    markdown_docs = [doc for doc in documents if not _is_pdf_page_document(doc)]
+    pdf_page_docs = [doc for doc in documents if _is_pdf_page_document(doc)]
+
+    chunks: list[Document] = []
+    if markdown_docs:
+        chunks.extend(splitter.split_documents(markdown_docs))
+
+    for page_doc in pdf_page_docs:
+        if len(page_doc.page_content) <= chunk_size:
+            chunks.append(page_doc)
+            continue
+        chunks.extend(splitter.split_documents([page_doc]))
+
+    return chunks
+
+
+def _chunk_id(document_id: str, chunk_index: int) -> str:
+    safe_id = str(document_id).replace("/", "_")
+    return f"{safe_id}__chunk_{chunk_index}"
+
+
+def _pinecone_index():
+    pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
+    return pc.Index(host=os.environ["PINECONE_HOST"])
+
+
+def clear_index() -> int:
+    """Delete all vectors from the Pinecone index. Returns the prior vector count."""
+    index = _pinecone_index()
+    stats = index.describe_index_stats()
+    previous_count = int(stats.total_vector_count or 0)
+    if previous_count:
+        index.delete(delete_all=True)
+    return previous_count
+
+
+def _embeddings_client() -> OpenAIEmbeddings:
+    return OpenAIEmbeddings(model=EMBEDDING_MODEL)
+
+
+def _chunk_to_metadata(chunk: Document, chunk_index: int) -> dict[str, str | int]:
+    metadata: dict[str, str | int] = {
+        METADATA_TEXT_KEY: chunk.page_content[:35000],
+        "document_id": str(chunk.metadata.get("document_id", "")),
+        "chunk_index": chunk_index,
+        "source": str(chunk.metadata.get("source", "")),
+    }
+    page_number = chunk.metadata.get("page_number")
+    if page_number is not None:
+        metadata["page_number"] = int(page_number)
+    return metadata
+
+
+def upsert_chunks(chunks: list[Document]) -> int:
+    if not chunks:
+        return 0
+
+    embeddings = _embeddings_client()
+    index = _pinecone_index()
+
+    # Group chunks by document_id so chunk_index is per-document.
+    by_document: dict[str, list[Document]] = {}
+    for chunk in chunks:
+        doc_id = str(chunk.metadata.get("document_id", "unknown"))
+        by_document.setdefault(doc_id, []).append(chunk)
+
+    total_indexed = 0
+    pending_ids: list[str] = []
+    pending_texts: list[str] = []
+    pending_meta: list[tuple[Document, int]] = []
+
+    def flush_batch() -> None:
+        nonlocal total_indexed
+        if not pending_ids:
+            return
+        vectors = embeddings.embed_documents(pending_texts)
+        records = [
+            {
+                "id": chunk_id,
+                "values": vector,
+                "metadata": _chunk_to_metadata(chunk, chunk_index),
+            }
+            for chunk_id, vector, (chunk, chunk_index) in zip(
+                pending_ids, vectors, pending_meta, strict=True
+            )
+        ]
+        index.upsert(vectors=records)
+        total_indexed += len(records)
+        pending_ids.clear()
+        pending_texts.clear()
+        pending_meta.clear()
+
+    for document_id, doc_chunks in by_document.items():
+        for chunk_index, chunk in enumerate(doc_chunks):
+            pending_ids.append(_chunk_id(document_id, chunk_index))
+            pending_texts.append(chunk.page_content)
+            pending_meta.append((chunk, chunk_index))
+            if len(pending_ids) >= UPSERT_BATCH_SIZE:
+                flush_batch()
+
+    flush_batch()
+    return total_indexed
+
+
+def ingest_documents(
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    clear_index_first: bool = True,
+) -> IngestResult:
+    raw_docs = load_documents()
+    if not raw_docs:
+        raise ValueError("No documents found to ingest")
+
+    chunks = chunk_documents(raw_docs, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    if not chunks:
+        raise ValueError("No chunks produced from document corpus")
+
+    vectors_cleared = clear_index() if clear_index_first else 0
+    chunks_indexed = upsert_chunks(chunks)
+
+    return IngestResult(
+        document_id="week-2/documents",
+        chunks_indexed=chunks_indexed,
+        status="ok",
+        vectors_cleared=vectors_cleared,
+    )
+
+
+def retrieve_chunks(question: str, k: int = 3) -> list[RetrievedChunk]:
+    embeddings = _embeddings_client()
+    index = _pinecone_index()
+
+    query_vector = embeddings.embed_query(question)
+    results = index.query(vector=query_vector, top_k=k, include_metadata=True)
+
+    chunks: list[RetrievedChunk] = []
+    for match in results.get("matches", []):
+        metadata = match.get("metadata") or {}
+        document_id = str(metadata.get("document_id", ""))
+        chunk_index_raw = metadata.get("chunk_index", -1)
+        chunk_index = int(chunk_index_raw) if chunk_index_raw is not None else -1
+        chunk_id = str(match.get("id") or _chunk_id(document_id, chunk_index))
+        chunks.append(
+            RetrievedChunk(
+                text=str(metadata.get(METADATA_TEXT_KEY, "")),
+                source_url=str(metadata.get("source_url", "")),
+                title=document_id,
+                source=str(metadata.get("source", "")),
+                chunk_id=chunk_id,
+                chunk_index=chunk_index,
+            )
+        )
+    return chunks
+
+
+def retrieve_chunks_diverse(
+    question: str,
+    k: int = 6,
+    fetch_k: int = 12,
+    max_per_document: int = 2,
+) -> list[RetrievedChunk]:
+    """Retrieve top chunks while limiting how many come from the same document.
+
+    Fetches more candidates than k, then keeps the highest-scoring chunks subject
+    to a per-document cap so one long PDF does not dominate the context window.
+    """
+    fetch_k = max(fetch_k, k)
+    candidates = retrieve_chunks(question, k=fetch_k)
+
+    selected: list[RetrievedChunk] = []
+    per_document: dict[str, int] = {}
+    for chunk in candidates:
+        doc_id = chunk.title or chunk.source
+        if per_document.get(doc_id, 0) >= max_per_document:
+            continue
+        selected.append(chunk)
+        per_document[doc_id] = per_document.get(doc_id, 0) + 1
+        if len(selected) >= k:
+            break
+    return selected
+
+
+def debug_retrieve(question: str, k: int = 5) -> list[DebugRetrievedChunk]:
+    """Embed a question and return top-k Pinecone matches with scores — no LLM."""
+
+    embeddings = _embeddings_client()
+    index = _pinecone_index()
+
+    query_vector = embeddings.embed_query(question)
+    results = index.query(vector=query_vector, top_k=k, include_metadata=True)
+
+    chunks: list[DebugRetrievedChunk] = []
+    for match in results.get("matches", []):
+        metadata = match.get("metadata") or {}
+        chunk_index = metadata.get("chunk_index", -1)
+        chunks.append(
+            DebugRetrievedChunk(
+                score=float(match.get("score", 0.0)),
+                document_id=str(metadata.get("document_id", "")),
+                chunk_index=int(chunk_index) if chunk_index is not None else -1,
+                source=str(metadata.get("source", "")),
+                text=str(metadata.get(METADATA_TEXT_KEY, "")),
+            )
+        )
+    return chunks

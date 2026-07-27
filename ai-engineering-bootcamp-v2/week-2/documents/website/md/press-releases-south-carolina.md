@@ -23,6 +23,6 @@ FOR IMMEDIATE RELEASE
 
 CONTACT: Anna O’Sullivan pressinquiry@zearn.org
 
-‍COLUMBIA, S.C., Aug. 27, 2025 – The South Carolina Department of Education (SCDE) today announced a major investment in math education through the Palmetto Math Project, aimed at ensuring that at least 75% of students perform at or above grade level in math by 2030. As part of this initiative, all South Carolina schools will receive free access to Zearn Math – a nationally recognized, evidence-based learning platform – for the next five years.
+COLUMBIA, S.C., Aug. 27, 2025 – The South Carolina Department of Education (SCDE) today announced a major investment in math education through the Palmetto Math Project, aimed at ensuring that at least 75% of students perform at or above grade level in math by 2030. As part of this initiative, all South Carolina schools will receive free access to Zearn Math – a nationally recognized, evidence-based learning platform – for the next five years.
 
 To view the full release, visit the South Carolina Department of Education website.

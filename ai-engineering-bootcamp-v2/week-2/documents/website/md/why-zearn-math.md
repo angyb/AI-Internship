@@ -9,12 +9,10 @@ path: /why-zearn-math
 section: why-zearn-math
 description: Zearn digital math lessons have real-time, supportive feedback and built-in
   math help so every student gets the opportunity to succeed in math.
-scraped_at: '2026-07-23T22:09:57Z'
-word_count: 1387
+scraped_at: '2026-07-27T19:34:27Z'
+word_count: 1385
 extraction_method: static
 ---
-
-HomeWhy Zearn?
 
 # Support every student to succeed in grade-level math
 
@@ -144,7 +142,7 @@ Every Zearn digital lesson follows a consistent structure: activities to build p
 
 ### Does Zearn Math work?
 
-Zearn Math earned a Tier 1 “Strong” rating from Evidence for ESSA — the highest designation from a nationally recognized, independent clearinghouse that evaluates education research to help schools, districts, and states select evidence-based programs. This top rating confirms that Zearn Math meets the rigorous evidence standards outlined in the Every Student Succeeds Act (ESSA). ‍ This rating is based on a recent large-scale randomized controlled trial conducted from 2022–2024 with 10,000 students in grades 3–5 across 64 schools in a large urban Texas district. The study found causal evidence of positive, statistically significant impacts of Zearn on student math achievement, as measured by the nationally normed NWEA MAP Growth assessment. ‍ This study is part of a growing base of third-party evidence of Zearn’s impact, including a quasi-experimental evaluation in Louisiana by the Center for Research and Reform in Education (CRRE) at Johns Hopkins University, which found that students using Zearn with implementation support, such as school coaching, educator training, and usage monitoring, significantly outperformed peers on the state’s LEAP math assessment, with statistically significant gains across all student subgroups.
+Zearn Math earned a Tier 1 “Strong” rating from Evidence for ESSA — the highest designation from a nationally recognized, independent clearinghouse that evaluates education research to help schools, districts, and states select evidence-based programs. This top rating confirms that Zearn Math meets the rigorous evidence standards outlined in the Every Student Succeeds Act (ESSA).  This rating is based on a recent large-scale randomized controlled trial conducted from 2022–2024 with 10,000 students in grades 3–5 across 64 schools in a large urban Texas district. The study found causal evidence of positive, statistically significant impacts of Zearn on student math achievement, as measured by the nationally normed NWEA MAP Growth assessment.  This study is part of a growing base of third-party evidence of Zearn’s impact, including a quasi-experimental evaluation in Louisiana by the Center for Research and Reform in Education (CRRE) at Johns Hopkins University, which found that students using Zearn with implementation support, such as school coaching, educator training, and usage monitoring, significantly outperformed peers on the state’s LEAP math assessment, with statistically significant gains across all student subgroups.
 
 ### Is Zearn aligned to state math standards?
 

@@ -21,9 +21,9 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-‍CONTACT: Anna O’Sullivan annao@zearn.org
+CONTACT: Anna O’Sullivan annao@zearn.org
 
-‍AUSTIN, Texas, Nov. 28, 2023 – A recent study shows that Texas elementary- and middle-school students who consistently utilized Zearn, the top-rated math learning platform, scored significantly higher on the 2023 State of Texas Assessments of Academic Readiness (STAAR®) math test. This was consistent across student groups including: Black, Hispanic, and economically disadvantaged, at-risk, gifted and emergent bilingual students.
+AUSTIN, Texas, Nov. 28, 2023 – A recent study shows that Texas elementary- and middle-school students who consistently utilized Zearn, the top-rated math learning platform, scored significantly higher on the 2023 State of Texas Assessments of Academic Readiness (STAAR®) math test. This was consistent across student groups including: Black, Hispanic, and economically disadvantaged, at-risk, gifted and emergent bilingual students.
 
 Researchers looked at how more than 4,400 Texas fourth- through sixth-grade students scored on the STAAR® math test. They found that consistent Zearn usage increases STAAR® math scale scores by 53 points on average, with gains across student groups. Further, 62% of the lowest scoring students moved up at least one STAAR® performance level when using the platform consistently.
 

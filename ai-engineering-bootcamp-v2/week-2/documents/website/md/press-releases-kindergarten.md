@@ -21,9 +21,9 @@ Press Release
 
 MEDIA CONTACT: Anna O’Sullivan annao@zearn.org
 
-‍FOR IMMEDIATE RELEASE
+FOR IMMEDIATE RELEASE
 
-‍NEW YORK, July 16, 2024 – As schools across the nation begin the 2024-2025 academic year, Zearn, the nonprofit organization solely dedicated to K-8 math, is releasing enhanced lessons to ensure every kindergarten student can engage in deep math learning. More than 100 digital math lessons accompanied with paper and pencil practice will not only support kindergarten students in learning to count and write numerals but also begin exposing them to the big ideas of math.
+NEW YORK, July 16, 2024 – As schools across the nation begin the 2024-2025 academic year, Zearn, the nonprofit organization solely dedicated to K-8 math, is releasing enhanced lessons to ensure every kindergarten student can engage in deep math learning. More than 100 digital math lessons accompanied with paper and pencil practice will not only support kindergarten students in learning to count and write numerals but also begin exposing them to the big ideas of math.
 
 “In enhancing our kindergarten lessons, we are responding directly to what we heard from educators across the nation in our field research: in the past few years, young learners are entering school at a wider range of starting points than ever before,” said Zearn CEO & Co-Founder Shalinee Sharma. “The math students learn in kindergarten is important; in this early grade, students are already building an understanding of concepts that will carry through K-8 math learning.”
 

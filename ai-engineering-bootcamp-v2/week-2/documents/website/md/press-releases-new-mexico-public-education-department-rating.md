@@ -29,4 +29,4 @@ Zearn Math builds deep understanding of concepts and flexible problem-solving sk
 
 New Mexico's evaluation of Zearn Math coincides with a major milestone in the top-rated curriculum's viral growth journey: the comprehensive math program is now used in over 50% of districts nationwide to support daily differentiated instruction. Shalinee Sharma, Zearn's Chief Executive Officer, commented, "We began building Zearn Math seven years ago as a nonprofit to support teachers with helping all kids deeply learn and love math. With the feedback of educators, Zearn Math has grown from a digital learning program to a K–5 curriculum top rated by EdReports, other states, and now, New Mexico. We are so grateful to all those who have partnered with us on this journey and are honored to serve New Mexico students and teachers with our curriculum."
 
-‍
+

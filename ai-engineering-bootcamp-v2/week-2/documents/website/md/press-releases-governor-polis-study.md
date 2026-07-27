@@ -20,8 +20,8 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-CONTACT:  Anna O’Sullivan pressinquiry@zearn.org‍
+CONTACT:  Anna O’Sullivan pressinquiry@zearn.org
 
-‍DENVER, February 6, 2025 – Today, Governor Polis celebrated a year-one study demonstrating that students in Colorado who consistently used Zearn, an online digital math accelerator tool, saw a positive increase in math achievement scores. The study included over 6,000 students in Colorado ranging grades fourth through eighth. Zearn has been made available through a grant through the Governors Emergency Education Relief (GEER) fund to provide statewide access to Zearn licenses for all elementary and middle schools in the state to increase math proficiency for the 2023-24 and 2024-25 school years.
+DENVER, February 6, 2025 – Today, Governor Polis celebrated a year-one study demonstrating that students in Colorado who consistently used Zearn, an online digital math accelerator tool, saw a positive increase in math achievement scores. The study included over 6,000 students in Colorado ranging grades fourth through eighth. Zearn has been made available through a grant through the Governors Emergency Education Relief (GEER) fund to provide statewide access to Zearn licenses for all elementary and middle schools in the state to increase math proficiency for the 2023-24 and 2024-25 school years.
 
 To view the full release, visit Colorado Governor Jared Polis' website.

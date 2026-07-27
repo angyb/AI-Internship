@@ -22,7 +22,7 @@ Contact:
 
 Anna O’Sullivanannao@zearn.org
 
-‍FOR IMMEDIATE RELEASE
+FOR IMMEDIATE RELEASE
 
 Richmond, VIRGINIA, October 16, 2023 – Gov. Glenn Youngkin today announced the first, statewide intensive math tutoring program for third- through eighth-grade students. The Virginia Math High Impact Statewide Tutoring Program offers all school divisions across the Commonwealth access toZearn Math – the top-rated math learning platform created by the nonprofit Zearn – at no cost. The Program is part of ALL In Tutoring promoting excellence in instruction and student achievement in mathematics, as outlined in the bipartisan billHB 938.
 

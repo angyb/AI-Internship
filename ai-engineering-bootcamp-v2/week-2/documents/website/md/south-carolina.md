@@ -9,7 +9,7 @@ path: /south-carolina
 section: south-carolina
 description: Zearn Math is a top-rated math learning platform designed to help all
   South Carolina students access and engage in grade-level math learning.
-scraped_at: '2026-07-23T22:09:50Z'
+scraped_at: '2026-07-27T19:34:27Z'
 word_count: 974
 extraction_method: static
 ---
@@ -48,7 +48,7 @@ Zearn Math earned a “Strong” (Tier 1) rating from Evidence for ESSA — the 
 
 ## Reinforce and deepen high-quality, Tier 1 instruction
 
-Zearn Math is designed to complement teachers’ Tier 1 instruction alongside their high-quality math curriculum. New for the 2026-27 school year, embedded Curriculum Companion Guides for all South Carolina state-adopted materials make it even easier for teachers to assign Zearn Math content that coherently connects to the grade-level concepts they’re teaching in their class — with no guesswork or extra planning.
+Zearn Math is designed to complement teachers’ Tier 1 instruction alongside their high-quality math curriculum. New for the 2026-27 school year, embedded Curriculum Companion Guides for all South Carolina state-adopted materials make it even easier for South Carolina teachers to assign Zearn Math content that coherently connects to the grade-level concepts they’re teaching in their class — with no guesswork or extra planning.
 
 ## Resources to get started Resources to get started
 

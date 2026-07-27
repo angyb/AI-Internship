@@ -26,7 +26,7 @@ At Buckman Heights Elementary, teachers and school leaders seek to create intell
 
 Source: 2017 and 2018 NY State Grades 3–8 Mathematics Assessment Data
 
-> ‍With Zearn, my students feel more in charge of their learning and are engaged the entire math block.
+> With Zearn, my students feel more in charge of their learning and are engaged the entire math block.
 
 ### RACHEL PIETROWSKI, 3RD GRADE TEACHER
 

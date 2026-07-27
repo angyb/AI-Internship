@@ -36,7 +36,7 @@ $110 per teacher
 
 Zearn Math Teacher Editions are available for Grades K-8 and include the following instructional materials:
 
-Course Guide ‍Educative supports teachers need to accurately address grade-level expectations of the standards.
+Course Guide Educative supports teachers need to accurately address grade-level expectations of the standards.
 
 Mission Books Unit-level offering lesson materials and instructional guidance for leading every day of instruction.
 

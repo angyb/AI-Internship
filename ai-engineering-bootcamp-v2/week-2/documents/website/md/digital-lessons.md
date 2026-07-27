@@ -59,7 +59,7 @@ Zearn Math currently offers daily digital lessons and teaching materials for eve
 
 How do I get started?
 
-If you already have a Zearn account, simply login. You’ll find all the materials in your account. If you don’t have an account, sign up for free!‍
+If you already have a Zearn account, simply login. You’ll find all the materials in your account. If you don’t have an account, sign up for free!
 
 What content is covered in each lesson?
 

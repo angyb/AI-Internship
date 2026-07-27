@@ -22,9 +22,9 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-‍CONTACT:
+CONTACT:
 
-Anna O’Sullivan ‍‍
+Anna O’Sullivan 
 
 pressinquiry@zearn.org
 

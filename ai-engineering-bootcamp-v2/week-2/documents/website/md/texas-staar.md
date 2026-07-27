@@ -10,12 +10,10 @@ section: texas
 description: Zearn Math for Texas embeds STAAR-aligned, TEKS-based digital practice
   into every lesson — giving students daily exposure to STAAR question types including
   graphs, number lines, fraction models and equation editors.
-scraped_at: '2026-07-23T22:08:20Z'
-word_count: 973
+scraped_at: '2026-07-27T19:34:30Z'
+word_count: 970
 extraction_method: static
 ---
-
-HomeTexasEmbedded STAAR-aligned practice
 
 ZEARN MATH FOR TEXAS
 

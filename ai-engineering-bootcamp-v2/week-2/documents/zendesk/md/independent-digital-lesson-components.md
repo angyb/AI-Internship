@@ -16,7 +16,7 @@ word_count: 154
 
 # Independent Digital Lesson components
 
-Zearn’s digital lessons deepen the learning students do with their teacher. In digital lessons, students learn grade-level math concepts with on-screen teachers, interactive visual models, and built-in, differentiated support. Each lesson develops a balance of conceptual understanding, procedural fluency, and application work through a consistent structure.Independent Digital Lessons consist of:
+Zearn’s digital lessons deepen the learning students do with their teacher. In digital lessons, students learn grade-level math concepts with on-screen teachers, interactive visual models, and built-in, differentiated support. Each lesson develops a balance of conceptual understanding, procedural fluency, and application work through a consistent structure. Independent Digital Lessons consist of:
 
 * Adaptive fluency (grades 1-5 only)
 * Lesson-aligned fluency

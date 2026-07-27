@@ -10,12 +10,10 @@ section: texas
 description: Access free digital math resources aligned to Bluebonnet Learning K-5
   Math and TEKS standards. Zearn helps Texas families and educators boost student
   learning.
-scraped_at: '2026-07-23T22:09:04Z'
-word_count: 1009
+scraped_at: '2026-07-27T19:34:28Z'
+word_count: 1007
 extraction_method: static
 ---
-
-HomeTexasTexas Resources
 
 # Make the most of Zearn Math for Texas
 

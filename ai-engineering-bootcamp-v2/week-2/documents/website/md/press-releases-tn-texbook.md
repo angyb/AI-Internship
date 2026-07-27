@@ -21,9 +21,9 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-CONTACT: Anna O’Sullivan pressinquiry@zearn.org‍
+CONTACT: Anna O’Sullivan pressinquiry@zearn.org
 
-‍NASHVILLE, TENNESSEE, Nov. 3, 2022 – The Tennessee Department of Education announced the Official List of Textbooks and Instructional Materials for mathematics. Through an intensive review by the Textbook and Instructional Materials Quality Commission, Zearn was selected and is the only nonprofit curriculum publisher solely dedicated to K-8 math learning. Materials on this list are approved for use by districts from 2023-2029.
+NASHVILLE, TENNESSEE, Nov. 3, 2022 – The Tennessee Department of Education announced the Official List of Textbooks and Instructional Materials for mathematics. Through an intensive review by the Textbook and Instructional Materials Quality Commission, Zearn was selected and is the only nonprofit curriculum publisher solely dedicated to K-8 math learning. Materials on this list are approved for use by districts from 2023-2029.
 
 Zearn Math for Tennessee is a blended K-8 curriculum that offers a comprehensive suite of digital and print materials. Statewide, districts can select from the list of instructional materials that is best suited for their teachers and students.
 

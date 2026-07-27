@@ -35,13 +35,13 @@ You may also choose to register your students on Zearn using a school authorized
 
 Users may also provide feedback on Zearn or report a problem. The Zearn Math program may prompt students to indicate their attitudes towards math, for example, by asking them to select whether or not they like math while using the program.
 
-‍
+
 
 ### Program Information:
 
 When your students use Zearn, we collect certain information, such as which lessons a student is assigned, the responses students provide to questions asked, and the timing of those responses.
 
-‍
+
 
 ### Site Usage Information:
 
@@ -85,12 +85,12 @@ We use Site Usage Information to administer the site and program, monitor and di
 
 ## How We May Share Your Information:
 
-We do not ever sell or rent your information. We will only share your information or that of your students in the following circumstances: ‍
+We do not ever sell or rent your information. We will only share your information or that of your students in the following circumstances: 
 
-* When we believe in good faith that disclosure of your information is necessary to protect our rights and those of others, to protect your safety or the safety of others, to investigate fraud or to respond to a government, judicial or other legal request or to comply with the law. ‍
-  * If Zearn experiences an organizational change, such as a merger, acquisition, reorganization, financing, bankruptcy, dissolution, sale of assets, or transition of service to another provider, personal information and student information may be transferred only in accordance with applicable law and contract. ‍
+* When we believe in good faith that disclosure of your information is necessary to protect our rights and those of others, to protect your safety or the safety of others, to investigate fraud or to respond to a government, judicial or other legal request or to comply with the law. 
+  * If Zearn experiences an organizational change, such as a merger, acquisition, reorganization, financing, bankruptcy, dissolution, sale of assets, or transition of service to another provider, personal information and student information may be transferred only in accordance with applicable law and contract. 
     * Where required, we will provide notice to affected schools, districts, users, or parents and ensure that any successor protects the information consistent with this Privacy Policy and applicable student privacy laws.
-* We sometimes hire third parties to perform certain business-related functions for us. Examples include, but are not limited to, mailing information, processing printed materials orders, scheduling and administering professional development, responding to customer support inquiries, maintaining databases, hosting services, and processing payments. Some of our third parties utilize Artificial Intelligence (“AI”) features to assist with these functions. We will not share student personally identifiable information with these AI features. When we employ another company to provide services to support Zearn, we provide them with the information that they need to perform their specific function. Our third parties are legally obligated to keep your personal information confidential and use it only for our specific purpose. Our third-party providers are required to maintain reasonable security practices, to use the information only for the purpose of helping us deliver the Services to you, and to prevent disclosure of the information to unauthorized parties. A list of our current third-party sub-processors is available at https://help.zearn.org/hc/en-us/articles/5373691318679-Privacy-and-third-party-sub-processors. ‍
+* We sometimes hire third parties to perform certain business-related functions for us. Examples include, but are not limited to, mailing information, processing printed materials orders, scheduling and administering professional development, responding to customer support inquiries, maintaining databases, hosting services, and processing payments. Some of our third parties utilize Artificial Intelligence (“AI”) features to assist with these functions. We will not share student personally identifiable information with these AI features. When we employ another company to provide services to support Zearn, we provide them with the information that they need to perform their specific function. Our third parties are legally obligated to keep your personal information confidential and use it only for our specific purpose. Our third-party providers are required to maintain reasonable security practices, to use the information only for the purpose of helping us deliver the Services to you, and to prevent disclosure of the information to unauthorized parties. A list of our current third-party sub-processors is available at https://help.zearn.org/hc/en-us/articles/5373691318679-Privacy-and-third-party-sub-processors. 
 * We may also share certain aggregated, de-identified information with third-party providers to help us analyze the information. Our third-party service providers and subprocessors may not use student personally identifiable information for targeted advertising, profiling, model training, model improvement, or any independent commercial purpose. Any third party receiving aggregated, de-identified, or anonymized information is prohibited from attempting to re-identify the information or combine it with other data to identify an individual student, educator, school, or district, except as permitted by law and contract.
 
 ## Artificial Intelligence
@@ -101,25 +101,25 @@ Zearn seeks to use AI applications in an ethical and responsible manner. Zearn h
 
 Zearn is designed to be used by students in grades K-8, and we take the privacy of children seriously. This section describes how we collect, use, and protect information from students, including children under 13.
 
-‍
+
 
 ### Collection of Children’s Information
 
 Zearn only collects information about students when it is provided by a parent or educator. Children under 13 may not register on their own.
 
-‍
+
 
 ### Types of Information Collected from Children
 
 When a student is registered for Zearn, we may collect the following information: first and last name, a unique student identifier, log-in information including username and password, and non-personal information such as current grade level. If your school or district uses Clever to roster its students, we may also collect date of birth, solely to match students with a grade level where no grade is otherwise listed.
 
-‍
+
 
 ### How We Use Children’s Information
 
 We use student information only to deliver our Services. Specifically, we use student information to facilitate a teacher, school, or district’s identification of their students using Zearn and to provide students with sequential and progressive lessons. We do not email students directly at any time. We do not use student information to engage in targeted advertising. We do not collect student information to amass a personal profile of a student, other than to be able to deliver our Services. We do not use student personally identifiable information to develop, improve, or train AI models.
 
-‍
+
 
 ### Disclosure of Children’s Information to Third Parties
 
@@ -127,13 +127,13 @@ Student information is not made publicly-visible through the Services and the Se
 
 We do not sell or rent student information. We may share student information with third-party service providers that perform functions on our behalf, such as hosting services and maintaining databases. These providers are legally obligated to keep student information confidential and to use it only for the purpose of helping us deliver the Services. They are required to maintain reasonable security practices and to prevent disclosure of the information to unauthorized parties. A list of our current third-party sub-processors is available at https://help.zearn.org/hc/en-us/articles/5373691318679-Privacy-and-third-party-sub-processors.
 
-‍
+
 
 ### Parental Rights
 
 If you are a parent or legal guardian of a child under 13, you have the right to (1) review the personal information we have collected from your child, (2) request deletion of that information, and (3) refuse further collection or use of your child’s information. If you refuse further collection or use, your child will no longer be able to access Zearn, as certain data practices are necessary to deliver the Services. To exercise these rights, please contact your child’s school or district, which may access and manage your child’s information through their classroom portal.
 
-‍
+
 
 ### Data Retention for Children’s Information
 
@@ -155,7 +155,7 @@ We retain aggregated, anonymized information for some of the purposes described 
 
 ## Security
 
-We maintain reasonable administrative, technical and physical safeguards to protect the security, confidentiality and integrity of your data. Zearn has multiple security measures in place to protect against the loss, misuse, or alteration of information under our control. These include encryption of data in transit and at rest, use of two-factor authentication to access the system, regular software security updates, periodic risk assessments, and remediation of identified security vulnerabilities in a timely manner. Zearn maintains a written information security program that includes designated security personnel, annual risk assessments, safeguards to address identified risks, and regular testing and evaluation of those safeguards. ‍ However, please be aware that no data transmissions over the Internet can be guaranteed to be 100% secure. Consequently, we cannot ensure or warrant the security of any information you transmit or otherwise provide to us and you do so at your own risk.
+We maintain reasonable administrative, technical and physical safeguards to protect the security, confidentiality and integrity of your data. Zearn has multiple security measures in place to protect against the loss, misuse, or alteration of information under our control. These include encryption of data in transit and at rest, use of two-factor authentication to access the system, regular software security updates, periodic risk assessments, and remediation of identified security vulnerabilities in a timely manner. Zearn maintains a written information security program that includes designated security personnel, annual risk assessments, safeguards to address identified risks, and regular testing and evaluation of those safeguards.  However, please be aware that no data transmissions over the Internet can be guaranteed to be 100% secure. Consequently, we cannot ensure or warrant the security of any information you transmit or otherwise provide to us and you do so at your own risk.
 
 If you create an account, you will be asked to select a password for both yourself and each student to access Zearn, and this password will be used to allow your student to use Zearn. You are responsible for maintaining the strict confidentiality of your and your students’ account password(s), and for any activity that occurs under your account credentials, whether or not authorized by you. Please notify us of any unauthorized use of your account or any suspected breach of security. In the event Zearn becomes aware of an unauthorized disclosure of personally identifiable information, Zearn will take action as required by applicable laws, including notifying affected schools, districts, and/or users as required.
 
@@ -165,7 +165,7 @@ Zearn may amend this Privacy Policy from time to time. When we do, we will notif
 
 ## Contact Us
 
-Zearn General Counsel 2093 Philadelphia Pike #2282, Claymont, DE 19703 ‍privacy@zearn.org
+Zearn General Counsel 2093 Philadelphia Pike #2282, Claymont, DE 19703 privacy@zearn.org
 
 ## Headings
 

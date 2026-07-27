@@ -18,7 +18,7 @@ word_count: 520
 
 Zearn supports districts and schools to foster a culture of math engagement and achievement. Check out our suite of free, downloadable digital resources designed to motivate math learning.
 
-Zearn’s Administrator Reports help school leaders monitor and assess schoolwide progress, making it easier celebrate schoolwide progress. Here are a few examples of what schools around the country are doing to motivate and celebrate schoolwide math learning:
+Zearn’s Administrator Reports help school leaders monitor and assess schoolwide progress, making it easier to celebrate schoolwide progress. Here are a few examples of what schools around the country are doing to motivate and celebrate schoolwide math learning:
 
 Surprise students with a celebration School leadership at one school dressed up as "The Zearntastics" to celebrate student success and progress. The leadership team came up with the idea as an incentive for students to complete four Independent Digital Lessons each week. The first week, the team surprised students by coming into the classrooms, in costume and cheering, to present them with a certificate and a sticker to put on their completion goal charts. The second week, the school tripled the number of students they recognized, and whole classes were even celebrated! They received so much positive feedback from teachers and students that the school decided to continue this celebration each week. Teachers noted, "It was a huge motivator for our students to push through their digital lessons!" Zearn has downloadable certificates and Zearn tags to help support these types of celebrations.
 

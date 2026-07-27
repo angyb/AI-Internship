@@ -22,7 +22,7 @@ Press Release
 
 CONTACT: Anna O’Sullivan annao@zearn.org
 
-‍BATON ROUGE, La., Jan. 30, 2024 – Building upon one of the most comprehensive statewide plans nationally to accelerate math learning in 2022, Louisiana has deepened its investment in the “Math Refresh”. A key part of the enhanced “Math Refresh” – built upon four central pillars – includes free district and school access to Zearn Math and the addition of comprehensive training for all educators and school and district leaders during the 2024-25 school year.
+BATON ROUGE, La., Jan. 30, 2024 – Building upon one of the most comprehensive statewide plans nationally to accelerate math learning in 2022, Louisiana has deepened its investment in the “Math Refresh”. A key part of the enhanced “Math Refresh” – built upon four central pillars – includes free district and school access to Zearn Math and the addition of comprehensive training for all educators and school and district leaders during the 2024-25 school year.
 
 “We are proud to continue deepening our commitment and expanding on our plan to support math teaching and learning throughout Louisiana,” said Louisiana Deputy Superintendent of Education Dr. Jenna Chiasson. “As I’ve expressed many times, it is our belief that every child can reach their potential when we address their individual needs, no matter their background. It is up to us as educators, however, to give students the highest quality resources to move their learning forward.”
 

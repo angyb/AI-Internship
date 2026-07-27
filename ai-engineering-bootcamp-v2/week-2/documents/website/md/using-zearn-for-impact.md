@@ -11,12 +11,10 @@ description: See how schools and districts use Zearn’s ESSA Tier 1-rated progr
   drive measurable math achievement gains. Explore real stories of impact, expert-led
   professional development, actionable classroom and system data, and tools to motivate
   and celebrate student learning.
-scraped_at: '2026-07-23T22:08:13Z'
-word_count: 848
+scraped_at: '2026-07-27T19:34:31Z'
+word_count: 843
 extraction_method: static
 ---
-
-HomeUsing Zearn Math for Impact
 
 ## Using Zearn Math for impact Using Zearn Math for impact Using Zearn Math for impact Using Zearn Math for impact
 
@@ -92,15 +90,15 @@ We’re here to support your school or district’s math learning goals. Reach o
 
 Does Zearn Math work?
 
-Zearn Math is a K-8 math learning platform that earned the highest rating from Evidence for ESSA, the nationally recognized independent clearinghouse, with multiple independent studies showing the program has a statistically significant, causal impact on elementary and middle school student outcomes. ‍ Read the review →
+Zearn Math is a K-8 math learning platform that earned the highest rating from Evidence for ESSA, the nationally recognized independent clearinghouse, with multiple independent studies showing the program has a statistically significant, causal impact on elementary and middle school student outcomes.  Read the review →
 
 How many Zearn Math lessons should students complete each week?
 
-Zearn Math is designed to be used during structured time as one, coherent element of Tier 1 math instruction to reinforce and deepen the learning elementary and middle school students are doing with their teacher. Research shows students learn most with Zearn Math when they complete 3 lessons per week, or approximately 90 minutes, as a coherent support to classroom instruction. ‍ Explore the research →
+Zearn Math is designed to be used during structured time as one, coherent element of Tier 1 math instruction to reinforce and deepen the learning elementary and middle school students are doing with their teacher. Research shows students learn most with Zearn Math when they complete 3 lessons per week, or approximately 90 minutes, as a coherent support to classroom instruction.  Explore the research →
 
 Does Zearn offer training/professional development?
 
-Yes, Zearn offers comprehensive training for educators and leaders at every stage of their implementation to help K-8 schools and districts scale impact with Zearn Math. In addition to live, dedicated professional learning sessions delivered virtually or in person by the Zearn team, Zearn offers on-demand curriculum study PD for every concept of K-5 math. ‍ Explore full PD offerings →
+Yes, Zearn offers comprehensive training for educators and leaders at every stage of their implementation to help K-8 schools and districts scale impact with Zearn Math. In addition to live, dedicated professional learning sessions delivered virtually or in person by the Zearn team, Zearn offers on-demand curriculum study PD for every concept of K-5 math.  Explore full PD offerings →
 
 Which grade levels is Zearn Math designed for?
 

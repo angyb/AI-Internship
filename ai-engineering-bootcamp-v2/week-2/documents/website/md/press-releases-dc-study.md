@@ -21,9 +21,9 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-CONTACT:  Anna O’Sullivan pressinquiry@zearn.org‍
+CONTACT:  Anna O’Sullivan pressinquiry@zearn.org
 
-‍WASHINGTON, Feb. 28, 2023 – A newly released study shows that first through sixth grade students in DC Public Schools (DCPS) who consistently utilized a top-rated math learning platform had large gains in math.
+WASHINGTON, Feb. 28, 2023 – A newly released study shows that first through sixth grade students in DC Public Schools (DCPS) who consistently utilized a top-rated math learning platform had large gains in math.
 
 “As DC Public Schools’ works to increase math comprehension and performance across the district, it is exciting to see the significant math growth and acceleration happening for DCPS students who have used the Zearn platform. Our teachers prioritized this opportunity for their students to study, engage and learn, and Zearn lessons strongly support their efforts in math teaching,” a DCPS spokesperson said.
 

@@ -31,7 +31,7 @@ The research found:
 
 Across student subgroups and math achievement levels, Louisiana students with consistent Zearn Math usage scored higher and had greater learning gains than students who did not use Zearn.
 
-‍
+
 
 ### Additional resources
 

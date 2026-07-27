@@ -21,7 +21,7 @@ Press Release
 
 CONTACT:  Anna O’Sullivan annao@zearn.org
 
-‍NASHVILLE, TENNESSEE, Jan. 16, 2023 – A new study shows that Tennessee elementary- and middle-school students who consistently utilized Zearn Math scored significantly higher on the state’s math exam than students who did not use the top-rated math learning platform. While support from Zearn helped students across all levels of math performance, previously low-scoring students nearly tripled their Tennessee Comprehensive Assessment Program (TCAP) score growth.
+NASHVILLE, TENNESSEE, Jan. 16, 2023 – A new study shows that Tennessee elementary- and middle-school students who consistently utilized Zearn Math scored significantly higher on the state’s math exam than students who did not use the top-rated math learning platform. While support from Zearn helped students across all levels of math performance, previously low-scoring students nearly tripled their Tennessee Comprehensive Assessment Program (TCAP) score growth.
 
 “Our teachers know how important math is to educational and career success and are steadfast in their commitment to ensuring continued math learning growth,” said Michael Adkins, Ed.S., director of schools, Lawrence County School System. “The results of this study show that when teachers have high-quality tools with ongoing training, they can ensure that all students succeed in math.”
 

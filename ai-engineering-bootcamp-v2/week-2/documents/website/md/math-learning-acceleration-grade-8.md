@@ -23,15 +23,15 @@ Our curated series of 8th grade math lessons is designed for students to complet
 
 ## Linear Relationships
 
-13 Lessons | Grade 8 Mission 3 ‍ The 8th grade math lessons focus on linear functions and linear equations, ensuring students have both the foundational understanding and procedural fluency needed to access the new learning of Algebra I. Students learn to recognize connections among rate of change, slope, and constant of proportionality.
+13 Lessons | Grade 8 Mission 3  The 8th grade math lessons focus on linear functions and linear equations, ensuring students have both the foundational understanding and procedural fluency needed to access the new learning of Algebra I. Students learn to recognize connections among rate of change, slope, and constant of proportionality.
 
 ## Linear Equations and Systems
 
-15 Lessons | Grade 8 Mission 4 ‍ Students write and solve linear equations in one variable. These include equations in which the variable occurs on both sides of the equal sign, and equations with no solutions, exactly one solution, and infinitely many solutions.
+15 Lessons | Grade 8 Mission 4  Students write and solve linear equations in one variable. These include equations in which the variable occurs on both sides of the equal sign, and equations with no solutions, exactly one solution, and infinitely many solutions.
 
 ## Functions and Volume
 
-21 Lessons | Grade 8 Mission 5 ‍ Students are introduced to the concept of a function. These 8th grade math lessons enable students to develop a deep understanding of linear relationships and functions in addition to being able to manipulate algebraic equations and expressions.
+21 Lessons | Grade 8 Mission 5  Students are introduced to the concept of a function. These 8th grade math lessons enable students to develop a deep understanding of linear relationships and functions in addition to being able to manipulate algebraic equations and expressions.
 
 ## Our approach to summer math
 
@@ -64,7 +64,7 @@ Easy account setup
 
 * Individual logins for all students, teachers, and tutors.
 * Paid School Accounts with premium features and content for all of the students, teachers and administrators within one school, plus dedicated implementation support.
-* Access to Zearn Help Center with 100+ help topics. ‍
+* Access to Zearn Help Center with 100+ help topics. 
 
 ## Motivate summer math learning with Zearn
 
@@ -78,4 +78,4 @@ As part of Zearn’s initial pilot release of Spanish-translated digital content
 
 How do Zearn digital lessons support English learners?
 
-Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include: ‍ Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time. ‍ Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages. ‍ Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English. ‍ Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.
+Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include:  Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time.  Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages.  Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English.  Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.

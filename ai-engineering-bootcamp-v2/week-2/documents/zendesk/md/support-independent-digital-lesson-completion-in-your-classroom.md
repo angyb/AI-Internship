@@ -20,7 +20,7 @@ Zearn Math teaches the big ideas of math in short, dynamic digital lessons with 
 
 Overview of Independent Digital Lessons
 
-Zearn’s digital lessons deepen the learning students do with their teacher. In digital lessons, students learn grade-level math concepts with on-screen teachers, interactive visual models, and built-in, differentiated support. Each lesson develops a balance of conceptual understanding, procedural fluency, and application work through a consistent structure.Independent Digital Lessons: Getting Started Checklist
+Zearn’s digital lessons deepen the learning students do with their teacher. In digital lessons, students learn grade-level math concepts with on-screen teachers, interactive visual models, and built-in, differentiated support. Each lesson develops a balance of conceptual understanding, procedural fluency, and application work through a consistent structure. Independent Digital Lessons: Getting Started Checklist
 
 Download this checklist with key actions to take when getting started with Independent Digital Lessons.
 

@@ -17,7 +17,7 @@ extraction_method: static
 
 This Cookie Policy is specific to our marketing website, about.zearn.org. Zearn’s learning platform, accessed through zearn.org, does not use targeting cookies and does not share any information with third-party advertisers. See our Privacy Policy for more information.
 
-‍
+
 
 ###### Updated OCTOBER 2020
 
@@ -37,4 +37,4 @@ To control functional and analytics cookies, you can adjust the settings in your
 
 To control targeting cookies, you can adjust your online advertising preferences with the Digital Advertising Alliance at http://www.aboutads.info/choices or the Network Advertising Initiative at http://www.networkadvertising.org/choices.
 
-‍
+

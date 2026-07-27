@@ -39,21 +39,21 @@ Johns Hopkins University, Center for Research and Reform in Education
 
 ## Quasi-Experimental Design Study Quasi-Experimental Design Study Quasi-Experimental Design Study Quasi-Experimental Design Study
 
-GRADES K-5‍
+GRADES K-5
 
-PARTICIPANTS 9,235 K–5 students across 35 schools‍
-
-DEMOGRAPHICS Large urban New York school district
-
-GRADES K-5‍
-
-PARTICIPANTS 9,235 K–5 students across 35 schools‍
+PARTICIPANTS 9,235 K–5 students across 35 schools
 
 DEMOGRAPHICS Large urban New York school district
 
-GRADES K-5‍
+GRADES K-5
 
-PARTICIPANTS 9,235 K–5 students across 35 schools‍
+PARTICIPANTS 9,235 K–5 students across 35 schools
+
+DEMOGRAPHICS Large urban New York school district
+
+GRADES K-5
+
+PARTICIPANTS 9,235 K–5 students across 35 schools
 
 DEMOGRAPHICS Large urban New York school district
 
@@ -61,21 +61,21 @@ Harvard Graduate School of Education (Peer-Reviewed)
 
 ## Quasi-Experimental Design Study Quasi-Experimental Design Study Quasi-Experimental Design Study Quasi-Experimental Design Study
 
-GRADES 3-5‍
+GRADES 3-5
 
-PARTICIPANTS 100K+ 3-5 students across 800+ schools‍
-
-DEMOGRAPHICS Mix of urban and rural school districts across Louisiana
-
-GRADES 3-5‍
-
-PARTICIPANTS 100K+ 3-5 students across 800+ schools‍
+PARTICIPANTS 100K+ 3-5 students across 800+ schools
 
 DEMOGRAPHICS Mix of urban and rural school districts across Louisiana
 
-GRADES 3-5‍
+GRADES 3-5
 
-PARTICIPANTS 100K+ 3-5 students across 800+ schools‍
+PARTICIPANTS 100K+ 3-5 students across 800+ schools
+
+DEMOGRAPHICS Mix of urban and rural school districts across Louisiana
+
+GRADES 3-5
+
+PARTICIPANTS 100K+ 3-5 students across 800+ schools
 
 DEMOGRAPHICS Mix of urban and rural school districts across Louisiana
 
@@ -83,21 +83,21 @@ SRI EDUCATION
 
 ## Multiple-Case Study Multiple-Case Study Multiple-Case Study Multiple-Case Study
 
-GRADES 3-5‍
+GRADES 3-5
 
-PARTICIPANTS Teachers across four schools‍
-
-DEMOGRAPHICS Mix of urban and rural school districts across three states
-
-GRADES 3-5‍
-
-PARTICIPANTS Teachers across four schools‍
+PARTICIPANTS Teachers across four schools
 
 DEMOGRAPHICS Mix of urban and rural school districts across three states
 
-GRADES 3-5‍
+GRADES 3-5
 
-PARTICIPANTS Teachers across four schools‍
+PARTICIPANTS Teachers across four schools
+
+DEMOGRAPHICS Mix of urban and rural school districts across three states
+
+GRADES 3-5
+
+PARTICIPANTS Teachers across four schools
 
 DEMOGRAPHICS Mix of urban and rural school districts across three states
 

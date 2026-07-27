@@ -48,7 +48,7 @@ Top-rated instructional materials
 
 * Digital math lessons for every K–8 math objective
 * Built-in Tier 1 intervention in all digital lessons
-* Embedded daily digital diagnostic in every lesson‍
+* Embedded daily digital diagnostic in every lesson
 * Problem solving activities for tutors (in Spanish, too!)
 
 Real-time data visibility

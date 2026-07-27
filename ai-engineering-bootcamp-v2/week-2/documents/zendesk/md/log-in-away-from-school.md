@@ -16,8 +16,8 @@ word_count: 81
 
 # Log in away from school
 
-Students can complete Zearn Math lessons outside of school using their school-issued account. If your child doesn't have a school-issued student account, you can sign up for a and create a student account for them.
+Students can complete Zearn Math lessons outside of school using their school-issued account. If your child doesn't have a school-issued student account, you can sign up for a free Individual Account and create a student account for them.
 
-Zearn is available online 24/7 and can be accessed by logging with their username and password at .
+Zearn is available online 24/7 and can be accessed by logging in with their username and password at zearn.org.
 
 Note: If your child uses Clever to access Zearn, read this article for instructions on how to help your students log in.

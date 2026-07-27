@@ -9,12 +9,10 @@ path: /louisiana/math-challenges
 section: louisiana
 description: Printable Louisiana Math Challenge kits help students stay engaged, reinforce
   their goal of three Zearn lessons a week, and celebrate their progress schoolwide.
-scraped_at: '2026-07-23T22:08:58Z'
-word_count: 716
+scraped_at: '2026-07-27T19:34:29Z'
+word_count: 714
 extraction_method: static
 ---
-
-HomeLouisianaLouisiana Resources
 
 ## Join the Louisiana Math Challenge!
 

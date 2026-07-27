@@ -22,11 +22,11 @@ Our curated series of 4th grade math lessons is designed for students to complet
 
 ## Equivalent Fractions
 
-38 Lessons | Grade 4 Mission 5 ‍ These 4th grade math lessons focus on fractions and decimals. Students compare fractions, evaluate equivalence, and learn that the same methods they used for whole number operations can be used to add, subtract, and multiply fractions.
+38 Lessons | Grade 4 Mission 5  These 4th grade math lessons focus on fractions and decimals. Students compare fractions, evaluate equivalence, and learn that the same methods they used for whole number operations can be used to add, subtract, and multiply fractions.
 
 ## Decimal Fractions
 
-15 Lessons | Grade 4 Mission 6 ‍ These 4th grade math lessons extend the understanding of fraction equivalence to decimal operations. This series is intended to ensure students have a solid grasp of these ideas to close out 5th grade successfully.
+15 Lessons | Grade 4 Mission 6  These 4th grade math lessons extend the understanding of fraction equivalence to decimal operations. This series is intended to ensure students have a solid grasp of these ideas to close out 5th grade successfully.
 
 ## Our approach to summer math
 
@@ -59,7 +59,7 @@ Easy account setup
 
 * Individual logins for all students, teachers, and tutors.
 * Paid School Accounts with premium features and content for all of the students, teachers and administrators within one school, plus dedicated implementation support.
-* Access to Zearn Help Center with 100+ help topics. ‍
+* Access to Zearn Help Center with 100+ help topics. 
 
 ## Motivate summer math learning with Zearn
 
@@ -73,4 +73,4 @@ As part of Zearn’s initial pilot release of Spanish-translated digital content
 
 How do Zearn digital lessons support English learners?
 
-Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include: ‍ Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time. ‍ Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages. ‍ Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English. ‍ Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.
+Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include:  Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time.  Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages.  Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English.  Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.

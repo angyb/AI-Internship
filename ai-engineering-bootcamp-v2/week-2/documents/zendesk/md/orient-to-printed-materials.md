@@ -27,7 +27,7 @@ Zearn’s paper-based teacher and student instructional materials include:
 * Paper Exit Ticket: After students demonstrate mastery in the Tower of Power, teachers can use Zearn’s Exit Tickets as an additional lesson-level assessment to monitor learning. Exit Tickets are un-scaffolded so that teachers can see how well students transfer their learning from the digital lesson to paper.
 * Optional problem set: Problem sets can be leveraged to support differentiation for students who may need more opportunities to learn or practice specific math ideas, as well as enrichment activities to deepen and extend the math ideas of the Mission.
 * Printable paper homework: Printable paper homework for each Mission gives students extra practice with concepts.
-* Assessments: Educators can access Mission-level assessments andLesson-level assessments, along with answer keys that include detailed rubrics and scoring guidance.
+* Assessments: Educators can access Mission-level assessments and Lesson-level assessments, along with answer keys that include detailed rubrics and scoring guidance.
 * Foundational Guidance: Educators can access foundational content guidance by Topic, Lesson, and Standard.
 
 Print all Zearn teacher and student materials directly from your account by following the steps below:

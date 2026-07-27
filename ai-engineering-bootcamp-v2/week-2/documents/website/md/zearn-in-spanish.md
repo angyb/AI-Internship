@@ -16,9 +16,9 @@ extraction_method: static
 
 # Built-in Support for English Learners
 
-Zearn Math is designed to support all students, including those developing proficiency in English. Beginning in the 2026-27 school year, all educators with a Zearn School Account can give students the option to complete all K-5 digital lessons in Spanish as part of a multi-year pilot of Spanish-translated digital content. ‍Learn more about how Zearn supports English Learners.
+Zearn Math is designed to support all students, including those developing proficiency in English. Beginning in the 2026-27 school year, all educators with a Zearn School Account can give students the option to complete all K-5 digital lessons in Spanish as part of a multi-year pilot of Spanish-translated digital content. Learn more about how Zearn supports English Learners.
 
-Don’t have a Zearn account? ‍Create a free account to get access to all content!
+Don’t have a Zearn account? Create a free account to get access to all content!
 
 ## FAQs
 
@@ -28,4 +28,4 @@ As part of Zearn’s initial pilot release of Spanish-translated digital content
 
 How do Zearn digital lessons support English learners?
 
-Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include: ‍ Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time. ‍ Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages. ‍ Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English. ‍ Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.
+Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include:  Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time.  Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages.  Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English.  Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.

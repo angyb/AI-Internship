@@ -1,0 +1,1342 @@
+[
+  {
+    "file": "case-studies-aspire.md",
+    "source_url": "https://about.zearn.org/case-studies/aspire",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "case-studies-caddo.md",
+    "source_url": "https://about.zearn.org/case-studies/caddo",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "case-studies-greece.md",
+    "source_url": "https://about.zearn.org/case-studies/greece",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "case-studies-mcp.md",
+    "source_url": "https://about.zearn.org/case-studies/mcp",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "contact.md",
+    "source_url": "https://about.zearn.org/contact",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "cookie-policy.md",
+    "source_url": "https://about.zearn.org/cookie-policy",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "curriculum-study-professional-development.md",
+    "source_url": "https://about.zearn.org/curriculum-study-professional-development",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "curriculum.md",
+    "source_url": "https://about.zearn.org/curriculum",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 0.9969,
+    "word_delta": 6,
+    "issues": [],
+    "local_excerpt": "ible problem solving skills * Real-time progress reports and",
+    "live_excerpt": "ible problem solving skills * * Real-time progress reports and"
+  },
+  {
+    "file": "digital-lessons.md",
+    "source_url": "https://about.zearn.org/digital-lessons",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "district-snapshots-zearn-efficacy-research-district-wide-study-dcps.md",
+    "source_url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-dcps",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "district-snapshots-zearn-efficacy-research-district-wide-study-tulsa.md",
+    "source_url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-district-wide-study-tulsa",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "district-snapshots-zearn-efficacy-research-pandemic-learning.md",
+    "source_url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-pandemic-learning",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "district-snapshots-zearn-efficacy-research-student-mobility.md",
+    "source_url": "https://about.zearn.org/district-snapshots/zearn-efficacy-research-student-mobility",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "district-snapshots-zearn-math-efficacy-research-large-southern-district.md",
+    "source_url": "https://about.zearn.org/district-snapshots/zearn-math-efficacy-research-large-southern-district",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "donate.md",
+    "source_url": "https://about.zearn.org/donate",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "family-engagement-library.md",
+    "source_url": "https://about.zearn.org/family-engagement-library",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "getting-started.md",
+    "source_url": "https://about.zearn.org/getting-started",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "how-zearn-math-works.md",
+    "source_url": "https://about.zearn.org/how-zearn-math-works",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 0.9902,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "missing_on_local",
+        "value": "## Handwritten work is part of Zearn Math lessons."
+      }
+    ],
+    "local_excerpt": "# Handwritten work is part of every lesson Every lesson integrates paper-and-pencil problem solv",
+    "live_excerpt": "# Handwritten work is part of Zearn Math lessons. Zearn Math lessons integrate paper-and-pencil problem solv"
+  },
+  {
+    "file": "index.md",
+    "source_url": "https://about.zearn.org",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "insights-inequitable-shock-in-math-learning.md",
+    "source_url": "https://about.zearn.org/insights/inequitable-shock-in-math-learning",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "insights-publications-catch-up-and-move-forward.md",
+    "source_url": "https://about.zearn.org/insights/publications-catch-up-and-move-forward",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "insights-publications-learning-acceleration.md",
+    "source_url": "https://about.zearn.org/insights/publications-learning-acceleration",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "insights-zearn-impact-large-southern-district.md",
+    "source_url": "https://about.zearn.org/insights/zearn-impact-large-southern-district",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "insights-zearn-impact-statewide-study-nebraska.md",
+    "source_url": "https://about.zearn.org/insights/zearn-impact-statewide-study-nebraska",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "insights-zearn-impact-study-dcps.md",
+    "source_url": "https://about.zearn.org/insights/zearn-impact-study-dcps",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "insights-zearn-impact-study-louisiana.md",
+    "source_url": "https://about.zearn.org/insights/zearn-impact-study-louisiana",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "insights-zearn-impact-study-texas.md",
+    "source_url": "https://about.zearn.org/insights/zearn-impact-study-texas",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "kindergarten-math.md",
+    "source_url": "https://about.zearn.org/kindergarten-math",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "louisiana-math-challenges.md",
+    "source_url": "https://about.zearn.org/louisiana/math-challenges",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "louisiana-using-zearn-alongside-hqim.md",
+    "source_url": "https://about.zearn.org/louisiana/using-zearn-alongside-hqim",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 0.4452,
+    "word_delta": 85,
+    "issues": [
+      {
+        "kind": "missing_on_local",
+        "value": "## Watch our recent webinar\n\n## Louisiana teachers\u2019 companion for Tier 1 math in"
+      }
+    ],
+    "local_excerpt": "materials \u2014 now with embedded Curriculum Companion Guides fo",
+    "live_excerpt": "materials \u2014 now with embedded Louisiana Curriculum Companion Guides fo"
+  },
+  {
+    "file": "louisiana.md",
+    "source_url": "https://about.zearn.org/louisiana",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-learning-acceleration-grade-1.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-1",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-grade-2.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-2",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-grade-3.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-3",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-grade-4.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-4",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-grade-5.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-5",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-grade-6.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-6",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-grade-7.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-7",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-grade-8.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/grade-8",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration-kindergarten.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration/kindergarten",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-learning-acceleration.md",
+    "source_url": "https://about.zearn.org/math-learning-acceleration",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-mind-book.md",
+    "source_url": "https://about.zearn.org/math-mind-book",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-resources-curriculum-reviews.md",
+    "source_url": "https://about.zearn.org/math-resources/curriculum-reviews",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-resources-family-support.md",
+    "source_url": "https://about.zearn.org/math-resources/family-support",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-resources-math-motivation-supplies.md",
+    "source_url": "https://about.zearn.org/math-resources/math-motivation-supplies",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-resources-math-tutoring-with-zearn.md",
+    "source_url": "https://about.zearn.org/math-resources/math-tutoring-with-zearn",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-resources-press-releases.md",
+    "source_url": "https://about.zearn.org/math-resources/press-releases",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-resources-printed-materials.md",
+    "source_url": "https://about.zearn.org/math-resources/printed-materials",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "math-resources.md",
+    "source_url": "https://about.zearn.org/math-resources",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "math-webinars.md",
+    "source_url": "https://about.zearn.org/math-webinars",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "middle-school-math.md",
+    "source_url": "https://about.zearn.org/middle-school-math",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "mission.md",
+    "source_url": "https://about.zearn.org/mission",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "news.md",
+    "source_url": "https://about.zearn.org/news",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "ohio.md",
+    "source_url": "https://about.zearn.org/ohio",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "platform-insights.md",
+    "source_url": "https://about.zearn.org/platform-insights",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "press-releases-announcing-clever-partnership.md",
+    "source_url": "https://about.zearn.org/press-releases/announcing-clever-partnership",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "press-releases-colorado-math-accelerator-schools.md",
+    "source_url": "https://about.zearn.org/press-releases/colorado-math-accelerator-schools",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-colorado-math-accelerator.md",
+    "source_url": "https://about.zearn.org/press-releases/colorado-math-accelerator",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-dc-study.md",
+    "source_url": "https://about.zearn.org/press-releases/dc-study",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-evidence-for-essa.md",
+    "source_url": "https://about.zearn.org/press-releases/evidence-for-essa",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "press-releases-governor-polis-study.md",
+    "source_url": "https://about.zearn.org/press-releases/governor-polis-study",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-kindergarten.md",
+    "source_url": "https://about.zearn.org/press-releases/kindergarten",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-louisiana-math-learning.md",
+    "source_url": "https://about.zearn.org/press-releases/louisiana-math-learning",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-louisiana-study.md",
+    "source_url": "https://about.zearn.org/press-releases/louisiana-study",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-math-matters-ri.md",
+    "source_url": "https://about.zearn.org/press-releases/math-matters-ri",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "press-releases-math-refresh-la.md",
+    "source_url": "https://about.zearn.org/press-releases/math-refresh-la",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-monthlong-celebration.md",
+    "source_url": "https://about.zearn.org/press-releases/monthlong-celebration",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-nebraska-study.md",
+    "source_url": "https://about.zearn.org/press-releases/nebraska-study",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "press-releases-new-mexico-public-education-department-rating.md",
+    "source_url": "https://about.zearn.org/press-releases/new-mexico-public-education-department-rating",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-ohio-math.md",
+    "source_url": "https://about.zearn.org/press-releases/ohio-math",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-schools-nationwide-gain-increased-access-to-top-rated-math-platform.md",
+    "source_url": "https://about.zearn.org/press-releases/schools-nationwide-gain-increased-access-to-top-rated-math-platform",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-south-carolina.md",
+    "source_url": "https://about.zearn.org/press-releases/south-carolina",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-tennessee-students-accelerate-their-math-learning-through-statewide-tutoring-program.md",
+    "source_url": "https://about.zearn.org/press-releases/tennessee-students-accelerate-their-math-learning-through-statewide-tutoring-program",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-texas-students-accelerate-their-math-learning-through-statewide-tutoring-program.md",
+    "source_url": "https://about.zearn.org/press-releases/texas-students-accelerate-their-math-learning-through-statewide-tutoring-program",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-tn-study-23.md",
+    "source_url": "https://about.zearn.org/press-releases/tn-study-23",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-tn-texbook.md",
+    "source_url": "https://about.zearn.org/press-releases/tn-texbook",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-tulsa-study.md",
+    "source_url": "https://about.zearn.org/press-releases/tulsa-study",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-tx-imra-math-catalyst-zmt.md",
+    "source_url": "https://about.zearn.org/press-releases/tx-imra-math-catalyst-zmt",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "press-releases-tx-imra.md",
+    "source_url": "https://about.zearn.org/press-releases/tx-imra",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-tx-study-23.md",
+    "source_url": "https://about.zearn.org/press-releases/tx-study-23",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-utah-state-board-of-education-rating.md",
+    "source_url": "https://about.zearn.org/press-releases/utah-state-board-of-education-rating",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-virginia.md",
+    "source_url": "https://about.zearn.org/press-releases/virginia",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "press-releases-zearn-provides-real-time-snapshot-on-the-state-of-u-s-math-education-through-new-oi-economic-tracker-by-opportunity-insights.md",
+    "source_url": "https://about.zearn.org/press-releases/zearn-provides-real-time-snapshot-on-the-state-of-u-s-math-education-through-new-oi-economic-tracker-by-opportunity-insights",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "press-releases-zearns-elementary-math-curriculum-receives-top-rating-by-edreports.md",
+    "source_url": "https://about.zearn.org/press-releases/zearns-elementary-math-curriculum-receives-top-rating-by-edreports",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "privacy.md",
+    "source_url": "https://about.zearn.org/privacy",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "professional-development.md",
+    "source_url": "https://about.zearn.org/professional-development",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research-catching-up-and-moving-forward-accelerating-math-learning-for-every-student.md",
+    "source_url": "https://about.zearn.org/research/catching-up-and-moving-forward-accelerating-math-learning-for-every-student",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research-consistent-zearn-usage-increases-texas-math-test-scores.md",
+    "source_url": "https://about.zearn.org/research/consistent-zearn-usage-increases-texas-math-test-scores",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research-dcps-students-gain-an-additional-11-weeks-of-math-learning-with-zearn.md",
+    "source_url": "https://about.zearn.org/research/dcps-students-gain-an-additional-11-weeks-of-math-learning-with-zearn",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research-impact-of-zearn-math-curriculum-study-professional-development.md",
+    "source_url": "https://about.zearn.org/research/impact-of-zearn-math-curriculum-study-professional-development",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research-library.md",
+    "source_url": "https://about.zearn.org/research-library",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "research-louisiana-students-increase-math-scores-with-zearn.md",
+    "source_url": "https://about.zearn.org/research/louisiana-students-increase-math-scores-with-zearn",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research-nebraska-students-experience-large-gains-in-math-learning-with-zearn.md",
+    "source_url": "https://about.zearn.org/research/nebraska-students-experience-large-gains-in-math-learning-with-zearn",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research-students-who-used-zearn-math-grew-1-3-grade-levels-in-one-year-of-learning.md",
+    "source_url": "https://about.zearn.org/research/students-who-used-zearn-math-grew-1-3-grade-levels-in-one-year-of-learning",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "research.md",
+    "source_url": "https://about.zearn.org/research",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "reviews-edreports-review-of-zearn-math.md",
+    "source_url": "https://about.zearn.org/reviews/edreports-review-of-zearn-math",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "reviews-louisiana-dept-of-education-review.md",
+    "source_url": "https://about.zearn.org/reviews/louisiana-dept-of-education-review",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "reviews-new-mexico-review.md",
+    "source_url": "https://about.zearn.org/reviews/new-mexico-review",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "reviews-tennessee-approved-list.md",
+    "source_url": "https://about.zearn.org/reviews/tennessee-approved-list",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "reviews-utah-state-board-of-education-review.md",
+    "source_url": "https://about.zearn.org/reviews/utah-state-board-of-education-review",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "school-account-resources.md",
+    "source_url": "https://about.zearn.org/school-account-resources",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "south-carolina.md",
+    "source_url": "https://about.zearn.org/south-carolina",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 0.9974,
+    "word_delta": 4,
+    "issues": [
+      {
+        "kind": "missing_on_local",
+        "value": "HomeSouth Carolina\n\n## Help all South Carolina students thrive in math\n\nZearn Ma"
+      }
+    ],
+    "local_excerpt": "## Help all South Carolina stu",
+    "live_excerpt": "HomeSouth Carolina ## Help all South Carolina stu"
+  },
+  {
+    "file": "summer-math.md",
+    "source_url": "https://about.zearn.org/summer-math",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "terms.md",
+    "source_url": "https://about.zearn.org/terms",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "texas-bluebonnet.md",
+    "source_url": "https://about.zearn.org/texas/bluebonnet",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "texas-resources.md",
+    "source_url": "https://about.zearn.org/texas/resources",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "texas-staar.md",
+    "source_url": "https://about.zearn.org/texas/staar",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "texas.md",
+    "source_url": "https://about.zearn.org/texas",
+    "status": "mismatch",
+    "identical": false,
+    "similarity": 0.9949,
+    "word_delta": 25,
+    "issues": [],
+    "local_excerpt": "HomeTexas # Support Texas students to suc",
+    "live_excerpt": "HomeTexas # Support Texas students to succeed in grade-level math ## Support Texas students to succeed in grade-level math Support Texas stu"
+  },
+  {
+    "file": "thank-a-teacher.md",
+    "source_url": "https://about.zearn.org/thank-a-teacher",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "tutoring-with-zearn-math.md",
+    "source_url": "https://about.zearn.org/tutoring-with-zearn-math",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "using-zearn-for-impact.md",
+    "source_url": "https://about.zearn.org/using-zearn-for-impact",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "virginia.md",
+    "source_url": "https://about.zearn.org/virginia",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  },
+  {
+    "file": "why-zearn-math.md",
+    "source_url": "https://about.zearn.org/why-zearn-math",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "zearn-in-spanish.md",
+    "source_url": "https://about.zearn.org/zearn-in-spanish",
+    "status": "mismatch",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": [
+      {
+        "kind": "invisible_char",
+        "value": "yes"
+      }
+    ]
+  },
+  {
+    "file": "zearn-math-louisiana-supplies.md",
+    "source_url": "https://about.zearn.org/zearn-math-louisiana-supplies",
+    "status": "ok",
+    "identical": true,
+    "similarity": 1.0,
+    "word_delta": 0,
+    "issues": []
+  }
+]

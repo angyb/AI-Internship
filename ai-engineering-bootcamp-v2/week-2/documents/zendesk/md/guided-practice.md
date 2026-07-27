@@ -16,7 +16,7 @@ word_count: 279
 
 # Guided practice
 
-Students learn new concepts and extend their understanding during the guided practice portion ofIndependent Digital Lessons. Guided practice activities create a rich learning environment for students through engaging and interactive videos featuring real on-screen teachers, virtual manipulatives, and paper-and-pencil Student Notes.
+Students learn new concepts and extend their understanding during the guided practice portion of Independent Digital Lessons. Guided practice activities create a rich learning environment for students through engaging and interactive videos featuring real on-screen teachers, virtual manipulatives, and paper-and-pencil Student Notes.
 
 Students experience one of four different guided practice activities—Story Time, Math Chat, Learning Lab, or Z-Squad. Each guided practice activity is designed to help students engage with grade-level math in different ways. For example, Z-Squad helps students grow their own understanding of themselves as competent mathematicians by featuring similarly aged and diverse on-screen students working through problems and persevering through challenges.
 

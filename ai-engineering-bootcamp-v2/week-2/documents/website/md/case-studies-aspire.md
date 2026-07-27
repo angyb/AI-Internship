@@ -46,7 +46,7 @@ To help students succeed in the flexible learning environment, RTA teachers inve
 
 RTA teachers also helped students set weekly goals, track their progress, and celebrate their own achievements. In Lamb’s 5th grade classroom, students use checklists on their desks to track how many lessons they complete each week. “We’ve built a classroom culture where students are really invested in math and proud of their progress. We celebrate that learning with Fun Fridays and Zearn parties after students finish all the digital lessons and Exit Tickets for a Mission,” she explained. Teachers also highlighted examples of student work on bulletin boards, showcasing the different strategies students used to solve a problem each week. “Teachers always find ways of creatively celebrating their scholars, including designing stickers and certificates to give out when students meet weekly lesson goals,” remarked Susie Tabrah. Tabrah continued, “This year, we’re rolling out school-wide Zearn celebrations for the first time. We’re excited to recognize the hard work of every child.”
 
-‍
+
 
 Share this article
 

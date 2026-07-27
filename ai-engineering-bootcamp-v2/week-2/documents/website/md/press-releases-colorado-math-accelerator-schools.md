@@ -21,8 +21,8 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-CONTACT: Anna O’Sullivan pressinquiry@zearn.org‍
+CONTACT: Anna O’Sullivan pressinquiry@zearn.org
 
-‍DENVER, May 31, 2023 – Governor Jared Polis today announced that over 750 schools and 81 school districts have already signed up for a free digital math acceleratorto provide top-rated math learning and educator training for kindergarten through eighth-grade students across Colorado. The digital math accelerator is provided at no cost to elementary and middle schools and school districts statewide that opt-in to participate. Zearn, the nonprofit educational organization behind top-rated math learning platform Zearn Math, is the platform provider.
+DENVER, May 31, 2023 – Governor Jared Polis today announced that over 750 schools and 81 school districts have already signed up for a free digital math acceleratorto provide top-rated math learning and educator training for kindergarten through eighth-grade students across Colorado. The digital math accelerator is provided at no cost to elementary and middle schools and school districts statewide that opt-in to participate. Zearn, the nonprofit educational organization behind top-rated math learning platform Zearn Math, is the platform provider.
 
 To view the full release, visit Colorado Gov. Jared Polis' website.

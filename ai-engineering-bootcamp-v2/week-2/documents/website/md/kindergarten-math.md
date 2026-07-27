@@ -74,4 +74,4 @@ Connect:
 
 © Zearn 2026
 
-‍Terms of Use | Privacy Policy| Sitemap
+Terms of Use | Privacy Policy| Sitemap

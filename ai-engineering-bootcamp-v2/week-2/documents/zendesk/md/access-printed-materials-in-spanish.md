@@ -27,7 +27,7 @@ Below are answers to common questions related to Zearn's Spanish-language printe
 
 Q: Which teacher materials will be available in Spanish?
 
-A: All daily instructional materials are available in Spanish, including word problems, fluency activities, and lesson plans. These materials support teachers with facilitating learning that builds deep understanding of concepts and flexible problem-solving skills. Materials can be used across a mix of instructional formats, including both small-group and whole-group learning. Teachers also have access to grade- and unit-level overview materials in Spanish that provide support with planning and delivering differentiated instruction that meets the needs of all learners.‍
+A: All daily instructional materials are available in Spanish, including word problems, fluency activities, and lesson plans. These materials support teachers with facilitating learning that builds deep understanding of concepts and flexible problem-solving skills. Materials can be used across a mix of instructional formats, including both small-group and whole-group learning. Teachers also have access to grade- and unit-level overview materials in Spanish that provide support with planning and delivering differentiated instruction that meets the needs of all learners.
 
 Q: Which student materials will be available in Spanish?
 

@@ -27,4 +27,4 @@ Utah's decision to recommend Zearn Math for all grades K–5 corroborates findin
 
 Utah's recommendation of Zearn Math coincides with a major milestone in the top-rated curriculum's viral growth journey: the comprehensive math program is now used in over 50% of districts nationwide to support daily differentiated instruction. Additionally, Zearn recently announced the launch of new features and resources for the coming school year to give teachers even more flexibility when using Zearn Math to support student learning. Shalinee Sharma, Zearn's Chief Executive Officer, commented, "We began building Zearn Math seven years ago as a nonprofit to support teachers with helping all kids deeply learn and love math. We are so grateful to all those educators, from Utah and across the country, who have partnered with us and provided us feedback on this journey. We're honored to continue to support Utah teachers in further personalizing our top-rated materials to meet the needs of each student."
 
-‍
+

@@ -18,6 +18,6 @@ extraction_method: static
 
 As a nonprofit, we rely on your generosity to keep the learning flowing.
 
-You can help us avoid processing fees and make your gift go further by sending us a check or donating by wire transfer. Please contact us at info@zearn.org for information about a wire transfer. Donations by check can be mailed to: ‍ Zearn Attention: Finance P.O. Box 20 New York, NY 10116
+You can help us avoid processing fees and make your gift go further by sending us a check or donating by wire transfer. Please contact us at info@zearn.org for information about a wire transfer. Donations by check can be mailed to:  Zearn Attention: Finance P.O. Box 20 New York, NY 10116
 
 Zearn is a 501(c)(3) nonprofit organization (EIN number 37-1665745). All donations are tax deductible in the United States to the fullest extent allowed by law.

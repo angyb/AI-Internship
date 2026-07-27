@@ -24,7 +24,7 @@ FOR IMMEDIATE RELEASE
 
 CONTACT:
 
-Anna O’Sullivan ‍‍
+Anna O’Sullivan 
 
 pressinquiry@zearn.org
 
@@ -38,6 +38,6 @@ Zearn, which aligns with the Tennessee State Math Standards, was selected throug
 
 “We developed Zearn’s technology to complement the work of great classroom teachers, which is why we are honored that more than 90 percent of Tennessee teachers who use Zearn would recommend it to another teacher,” Sharma said. “Likewise, kids in Tennessee love learning with Zearn, and we are thrilled to help foster a love of math.”
 
-‍
+
 
 ABOUT ZEARN

@@ -33,7 +33,7 @@ As the nation works to collectively get students back on track after pandemic-er
 
 Researchers looked at the same student multiple times over the course of two years and compared how they responded to both learning acceleration and remediation practices. They observed 600,000 individual elementary- and middle-school students, across all 50 states, and analyzed 5 million intervention decisions for the 2020-2021 and 2021-2022 academic years. With the more traditional practice of remediation, students practice skills they did not master in previous grade-levels before moving forward. Learning acceleration, by contrast, begins students with grade-level learning, and when knowledge gaps arise, provides just-in-time support connected to the grade-level lesson. This report builds on previous data research from Zearn, which provided one of the first direct comparisons of remediation and learning acceleration, analyzing progress in math across 6,000 elementary classrooms over the 2020-2021 school year. The report, Accelerate, Don't Remediate, which was co-published with TNTP, included some of the first empirical evidence at scale that acceleration produces different, and more promising, results than remediation.
 
-‍
+
 
 ### Additional resources
 

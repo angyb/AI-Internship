@@ -16,7 +16,7 @@ word_count: 97
 
 # Edit staff accounts
 
-If you’re a school or district administrator of a Zearn Math School Account and your school does not access Zearn throughClever orClasslink, you can make edits to your staff members' accounts — including updates to staff email addresses, titles and classroom assignments — directly through Zearn by following these steps:
+If you’re a school or district administrator of a Zearn Math School Account and your school does not access Zearn through Clever or Classlink, you can make edits to your staff members' accounts — including updates to staff email addresses, titles and classroom assignments — directly through Zearn by following these steps:
 
 1. Log into your Administrator Account and select Roster at the top of the page.
 2. Click on the desired staff member's name.

@@ -90,7 +90,7 @@ GRADE 6 TEACHER
 
 FOREST HILLS SCHOOL DISTRICT
 
-Zearn goes along perfectly with every lesson I teach and gives the students additional opportunities to explore the skills and learning on their own.‍
+Zearn goes along perfectly with every lesson I teach and gives the students additional opportunities to explore the skills and learning on their own.
 
 GRADE 3 TEACHER
 

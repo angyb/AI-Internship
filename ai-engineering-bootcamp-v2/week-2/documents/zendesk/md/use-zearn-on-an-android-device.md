@@ -16,7 +16,7 @@ word_count: 102
 
 # Use Zearn on an Android device
 
-Android devices are supported and can be used to access Zearn Math digital lessons. You canreview our technology requirements for a full list of devices we support.
+Android devices are supported and can be used to access Zearn Math digital lessons. You can review our technology requirements for a full list of devices we support.
 
 When using an Android device to access Zearn Math, we recommend using click-and-place functionality instead of drag-and-drop. You may notice some usability issues when dragging and dropping items within specific lessons. Watch the video below for alternatives to dragging and dropping on a place value chart.
 

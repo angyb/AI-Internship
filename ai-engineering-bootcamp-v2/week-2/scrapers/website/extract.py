@@ -414,6 +414,10 @@ def prepare_main_content(main: Tag) -> None:
     remove_empty_headings(main)
     remove_hidden_elements(main)
 
+    # Breadcrumb navigation (e.g. Home > Texas) is not article content.
+    for el in main.select("nav.breadcrumbs_component, .breadcrumbs_component"):
+        el.decompose()
+
     # In-page navigation sidebars (e.g. terms/privacy table of contents).
     for el in main.select(".terms-sidebar_wrapper"):
         el.decompose()

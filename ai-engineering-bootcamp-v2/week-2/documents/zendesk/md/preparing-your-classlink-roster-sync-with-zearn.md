@@ -34,7 +34,7 @@ If there are coaches or aides who will need access to student information across
 
 Administrators within ClassLink
 
-There are two ways to set up users with administrative access within Zearn. The first way is through the role assignments within ClassLink. A school or district administrator in ClassLink translates directly to a school or group administrator in Zearn. A second option is available to coaches or other personnel who need access to Zearn admin reports but are assigned the teacher role in ClassLink. Users with the teacher role can have their rolepromoted by a School or Group Administrator within the Zearn application. It is critical to have administrators set up in a district’s Zearn Math School Account in order to access the associated Admin Reports.
+There are two ways to set up users with administrative access within Zearn. The first way is through the role assignments within ClassLink. A school or district administrator in ClassLink translates directly to a school or group administrator in Zearn. A second option is available to coaches or other personnel who need access to Zearn admin reports but are assigned the teacher role in ClassLink. Users with the teacher role can have their role promoted by a School or Group Administrator within the Zearn application. It is critical to have administrators set up in a district’s Zearn Math School Account in order to access the associated Admin Reports.
 
 Sync Timing
 

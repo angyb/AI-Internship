@@ -9,12 +9,10 @@ path: /texas/bluebonnet
 section: texas
 description: Zearn Math for Texas is a daily digital companion to Bluebonnet Learning
   K–5 Math, with adaptive lessons that reinforce TEKS-aligned learning. Learn more.
-scraped_at: '2026-07-23T22:09:16Z'
-word_count: 2079
+scraped_at: '2026-07-27T19:34:30Z'
+word_count: 2075
 extraction_method: static
 ---
-
-HomeTexasBluebonnet Learning K-5 Math
 
 ZEARN FOR TEXAS
 
@@ -34,15 +32,15 @@ Zearn Math is designed for structured use as a part of classroom instruction. Te
 
 Every lesson includes designated activities to build procedural fluency and automaticity.
 
-‍
+
 
 Every lesson includes designated activities to build procedural fluency and automaticity.
 
-‍
+
 
 Every lesson includes designated activities to build procedural fluency and automaticity.
 
-‍
+
 
 ### Interactive video lessons
 
@@ -430,7 +428,7 @@ The Coordinate Plane
 
 ### Is Zearn Math for Texas approved by the Texas State Board of Education (SBOE)?
 
-Zearn Math for Texas was reviewed through the Instructional Materials Review and Approval (IMRA) process and is SBOE-approved. Texas teacher reviewers awarded it one of the highest Quality scores for K-5 supplemental math materials, including a perfect Quality score for “Balance of Conceptual and Procedural Understanding,” recognizing how our lessons integrate both dimensions of mathematical learning in every grade. As an SBOE-approved program, Zearn Math for Texas is designated as a high-quality instructional material, meaning districts can apply a state-funded annual entitlement of $40 per student toward purchase and adoption. Districts may also use their ongoing Instructional Materials and Technology Allotment (IMTA) entitlement to fund Zearn Math for Texas.
+Zearn Math for Texas was reviewed through the Instructional Materials Review and Approval (IMRA) process and is SBOE-approved. Texas teacher reviewers awarded it one of the highest Quality scores for K-5 supplemental math materials, including a perfect Quality score for “Balance of Conceptual and Procedural Understanding,” recognizing how our lessons integrate both dimensions of mathematical learning in every grade.  As an SBOE-approved program, Zearn Math for Texas is designated as a high-quality instructional material, meaning districts can apply a state-funded annual entitlement of $40 per student toward purchase and adoption. Districts may also use their ongoing Instructional Materials and Technology Allotment (IMTA) entitlement to fund Zearn Math for Texas.
 
 ### How can teachers use Zearn Math for Texas alongside Bluebonnet Learning?
 

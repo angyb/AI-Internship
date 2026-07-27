@@ -32,7 +32,7 @@ Researchers looked at how elementary- and middle-school students across six larg
 
 While many factors influence student achievement, one factor is clear: consistent Zearn usage is strongly associated with statewide achievement gains—for students across subgroups and starting proficiency levels.
 
-‍
+
 
 ### Additional resources
 

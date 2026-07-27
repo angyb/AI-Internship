@@ -38,6 +38,6 @@ Rated a high-quality math curricular resource by Louisiana educators, 59 parishe
 
 “This new research exhibits the tremendous effect Louisiana teachers are having on student math learning,” Zearn CEO and Co-Founder Shalinee Sharma said. “It also emphasizes the importance of strong Zearn implementation- students completing three or more grade-level lessons per week-in achieving transformative results.”
 
-In 2022, the Louisiana Department of Education (LDOE) alsoannounced the launch of the new, statewide “Math Refresh,” which provides educators with high-quality instructional materials and professional development to enhance the impact of extra learning time, such as tutoring, in math for all K-8 students.‍
+In 2022, the Louisiana Department of Education (LDOE) alsoannounced the launch of the new, statewide “Math Refresh,” which provides educators with high-quality instructional materials and professional development to enhance the impact of extra learning time, such as tutoring, in math for all K-8 students.
 
-‍ ABOUT ZEARN
+ ABOUT ZEARN

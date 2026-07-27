@@ -25,25 +25,25 @@ We reserve the right, at our discretion, to change these terms in the future. Wh
 
 ## Use of Services
 
-### SERVICES‍
+### SERVICES
 
 Zearn operates a web-based platform that delivers content and provides educators and administrators of educational institutions—as well as parents if they are the adults setting up accounts for their children to use at home—with insight into their students’ performance. In order to access and use portions of the Services, you will be required to register for an account. Zearn also offers the option for schools and/or districts to purchase a Zearn School Account that includes, but is not limited to, unlimited classroom sizes, administrative-level accounts, school or district-level reporting, dedicated support and roster set-up (“Zearn School Account”). Individual free accounts in the Services are subject to single classroom creation and classroom capacity limits. If you register for a Zearn School Account to use the Services on behalf of your educational institution, you will be required to agree to additional terms and conditions as the authorized representative of such educational institution (the "Zearn School Account Agreement"). If you have registered for an individual account, and your school or district subsequently purchases a Zearn School Account covering your classroom, Zearn may deactivate your individual account and you may be required to log in using your School Account credentials.
 
-### ‍PASSWORDS AND SECURITY‍
+### PASSWORDS AND SECURITY
 
 Some portions of the Services may be restricted to registered users or a subset of users, e.g. Zearn School Account holders. When you register for access to such restricted Services, you agree to submit and maintain accurate and complete information. If we suspect that your information is untrue, inaccurate, out-of-date, or incomplete, we may suspend or terminate your access to the Services or request additional information from you. When registering for access to restricted portions of the Services, you may be asked to select a personal, non-transferable password. You may also be asked to provide information that we will use to confirm your identity in the event you submit a request for a lost or forgotten username or password. You are solely responsible for all activities that occur under your password-protected account and for ensuring the protection of your account information. You agree to notify us immediately of any unauthorized use of your password or account or any other breach of security that is known or suspected by you. Password-protected accounts may not be shared or used by more than one individual. You agree that we may send to you in electronic form any notices or other communications regarding the Services.
 
-‍
+
 
 ### INTELLECTUAL PROPERTY
 
 We retain all right, title, and interest in and to the Services, including but not limited to text, graphics, logos, images, audio, music, audiovisual materials, downloadable printed materials, and software which are protected by applicable intellectual property laws, including United States and foreign copyright and trademark laws. Except as expressly permitted in these Terms of Use, no portion of the Services, including the trademarks and service marks, and copyrighted materials may be used, displayed, distributed, published, shared, reverse engineered, decompiled, copied, or reproduced, nor any derivative works created, without the prior written consent from Zearn.
 
-‍
+
 
 ZEARN®, Z-SQUAD®, ZEARN SQUAD®, TOWER OF POWER®, NUMBER GYM®, LEARNING LABTM, MATH CHATTM, FRACTION ACTION®, MULTIPLY MANIA®, MULTIPLY MAGIC®, ADDITION MAGICIAN®, ADDITION MAGICIAN RETURNS®, PAIR COMPARE®, MAKE AND BREAK®, NEXT STOP TOP®, MIX AND MATCHTM, TOTALLY TIMES®, BLASTTM, FORM TO FORM®, IMPOPPABLE®, THE COUNTING TRAIN®, HOP SKIP SPLASH®, SUM SNACKS®, BUNDLE THE SEA®, DISCOVERY CANYON®, COUNT THE COSMOS®, POLAR PLACE VALUES®, ZEARN PD®, ZEARN 101®, zearn , z , and ALL KIDS ARE MATH KIDS® are trademarks and service marks owned by Zearn.
 
-‍ You may not use, display, or reproduce Zearn’s registered or unregistered trademarks without the prior written consent of Zearn. Further, you may not remove, obscure, or otherwise modify any copyright, trademark, confidentiality or other proprietary rights notices displayed on, embedded in, or otherwise appearing in any content offered by, viewed on, or received through this site or through the Services. All other trademarks identified and contained on this site or within the Services are the property of their respective owners and their use herein does not imply sponsorship or endorsement of their products or services.
+ You may not use, display, or reproduce Zearn’s registered or unregistered trademarks without the prior written consent of Zearn. Further, you may not remove, obscure, or otherwise modify any copyright, trademark, confidentiality or other proprietary rights notices displayed on, embedded in, or otherwise appearing in any content offered by, viewed on, or received through this site or through the Services. All other trademarks identified and contained on this site or within the Services are the property of their respective owners and their use herein does not imply sponsorship or endorsement of their products or services.
 
 Portions of Zearn Math are derivative of Eureka Math and licensed by Great Minds. ©2017-2020 Great Minds, Inc. Some rights reserved. Available at https://greatminds.org/math/eurekamath.
 
@@ -53,15 +53,15 @@ Portions of Zearn Math are derivative of Open Up Resources’ 6-8 Math curriculu
 
 Portions of Zearn Math are also licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License (CC BY-NC-SA 4.0) at www.creativecommons.org/licenses/by-nc-sa/4.0/legalcode. ©2017 Great Minds, Inc. Some rights reserved. www.greatminds.org/math. The original work has been modified.
 
-‍
 
-### LICENSES‍
+
+### LICENSES
 
 Zearn grants you a limited, personal, non-exclusive, non-transferable, revocable license to access and use the Services, and download and reproduce printable materials provided with the Services, for your personal, non-commercial use.
 
-‍
 
-### COPYRIGHT INFRINGEMENT‍
+
+### COPYRIGHT INFRINGEMENT
 
 Zearn respects the intellectual property rights of others, and requires that the people who use the Services do the same.
 
@@ -78,35 +78,35 @@ Our designated agent to receive notification of claimed infringement under the D
 
 Zearn General Counsel 2093 Philadelphia Pike #2282 Claymont DE 19703
 
-‍
 
-### USER SUBMISSIONS‍
+
+### USER SUBMISSIONS
 
 Zearn does not solicit creative ideas or suggestions relating to products or marketing plans via the Services. If you do send such materials, including any concepts, know-how, notes, drawings or techniques, Zearn shall be free to use them for any purpose whatsoever, including but not limited to developing, manufacturing and marketing products. Zearn shall not be liable to you or to any person claiming any commercial or non-commercial rights related to our use or disclosure of any submission.
 
 ## Liabilities
 
-### LIMITATIONS OF LIABILITY‍
+### LIMITATIONS OF LIABILITY
 
 In no event shall Zearn or its affiliates, or any of their respective directors, officers, employees, agents, representatives and suppliers (or their respective successors and assigns) be liable to you or any third party in contract, tort (including negligence) or otherwise for any direct, indirect, consequential, special, incidental or putative damages, including, but not limited to, loss of use, service interruptions and loss of data, regardless of whether these parties had advance notice of the possibility of any such damages.
 
 Zearn’s total liability to you for any claim arising out of or relating to the services shall not exceed $100. Some states do not allow the foregoing limitation of liability so they may not apply to you.
 
-‍
 
-### ‍INDEMNITY‍
+
+### INDEMNITY
 
 To the extent that state law allows, you agree to indemnify and hold Zearn and its directors, officers, employees and agents harmless from any loss, damage, liability or demand, including reasonable attorneys’ fees, arising out of, resulting from or connected with the use of the Services and/or arising from your breach of these Terms of Use. We reserve the right to assume the exclusive defense and control of any matter for which you are required to indemnify us. You agree to cooperate with any reasonable requests to assist us in our defense of such matters.
 
-‍
 
-### RELEASE‍
+
+### RELEASE
 
 In the event that you have a dispute with any user(s) of the Services, you release Zearn and its directors, officers, employees and agents from claims, demands, and damages (actual and consequential) of every kind and nature, known and unknown, suspected and unsuspected, disclosed and undisclosed, arising out of or in any way connected with such disputes. If you are a California resident, you waive California Civil Code 1542, which says: “A general release does not extend to claims which the creditor does not know or suspect to exist in his favor at the time of executing the release, which if known by him must have materially affected his settlement with the debtor.”
 
 ## Representations
 
-### USER REPRESENTATIONS‍
+### USER REPRESENTATIONS
 
 By using and/or registering for the Services, you represent that:
 
@@ -127,19 +127,19 @@ In addition, you will not:
 * Reproduce, rent, sell, modify, translate, decompile, disassemble, reverse engineer or create derivative works of the Services; or
 * Circumvent or disable any security or technological features or measures that protect the Services.
 
-‍
 
-### NO WARRANTIES‍
+
+### NO WARRANTIES
 
 The Services are provided “as is”. Zearn makes no representations or warranties about the reliability, quality, suitability, availability, accuracy or completeness of the Services, and is not subject to liability for any delays or interruptions, viruses or other harmful components. You agree that your use of the Services is at your own risk. We reserve the right to modify, suspend or discontinue the Services at any time without notice. We further reserve the right, at any time without prior notice, to terminate your account and use of the Services for lack of use or if Zearn believes that you have violated these Terms of Use. You agree that we shall not be liable to you or any third party for such actions.
 
-‍
 
-### LINKS‍
+
+### LINKS
 
 We may provide links to other Web sites or resources. These links are provided solely as a convenience to you and inclusion of such links does not represent an endorsement by Zearn. We are not responsible for the content of any linked websites or resources, and make no representations regarding the accuracy of such websites or resources.
 
-‍
+
 
 ### RESTRICTIONS
 
@@ -149,13 +149,13 @@ If you provide a child with access to the Services, you represent and warrant th
 
 ## Communications
 
-### NOTICE‍
+### NOTICE
 
 By using the Services, you consent to receiving electronic communications from Zearn providing notices about your account and information concerning or related to the Services. You agree that any notice, agreements, disclosure, or other communications that we send to you electronically will satisfy any legal communication requirements, including that such communications be in writing.
 
-‍
 
-### QUESTIONS‍
+
+### QUESTIONS
 
 Please direct any questions regarding these Terms of Use to:
 
@@ -167,9 +167,9 @@ privacy@zearn.org
 
 The headings identifying the sections and subsections of these terms of use are for reference only and do not define, modify, expand, or limit any of the terms or provisions herein.
 
-‍
 
-### GOVERNING LAW AND ARBITRATION‍
+
+### GOVERNING LAW AND ARBITRATION
 
 These Terms of Use are governed by the laws of the State of Delaware. Any controversy or claim arising out of or relating to these Terms of Use will be settled by binding arbitration in accordance with the commercial arbitration rules of the American Arbitration Association. Any such controversy or claim will be arbitrated on an individual basis, and will not be consolidated in any arbitration with any claim or controversy of any other party. The arbitration will be conducted in Delaware, and judgment on the arbitration award may be entered into any court having jurisdiction thereof. The award of the arbitrator will be final and binding upon the parties without appeal or review except as permitted by Delaware law. Notwithstanding the foregoing, either party may seek any interim or preliminary injunctive relief from any court of competent jurisdiction, as necessary to protect the party’s rights or property pending the completion of arbitration.
 
@@ -207,7 +207,7 @@ For California local educational agencies, pursuant to California Education Code
 
 Zearn acknowledges and agrees that personally identifiable information from pupil records shall not be used for the purpose of engaging in targeted advertising
 
-‍
+
 
 For Connecticut local or regional boards of education, pursuant to Connecticut Public Act 16-189:
 
@@ -224,7 +224,7 @@ For Connecticut local or regional boards of education, pursuant to Connecticut P
 9. The laws of the state of Connecticut shall govern the rights and duties of the parties with respect to this section of the Terms.
 10. Should any provision of these Terms be held invalid by a court of competent jurisdiction, the invalidity does not affect other provisions or applications of the Terms which can be given effect without the invalid provisions or application.
 
-‍
+
 
 For Colorado local or regional boards of education, pursuant to Colorado Revised Statute 22-16-101, et seq.:
 
@@ -277,7 +277,7 @@ During the term of a contract between Zearn and a public education entity, the c
 
 Upon the termination of or the conclusion of the contracted services, and with the written request from the public education entity that student information be deleted, Zearn shall delete the data. If no such request is received, student personally identifiable information from school records will be destroyed in accordance with the Zearn Privacy Policy. Upon written request, Zearn will notify the public education entity of the date upon which all of the student personally identifiable information is destroyed.
 
-‍
+
 
 For Illinois local educational agencies, pursuant to 105 ILCS 85/1 et. seq. (SOPPA):
 
@@ -289,7 +289,7 @@ For Illinois local educational agencies, pursuant to 105 ILCS 85/1 et. seq. (SOP
 4. If the school maintains a website, these terms must be published on the school’s website. If the school does not maintain a school website, the school must make these terms available for inspection by the general public at its administrative office.
 5. In order to deliver the Services, Zearn relies upon certain third-party service providers who may have access to covered information, as described further in Zearn’s Privacy Policy.
 
-‍
+
 
 For New York educational agencies, pursuant to N.Y. Education Law § 2-d:
 
@@ -339,13 +339,13 @@ Zearn maintains an internal incident response plan to manage data security and p
 
 Zearn gives users control over the deletion of personal data through the product account dashboard, or by written request to privacy@zearn.org.
 
-‍
+
 
 For Ohio educational agencies, pursuant to Ohio Rev. Code Ann. §§ 3319.325 et. Seq. (Ohio Senate Bill 29):
 
 Unless renewal of the Zearn School Account is reasonably anticipated, Zearn agrees to destroy or return to the appropriate school district all educational records created, received, or maintained pursuant or incidental to the Zearn School Account within thirty (30) days of the expiration of the Zearn School Account.
 
-‍
+
 
 For Utah educational entities, pursuant to Utah Code 53A-1-1409:
 

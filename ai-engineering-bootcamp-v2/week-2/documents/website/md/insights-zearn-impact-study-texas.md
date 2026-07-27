@@ -28,4 +28,4 @@ To analyze the impact of Zearn Math on Texas student achievement, researchers us
 
 Researchers found that consistent Zearn usage increases STAAR math scale scores by 53 points on average, with gains across subgroups. Further, Zearn usage increased STAAR performance level; 62% of the lowest scoring students moved up at least one level when using the platform consistently.
 
-‍
+

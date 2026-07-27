@@ -18,7 +18,7 @@ word_count: 343
 
 Staff members that are part of a Zearn Math School Account have different levels of permission within Zearn. To protect staff and student data, some types of accounts will require enabling two-step authentication.
 
-Note: Zearn Math School Accounts that are rostered through Clever orClasslink will need to manage staff and student rosters directly through Clever/Classlink and their SIS. School Accounts rostered by spreadsheet can manage rosters through the Zearn platform.
+Note: Zearn Math School Accounts that are rostered through Clever or Classlink will need to manage staff and student rosters directly through Clever/Classlink and their SIS. School Accounts rostered by spreadsheet can manage rosters through the Zearn platform.
 
 Teachers All teachers who are part of a Zearn Math School account can access classroom-level reports for students in their class and any shared classrooms. Teachers who are part of a School Account rostered by spreadsheet can also add and remove students as well as update the assignment for students in their classes. Teachers do not need to enable two-step authentication in order to access their accounts.
 

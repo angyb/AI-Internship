@@ -29,7 +29,7 @@ Teachers & individual classrooms Always free. Access to our top-rated math platf
 
 ### Professional Development
 
-Included with School Accounts ‍Access to Getting Started with Zearn Math, a 1-hour orientation to your Zearn account. Each session explores instructional materials and reports, as well as shares guidance for implementing Zearn Math in your daily schedule. ‍ Curriculum Study PD ‍Access on-demand Curriculum Study PD for all teachers and administrators within one school. School Account required. ‍ Dedicated PD ‍Contact our team to learn more.
+Included with School Accounts Access to Getting Started with Zearn Math, a 1-hour orientation to your Zearn account. Each session explores instructional materials and reports, as well as shares guidance for implementing Zearn Math in your daily schedule.  Curriculum Study PD Access on-demand Curriculum Study PD for all teachers and administrators within one school. School Account required.  Dedicated PD Contact our team to learn more.
 
 ### Printed Materials
 

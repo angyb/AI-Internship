@@ -20,7 +20,7 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-CONTACT: Anna O’Sullivan pressinquiry@zearn.org‍
+CONTACT: Anna O’Sullivan pressinquiry@zearn.org
 
 BATON ROUGE, La., Jan. 11, 2023–The Louisiana Department of Education (LDOE) announced the launch of the new, statewide “Math Refresh” in accelerating the math learning of all K-8 students. As a part of this initiative, LDOE is investing in high-quality instructional materials and professional development for educators to enhance the impact of extra learning time in math. Zearn, the nonprofit educational organization behind Zearn Math, was selected by LDOE for this initiative.
 

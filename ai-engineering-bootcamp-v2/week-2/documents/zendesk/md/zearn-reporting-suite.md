@@ -36,10 +36,10 @@ Some Class Reports are available on both Individual and paid School Accounts, wh
 
 ### Class Reports available on both Individual and paid School Accounts:
 
-* ThePace Report helps teachers track student progress toward the goal of 3+ lessons per week. It provides a real-time view of how many Independent Digital Lessons each student has completed, their time to complete each Independent Digital Lesson, and their aggregate weekly time spent on Zearn.
-* TheProgress Report shows each student's place in Zearn’s digital sequence and the number of Independent Digital Lessons completed per Zearn Math Mission.
-* TheTower Alerts Report helps teachers know when and where students need more support by notifying them when students repeatedly struggle in the Tower of Power.
-* TheSprint Alerts Report notifies teachers when students struggle in timed fluency activities.
+* The Pace Report helps teachers track student progress toward the goal of 3+ lessons per week. It provides a real-time view of how many Independent Digital Lessons each student has completed, their time to complete each Independent Digital Lesson, and their aggregate weekly time spent on Zearn.
+* The Progress Report shows each student's place in Zearn’s digital sequence and the number of Independent Digital Lessons completed per Zearn Math Mission.
+* The Tower Alerts Report helps teachers know when and where students need more support by notifying them when students repeatedly struggle in the Tower of Power.
+* The Sprint Alerts Report notifies teachers when students struggle in timed fluency activities.
 
 ## Admin Reports
 

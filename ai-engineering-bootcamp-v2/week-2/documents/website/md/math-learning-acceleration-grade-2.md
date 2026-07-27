@@ -22,7 +22,7 @@ Our curated series of 2nd grade math lessons is designed for students to complet
 
 ## Add & Subtract Big Numbers
 
-20 Lessons | Grade 2 Mission 5 ‍ These math lessons for 2nd graders focus on the capstone content of K–2: a deep understanding of the base ten system and flexibly being able to add and subtract. Students will work with numbers up to 1,000 and increase the focus on efficiency and checking their work.
+20 Lessons | Grade 2 Mission 5  These math lessons for 2nd graders focus on the capstone content of K–2: a deep understanding of the base ten system and flexibly being able to add and subtract. Students will work with numbers up to 1,000 and increase the focus on efficiency and checking their work.
 
 ## Our approach to summer math
 
@@ -55,7 +55,7 @@ Easy account setup
 
 * Individual logins for all students, teachers, and tutors.
 * Paid School Accounts with premium features and content for all of the students, teachers and administrators within one school, plus dedicated implementation support.
-* Access to Zearn Help Center with 100+ help topics. ‍
+* Access to Zearn Help Center with 100+ help topics. 
 
 ## FAQs
 
@@ -65,4 +65,4 @@ As part of Zearn’s initial pilot release of Spanish-translated digital content
 
 How do Zearn digital lessons support English learners?
 
-Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include: ‍ Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time. ‍ Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages. ‍ Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English. ‍ Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.
+Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include:  Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time.  Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages.  Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English.  Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.

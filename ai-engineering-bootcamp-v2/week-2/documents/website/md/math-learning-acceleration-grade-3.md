@@ -22,11 +22,11 @@ Our curated series of 3rd grade math lessons is designed for students to complet
 
 ## Multiply & Divide Tricky Numbers
 
-21 Lessons | Grade 3 Mission 3 ‍ These 3rd grade math lessons focus on multiplication and division, which is key to success in later grades. Students work deeply with the commutative, distributive and associative properties and they’ll have problem-solving opportunities at the close of each topic.
+21 Lessons | Grade 3 Mission 3  These 3rd grade math lessons focus on multiplication and division, which is key to success in later grades. Students work deeply with the commutative, distributive and associative properties and they’ll have problem-solving opportunities at the close of each topic.
 
 ## Find the Area
 
-16 Lessons | Grade 3 Mission 4 ‍ These 3rd grade math lessons continue the focus on multiplication and division as students explore area as an attribute of two-dimensional figures and relate it to their prior understandings of multiplication.
+16 Lessons | Grade 3 Mission 4  These 3rd grade math lessons continue the focus on multiplication and division as students explore area as an attribute of two-dimensional figures and relate it to their prior understandings of multiplication.
 
 ## Our approach to summer math
 
@@ -59,7 +59,7 @@ Easy account setup
 
 * Individual logins for all students, teachers, and tutors.
 * Paid School Accounts with premium features and content for all of the students, teachers and administrators within one school, plus dedicated implementation support.
-* Access to Zearn Help Center with 100+ help topics. ‍
+* Access to Zearn Help Center with 100+ help topics. 
 
 ## Motivate summer math learning with Zearn
 
@@ -73,4 +73,4 @@ As part of Zearn’s initial pilot release of Spanish-translated digital content
 
 How do Zearn digital lessons support English learners?
 
-Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include: ‍ Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time. ‍ Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages. ‍ Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English. ‍ Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.
+Zearn Math is designed to support all students, including those developing proficiency in English. Zearn Digital Lessons include:  Language flexibility: When Spanish is enabled, students can switch between Spanish and English at any time.  Scaffolds for understanding: Visual models and just-in-time feedback support math comprehension in both languages.  Written language practice: Student notes provide opportunities for labeling, sentence completion, and written explanations in Spanish or English.  Accessibility tools: Text-to-speech, closed captioning, and pause/replay features support understanding at a student’s own pace. To learn more about how Zearn supports English learners, see Zearn’s Approach to English Learner Support for Independent Digital Lessons.

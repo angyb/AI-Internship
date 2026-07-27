@@ -10,7 +10,7 @@ section: how-zearn-math-works
 description: Explore how Zearn Math works alongside classroom instruction to help
   teachers engage every student in grade-level math with a blend of digital learning
   and handwritten problem solving.
-scraped_at: '2026-07-23T22:23:47Z'
+scraped_at: '2026-07-27T19:30:33Z'
 word_count: 1125
 extraction_method: static
 ---
@@ -33,9 +33,9 @@ Zearn Math is designed to reflect the science of how kids learn — moving from 
 
 When students struggle, digital lessons adapt just in time with the support and scaffolding students need to work through challenges — without sacrificing grade-level rigor.
 
-## Handwritten work is part of every lesson
+## Handwritten work is part of Zearn Math lessons.
 
-Every lesson integrates paper-and-pencil problem solving, giving students opportunities to reflect on new concepts, demonstrate their thinking, and transfer their learning beyond the screen.
+Zearn Math lessons integrate paper-and-pencil problem solving, giving students opportunities to reflect on new concepts, demonstrate their thinking, and transfer their learning beyond the screen.
 
 ## Technology that complements teaching
 
@@ -63,7 +63,7 @@ As they learn, students progress from concrete exploration to more abstract repr
 
 ### Embedded prompts for handwritten problem solving help students strengthen and retain new learning.
 
-Every lesson guides students through paper-and-pencil work, ensuring they transfer their understanding to new contexts.
+Lessons guide students through paper-and-pencil work, ensuring they transfer their understanding to new contexts.
 
 ## Tab: GET REAL-TIME SUPPORT
 
@@ -109,7 +109,7 @@ Teachers have real-time visibility into students’ progress through grade-level
 
 #### Reinforce and extend learning with printable resources
 
-Zearn Math includes printable supplemental resources that extend learning beyond the screen. Teachers can access Student Notes to accompany each digital lesson, practice problems to reinforce math concepts, and other instructional materials to deliver targeted support.
+Zearn Math includes printable supplemental resources that extend learning beyond the screen. Teachers can access Student Notes to accompany digital lessons, practice problems to reinforce math concepts, and other instructional materials to deliver targeted support.
 
 ## Tab: FAMILIES
 

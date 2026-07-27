@@ -20,9 +20,9 @@ Press Release
 
 # Nonprofit Math Learning Organization Joins TN ALL Corps' Monthlong Celebration
 
-FOR IMMEDIATE RELEASE  CONTACT: Anna O'Sullivan  pressinquiry@zearn.org‍
+FOR IMMEDIATE RELEASE  CONTACT: Anna O'Sullivan  pressinquiry@zearn.org
 
-‍‍
+
 
 NASHVILLE, Tenn., Sept. 23, 2022 – Throughout September, the Tennessee Department of Education (TDOE) celebrated TN ALL Corps Month highlighting the state’s commitment to learning acceleration. As a way to support students with their math learning, the nonprofit educational organization – Zearn – joined Tennessee educators on the road. The celebration honored the districts and teachers who helped kids catch up and move forward in math.
 

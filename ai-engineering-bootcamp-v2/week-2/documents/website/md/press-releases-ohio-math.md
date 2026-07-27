@@ -20,7 +20,7 @@ Press Release
 
 FOR IMMEDIATE RELEASE
 
-CONTACT:  Anna O’Sullivan pressinquiry@zearn.org‍
+CONTACT:  Anna O’Sullivan pressinquiry@zearn.org
 
 COLUMBUS, July 18, 2023 – Ohio Governor Mike DeWine announced a new, online individualized learning opportunity to accelerate math learning of middle school students. All Ohio districts and schools serving students in grades 6-8 will have access at no cost to Zearn, through June 30, 2025.
 

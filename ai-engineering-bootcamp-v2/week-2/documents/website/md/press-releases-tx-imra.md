@@ -20,7 +20,7 @@ Press Release
 
 # Texas State Board of Education Approves Zearn Math for Texas™, Reviewed and Recommended by Texas Teachers
 
-FOR IMMEDIATE RELEASE ‍‍
+FOR IMMEDIATE RELEASE 
 
 Zearn Math for Texas has officially been approved through the Texas Instructional Materials Review and Approval (IMRA) process, earning one of the highest overall Quality scores among K–5 supplemental math materials.
 
@@ -28,7 +28,7 @@ Texas teacher reviewers found Zearn’s materials demonstrate alignment to the T
 
 As an SBOE-approved program, Zearn Math for Texas is designated as a high-quality instructional material. This means districts may apply a state-funded annual entitlement of $40 per student or use their ongoing Instructional Materials and Technology Allotment to fund Zearn Math for Texas.
 
-‍Zearn Math for Texas is a daily, Tier 1 companion to Bluebonnet Learning K-5 Math designed to give all students daily opportunities to explore, persevere, and break through in TEKS-aligned, grade-level learning.
+Zearn Math for Texas is a daily, Tier 1 companion to Bluebonnet Learning K-5 Math designed to give all students daily opportunities to explore, persevere, and break through in TEKS-aligned, grade-level learning.
 
 The program includes:
 
@@ -38,11 +38,11 @@ The program includes:
 * Pedagogy grounded in the Concrete–Representational–Abstract progression and aligned to the Texas RBIS for math, helping students build deep conceptual understanding and procedural fluency through adaptive, scaffolded practice.
 * English and Spanish language availability beginning in the 2026-27 academic year.
 
-‍Zearn Math for Texas is backed by proven results for Texas students, earning a “Strong” (Tier 1) rating from Evidence for ESSA, based on a large-scalerandomized control trialconducted in a major Texas district.
+Zearn Math for Texas is backed by proven results for Texas students, earning a “Strong” (Tier 1) rating from Evidence for ESSA, based on a large-scalerandomized control trialconducted in a major Texas district.
 
 A 2025 RAND evaluation of a large urban district in Texas found statistically significant gains in math performance for students learning with Zearn, as measured by the nationally normed NWEA MAP Growth assessment. Additional analyses conducted in partnership with the Texas Education Agency (TEA) show measurable STAAR growth for students who use Zearn consistently.
 
-‍Zearn is a 501(c)(3) nonprofit organization whose digital math lessons are used by more than 445,000 Texas students and tens of thousands of teachers statewide.
+Zearn is a 501(c)(3) nonprofit organization whose digital math lessons are used by more than 445,000 Texas students and tens of thousands of teachers statewide.
 
 The SBOE’s approval of Zearn Math for Texas builds on the organization's long-standing commitment to providing the highest quality instructional materials to Texas educators through initiatives such as Math Supplemental Curriculum Grants, HB 1416 Ratio Waivers, Blended Learning Grants, and other statewide programs. Zearn is committed to supporting Texas classrooms through its partnership with Great Minds’ Math Catalyst Texas. Together, Zearn Math for Texas and Math Catalyst Texas provide an SBOE-approved, coherent, multi-tiered blended learning solution to support every learner at every tier of instruction.
 

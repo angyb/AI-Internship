@@ -11,14 +11,14 @@ description: Zearn Math is a top-rated online learning platform aligned to Texas
   standards, with built-in, differentiated support for K-8 students. Learn more about
   how Zearn can be used flexibly to accelerate math learning as part of blended learning
   models and high impact tutoring.
-scraped_at: '2026-07-23T22:08:12Z'
-word_count: 2369
+scraped_at: '2026-07-27T19:34:28Z'
+word_count: 2368
 extraction_method: static
 ---
 
-HomeTexas
-
 # Support Texas students to succeed in grade-level math
+
+## Support Texas students to succeed in grade-level math Support Texas students to succeed in grade-level math Support Texas students to succeed in grade-level math
 
 Zearn Math for Texas is a daily, Tier 1 support to Bluebonnet Learning K-5 Math designed to help all students engage in grade-level learning that meets the rigor of the TEKS.
 
