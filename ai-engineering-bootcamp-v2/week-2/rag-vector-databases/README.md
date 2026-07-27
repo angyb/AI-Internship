@@ -74,6 +74,41 @@ To use with your own documents:
 - API calls will incur costs (embeddings and LLM calls)
 - For production, consider using local embedding models or managed services
 
+## Deploy to Render
+
+Deploy the Week 2 RAG API (`main.py`) as a Render **Web Service** from this GitHub repo.
+
+1. Push your code to GitHub (do **not** commit `.env`).
+2. In [Render](https://render.com): **New → Web Service** → connect the repo.
+3. Settings:
+   - **Root Directory:** `ai-engineering-bootcamp-v2/week-2/rag-vector-databases`  
+     (required — there is no `main.py` at the repo root)
+   - **Runtime:** Python
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. **Environment** → add:
+   - `OPENAI_API_KEY`
+   - `PINECONE_API_KEY`
+   - `PINECONE_INDEX_NAME`
+   - `PINECONE_HOST` (hostname only, no `https://`)
+5. Deploy, then open your service URL (for example `https://your-app.onrender.com/docs`).
+
+If you see `Could not import module "main"`, the **Root Directory** is wrong or empty.
+
+After deploy, ingest documents once (from your machine or a one-off shell):
+
+```bash
+curl -X POST "https://your-app.onrender.com/ingest"
+```
+
+Then test:
+
+```bash
+curl -s -X POST "https://your-app.onrender.com/ask" \
+  -H "Content-Type: application/json" \
+  -d '{"question": "How do I add students to my class?"}'
+```
+
 ## 📝 License
 
 This notebook is part of The AI Internship curriculum.

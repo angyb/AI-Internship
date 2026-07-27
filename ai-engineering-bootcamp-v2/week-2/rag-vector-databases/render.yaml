@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: week-2-rag-api
+    runtime: python
+    rootDir: ai-engineering-bootcamp-v2/week-2/rag-vector-databases
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PINECONE_API_KEY
+        sync: false
+      - key: PINECONE_INDEX_NAME
+        sync: false
+      - key: PINECONE_HOST
+        sync: false
