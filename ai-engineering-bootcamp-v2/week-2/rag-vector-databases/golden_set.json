@@ -1,7 +1,7 @@
 [
   {
     "question": "Who can approve a fully remote work week?",
-    "reference": "Your director can approve a fully remote work week, with reviews every 6 months",
+    "reference": "Your director can approve a fully remote work week.",
     "expected_document_ids": ["employee_handbook"]
   },
   {
@@ -11,12 +11,12 @@
   },
   {
     "question": "How many days of annual leave does Northwind offer?",
-    "reference": "Annual leave is 28 days plus public holidays.",
+    "reference": "Annual leave is 28 days.",
     "expected_document_ids": ["employee_handbook"]
   },
   {
     "question": "What are core work hours",
-    "reference": "Core hours are 10:00 to 15:00, Monday to Friday.",
+    "reference": "Core hours are 10:00 to 15:00.",
     "expected_document_ids": ["employee_handbook"]
   },
   {
