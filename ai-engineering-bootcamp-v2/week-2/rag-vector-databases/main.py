@@ -107,6 +107,40 @@ class RetrieveResponse(BaseModel):
     chunks: list[RetrievedChunkOut]
 
 
+class EvalRequest(BaseModel):
+    skip_northwind_upsert: bool = Field(
+        default=True,
+        description="Skip re-ingesting the Northwind handbook before eval (use when already indexed).",
+    )
+
+
+class EvalQuestionResult(BaseModel):
+    question: str
+    reference: str
+    expected_document_ids: list[str]
+    retrieved_document_ids: list[str]
+    retrieval_hit: bool
+    faithfulness: float | None
+    answer_correctness: float | None
+    answer: str
+    sources_needed: bool
+
+
+class EvalAverages(BaseModel):
+    retrieval_hit: float
+    faithfulness: float | None
+    answer_correctness: float | None
+    retrieval_hits: int
+    question_count: int
+
+
+class EvalResponse(BaseModel):
+    golden_set: str
+    mode: str
+    averages: EvalAverages
+    questions: list[EvalQuestionResult]
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -365,4 +399,42 @@ def ask(body: AskRequest) -> AskResponse:
     raise HTTPException(
         status_code=502,
         detail=f"Model response failed schema validation after retry: {last_error}",
+    )
+
+
+@app.post("/eval")
+def run_golden_eval(body: EvalRequest | None = None) -> EvalResponse:
+    """Run golden-set evaluation (retrieval + /ask + RAGAS) on this server."""
+
+    from eval_golden import DEFAULT_GOLDEN_SET, run_eval
+
+    request = body or EvalRequest()
+    try:
+        result = run_eval(
+            DEFAULT_GOLDEN_SET,
+            skip_northwind_upsert=request.skip_northwind_upsert,
+            verbose=False,
+        )
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Missing required environment variable: {exc.args[0]}",
+        ) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Evaluation failed: {exc}") from exc
+
+    averages = result["averages"]
+    return EvalResponse(
+        golden_set=result["golden_set"],
+        mode=result["mode"],
+        averages=EvalAverages(
+            retrieval_hit=averages["retrieval_hit"],
+            faithfulness=averages["faithfulness"],
+            answer_correctness=averages["answer_correctness"],
+            retrieval_hits=averages["retrieval_hits"],
+            question_count=averages["question_count"],
+        ),
+        questions=[EvalQuestionResult(**question) for question in result["questions"]],
     )

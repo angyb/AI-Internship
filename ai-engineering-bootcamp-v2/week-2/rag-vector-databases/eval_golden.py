@@ -10,6 +10,8 @@ Usage (live Render API — retrieval + /ask on the deployed service):
   python eval_golden.py --api-url https://ai-internship-i3lw.onrender.com --skip-northwind-upsert
   export RAG_API_URL=https://ai-internship-i3lw.onrender.com
   python eval_golden.py --skip-northwind-upsert
+
+The FastAPI service also exposes POST /eval (same logic, runs on the server).
 """
 
 from __future__ import annotations
@@ -21,6 +23,7 @@ import sys
 import types
 import warnings
 from pathlib import Path
+from typing import Any
 
 import httpx
 from dotenv import load_dotenv
@@ -87,7 +90,7 @@ def ensure_northwind_indexed_api(api_url: str) -> None:
     response.raise_for_status()
 
 
-def collect_eval_rows_local(golden_set: list[dict]) -> list[dict]:
+def collect_eval_rows_local(golden_set: list[dict], *, verbose: bool = False) -> list[dict]:
     from main import DEFAULT_MODEL, build_grounding_prompt, call_model_structured, retrieve_context
 
     rows: list[dict] = []
@@ -109,12 +112,18 @@ def collect_eval_rows_local(golden_set: list[dict]) -> list[dict]:
             question, reference, expected_docs, retrieved_doc_ids, chunk_ids,
             hit, [chunk.text for chunk in chunks], answer.answer, answer.sources_needed,
         ))
-        _print_row_status(question, expected_docs, retrieved_doc_ids, answer.answer, hit)
+        if verbose:
+            _print_row_status(question, expected_docs, retrieved_doc_ids, answer.answer, hit)
 
     return rows
 
 
-def collect_eval_rows_api(api_url: str, golden_set: list[dict]) -> list[dict]:
+def collect_eval_rows_api(
+    api_url: str,
+    golden_set: list[dict],
+    *,
+    verbose: bool = False,
+) -> list[dict]:
     base = api_url.rstrip("/")
     rows: list[dict] = []
 
@@ -154,7 +163,8 @@ def collect_eval_rows_api(api_url: str, golden_set: list[dict]) -> list[dict]:
             question, reference, expected_docs, retrieved_doc_ids, chunk_ids,
             hit, contexts, answer_text, sources_needed,
         ))
-        _print_row_status(question, expected_docs, retrieved_doc_ids, answer_text, hit)
+        if verbose:
+            _print_row_status(question, expected_docs, retrieved_doc_ids, answer_text, hit)
 
     return rows
 
@@ -222,42 +232,142 @@ def score_with_ragas(eval_rows: list[dict]):
     )
 
 
-def print_summary(eval_rows: list[dict], ragas_result, api_url: str | None = None) -> None:
+def _safe_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    try:
+        result = float(value)
+    except (TypeError, ValueError):
+        return None
+    if result != result:  # NaN
+        return None
+    return result
+
+
+def build_eval_result(
+    eval_rows: list[dict],
+    ragas_result,
+    *,
+    golden_set_path: Path,
+    api_url: str | None = None,
+) -> dict[str, Any]:
     df = ragas_result.to_pandas()
-    df["retrieval_hit"] = [row["retrieval_hit"] for row in eval_rows]
-    df["expected_document_ids"] = [row["expected_document_ids"] for row in eval_rows]
-    df["retrieved_document_ids"] = [row["retrieved_document_ids"] for row in eval_rows]
+    questions: list[dict[str, Any]] = []
 
-    if api_url:
-        print(f"Evaluated via API: {api_url.rstrip('/')}\n")
+    for index, row in enumerate(eval_rows):
+        faithfulness = (
+            _safe_float(df.iloc[index]["faithfulness"])
+            if "faithfulness" in df.columns
+            else None
+        )
+        correctness = (
+            _safe_float(df.iloc[index]["answer_correctness"])
+            if "answer_correctness" in df.columns
+            else None
+        )
+        questions.append({
+            "question": row["question"],
+            "reference": row["reference"],
+            "expected_document_ids": row["expected_document_ids"],
+            "retrieved_document_ids": row["retrieved_document_ids"],
+            "retrieval_hit": row["retrieval_hit"],
+            "faithfulness": faithfulness,
+            "answer_correctness": correctness,
+            "answer": row["response"],
+            "sources_needed": row["sources_needed"],
+        })
 
-    display_cols = [
-        "user_input",
-        "retrieval_hit",
-        "faithfulness",
-        "answer_correctness",
-        "expected_document_ids",
-        "retrieved_document_ids",
-    ]
-    present_cols = [col for col in display_cols if col in df.columns]
-
-    print("=" * 72)
-    print("Per-question scores")
-    print("=" * 72)
-    print(df[present_cols].to_string(index=False))
-
-    retrieval_rate = sum(1 for row in eval_rows if row["retrieval_hit"]) / len(eval_rows)
+    retrieval_hits = sum(1 for row in eval_rows if row["retrieval_hit"])
+    question_count = len(eval_rows)
     avg_faithfulness = df["faithfulness"].mean() if "faithfulness" in df.columns else float("nan")
     avg_correctness = (
         df["answer_correctness"].mean() if "answer_correctness" in df.columns else float("nan")
     )
 
-    print("\n" + "=" * 72)
+    return {
+        "golden_set": golden_set_path.name,
+        "mode": "api" if api_url else "local",
+        "api_url": api_url,
+        "question_count": question_count,
+        "averages": {
+            "retrieval_hit": retrieval_hits / question_count if question_count else 0.0,
+            "faithfulness": _safe_float(avg_faithfulness),
+            "answer_correctness": _safe_float(avg_correctness),
+            "retrieval_hits": retrieval_hits,
+            "question_count": question_count,
+        },
+        "questions": questions,
+    }
+
+
+def run_eval(
+    golden_set_path: Path = DEFAULT_GOLDEN_SET,
+    *,
+    api_url: str | None = None,
+    skip_northwind_upsert: bool = False,
+    verbose: bool = False,
+) -> dict[str, Any]:
+    """Run golden-set eval and return structured results for CLI, API, or Streamlit."""
+
+    golden_set = load_golden_set(golden_set_path)
+    normalized_api_url = api_url.rstrip("/") if api_url else None
+
+    if not skip_northwind_upsert:
+        if normalized_api_url:
+            ensure_northwind_indexed_api(normalized_api_url)
+        else:
+            ensure_northwind_indexed_local()
+
+    if normalized_api_url:
+        eval_rows = collect_eval_rows_api(normalized_api_url, golden_set, verbose=verbose)
+    else:
+        eval_rows = collect_eval_rows_local(golden_set, verbose=verbose)
+
+    ragas_result = score_with_ragas(eval_rows)
+    return build_eval_result(
+        eval_rows,
+        ragas_result,
+        golden_set_path=golden_set_path,
+        api_url=normalized_api_url,
+    )
+
+
+def print_summary_from_result(result: dict[str, Any], api_url: str | None = None) -> None:
+    if api_url:
+        print(f"Evaluated via API: {api_url.rstrip('/')}\n")
+
+    print("=" * 72)
+    print("Per-question scores")
+    print("=" * 72)
+    for item in result["questions"]:
+        hit_label = "HIT" if item["retrieval_hit"] else "MISS"
+        faith = item["faithfulness"]
+        correctness = item["answer_correctness"]
+        faith_str = f"{faith:.4f}" if faith is not None else "—"
+        corr_str = f"{correctness:.4f}" if correctness is not None else "—"
+        print(f"[{hit_label}] {item['question']}")
+        print(f"       faithfulness={faith_str}  answer_correctness={corr_str}")
+        print(f"       expected: {item['expected_document_ids']}")
+        print(f"       retrieved: {item['retrieved_document_ids']}\n")
+
+    averages = result["averages"]
+    print("=" * 72)
     print("Averages across golden set")
     print("=" * 72)
-    print(f"  retrieval_hit:      {retrieval_rate:.2%} ({sum(row['retrieval_hit'] for row in eval_rows)}/{len(eval_rows)})")
-    print(f"  faithfulness:       {avg_faithfulness:.4f}")
-    print(f"  answer_correctness: {avg_correctness:.4f}")
+    print(
+        f"  retrieval_hit:      {averages['retrieval_hit']:.2%} "
+        f"({averages['retrieval_hits']}/{averages['question_count']})"
+    )
+    faith_avg = averages["faithfulness"]
+    corr_avg = averages["answer_correctness"]
+    if faith_avg is not None:
+        print(f"  faithfulness:       {faith_avg:.4f}")
+    else:
+        print("  faithfulness:       —")
+    if corr_avg is not None:
+        print(f"  answer_correctness: {corr_avg:.4f}")
+    else:
+        print("  answer_correctness: —")
 
 
 def main() -> None:
@@ -280,29 +390,23 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    golden_set = load_golden_set(args.golden_set)
     api_url = args.api_url.rstrip("/") if args.api_url else None
     mode = f"API ({api_url})" if api_url else "local pipeline"
-    print(f"Golden set: {len(golden_set)} questions from {args.golden_set.name}")
+    print(f"Golden set: {len(load_golden_set(args.golden_set))} questions from {args.golden_set.name}")
     print(f"Mode: {mode}\n")
 
     if not args.skip_northwind_upsert:
-        print("Ensuring employee_handbook is indexed for Northwind questions...")
-        if api_url:
-            ensure_northwind_indexed_api(api_url)
-        else:
-            ensure_northwind_indexed_local()
-        print()
+        print("Ensuring employee_handbook is indexed for Northwind questions...\n")
 
     try:
-        if api_url:
-            eval_rows = collect_eval_rows_api(api_url, golden_set)
-        else:
-            eval_rows = collect_eval_rows_local(golden_set)
-
-        print("Scoring with RAGAS locally (faithfulness + answer_correctness)...")
-        ragas_result = score_with_ragas(eval_rows)
-        print_summary(eval_rows, ragas_result, api_url=api_url)
+        print("Scoring with RAGAS (faithfulness + answer_correctness)...")
+        result = run_eval(
+            args.golden_set,
+            api_url=api_url,
+            skip_northwind_upsert=args.skip_northwind_upsert,
+            verbose=True,
+        )
+        print_summary_from_result(result, api_url=api_url)
     except httpx.HTTPStatusError as exc:
         print(f"API error: {exc.response.status_code} {exc.response.text[:500]}")
         if api_url and exc.response.status_code == 404:

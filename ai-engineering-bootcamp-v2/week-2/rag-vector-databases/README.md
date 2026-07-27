@@ -123,13 +123,15 @@ streamlit run demo_page.py
 
 **Assignment screenshot:** capture the **Ask** tab after a successful question — show the sidebar with your Render URL, the answer, chunk_ids/sources under Citations, and (optionally) the **Ingest** tab with a pasted document + success message.
 
+Use the **Eval** tab (see Golden-set evaluation below) for eval screenshots in the browser.
+
 ## Golden-set evaluation
 
 Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinecone pipeline.
 
 **Files:**
 - `golden_set.json` — 5 questions with human-written reference answers and expected `document_id`s
-- `eval_golden.py` — runs retrieval + `/ask` generation, then scores with RAGAS
+- `eval_golden.py` — CLI runner (same logic as `POST /eval`)
 
 **Metrics tracked:**
 
@@ -139,14 +141,41 @@ Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinec
 | `faithfulness` | Is the answer supported by retrieved context? (RAGAS) |
 | `answer_correctness` | How close is the answer to the reference? (RAGAS — your **correctness** score) |
 
+### Option A — Streamlit (browser, recommended on Render)
+
+1. Deploy the latest API to Render (includes `POST /eval` + RAGAS).
+2. Run Streamlit locally and point it at Render:
+
 ```bash
 cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
 source .venv/bin/activate
 pip install -r requirements-dev.txt
-python eval_golden.py
+export RAG_API_URL=https://ai-internship-i3lw.onrender.com
+streamlit run demo_page.py
 ```
 
-**Against your live Render API** (after deploying the latest code with `POST /retrieve`):
+3. Open the **Eval** tab, leave **Skip Northwind handbook upsert** checked (if already ingested), click **Run golden-set eval**.
+
+The full pipeline runs on Render; Streamlit only displays the results.
+
+### Option B — Render Swagger
+
+After deploy, open `https://your-app.onrender.com/docs` → **POST /eval** → Execute with:
+
+```json
+{"skip_northwind_upsert": true}
+```
+
+### Option C — Local terminal
+
+```bash
+cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+python eval_golden.py --skip-northwind-upsert
+```
+
+To eval a remote API from the CLI (legacy — prefer Option A or B):
 
 ```bash
 python eval_golden.py \
@@ -154,11 +183,7 @@ python eval_golden.py \
   --skip-northwind-upsert
 ```
 
-Or set `RAG_API_URL` in `.env` and omit `--api-url`. RAGAS scoring still runs locally (needs `OPENAI_API_KEY` on your machine); retrieval and `/ask` go through Render.
-
-The script upserts the Northwind handbook before eval unless you pass `--skip-northwind-upsert`.
-
-**Assignment screenshot:** terminal output showing the per-question table with all three metrics and the averages block at the bottom.
+**Assignment screenshot:** Eval tab or terminal output showing per-question scores and averages for all three metrics.
 
 ## 📝 License
 

@@ -45,10 +45,16 @@ def api_url() -> str:
     return st.session_state.get("api_url", DEFAULT_API_URL).rstrip("/")
 
 
-def call_json(method: str, path: str, payload: dict | None = None) -> tuple[int, dict | str]:
+def call_json(
+    method: str,
+    path: str,
+    payload: dict | None = None,
+    *,
+    timeout: float = 120.0,
+) -> tuple[int, dict | str]:
     url = f"{api_url()}{path}"
     try:
-        with httpx.Client(timeout=120.0) as client:
+        with httpx.Client(timeout=timeout) as client:
             if method == "GET":
                 response = client.get(url)
             else:
@@ -106,7 +112,7 @@ st.sidebar.code(
     language="bash",
 )
 
-ingest_tab, ask_tab = st.tabs(["Ingest", "Ask"])
+ingest_tab, ask_tab, eval_tab = st.tabs(["Ingest", "Ask", "Eval"])
 
 with ingest_tab:
     st.subheader("POST /ingest — paste a document")
@@ -197,3 +203,65 @@ with ask_tab:
 
                 with st.expander("Full JSON response"):
                     st.json(data)
+
+with eval_tab:
+    st.subheader("POST /eval — golden-set evaluation")
+    st.markdown(
+        "Runs all questions in `golden_set.json` against the API: retrieval, answer generation, "
+        "and RAGAS scoring (faithfulness + answer_correctness). "
+        "When pointed at Render, the full eval runs on the server — no local terminal needed."
+    )
+
+    skip_northwind = st.checkbox(
+        "Skip Northwind handbook upsert",
+        value=True,
+        help="Leave checked if `employee_handbook` is already indexed on this API.",
+    )
+
+    if st.button("Run golden-set eval", type="primary"):
+        payload = {"skip_northwind_upsert": skip_northwind}
+        with st.spinner("Running eval (retrieval + generation + RAGAS — may take 2–3 minutes)..."):
+            status, data = call_json("POST", "/eval", payload, timeout=600.0)
+
+        if status != 200 or not isinstance(data, dict):
+            render_api_error(status, data)
+        else:
+            averages = data.get("averages", {})
+            hits = averages.get("retrieval_hits", 0)
+            count = averages.get("question_count", 0)
+            faith = averages.get("faithfulness")
+            correctness = averages.get("answer_correctness")
+
+            st.success(f"Eval complete — {data.get('golden_set', 'golden_set.json')}")
+
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                st.metric("Retrieval hit", f"{hits}/{count}")
+            with c2:
+                st.metric("Faithfulness (avg)", f"{faith:.4f}" if faith is not None else "—")
+            with c3:
+                st.metric("Correctness (avg)", f"{correctness:.4f}" if correctness is not None else "—")
+
+            rows = []
+            for item in data.get("questions", []):
+                rows.append({
+                    "Question": item.get("question", ""),
+                    "Retrieval hit": item.get("retrieval_hit"),
+                    "Faithfulness": item.get("faithfulness"),
+                    "Correctness": item.get("answer_correctness"),
+                    "Expected docs": ", ".join(item.get("expected_document_ids", [])),
+                    "Retrieved docs": ", ".join(item.get("retrieved_document_ids", [])),
+                })
+
+            if rows:
+                st.markdown("### Per-question scores")
+                st.dataframe(rows, use_container_width=True, hide_index=True)
+
+            with st.expander("Answers"):
+                for item in data.get("questions", []):
+                    st.markdown(f"**{item.get('question', '')}**")
+                    st.markdown(item.get("answer", ""))
+                    st.divider()
+
+            with st.expander("Full JSON response"):
+                st.json(data)
