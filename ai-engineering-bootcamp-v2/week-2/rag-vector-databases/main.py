@@ -8,7 +8,7 @@ from string import Template
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from openai import OpenAI
+from openai import APIError, OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
 from ingest import (
@@ -62,7 +62,11 @@ class Answer(BaseModel):
 class AskRequest(BaseModel):
     question: str
     force_bad: bool = False
-    model: str | None = None
+    model: str | None = Field(
+        default=None,
+        description="OpenAI model override. Omit to use the default (gpt-4o).",
+        json_schema_extra={"examples": ["gpt-4o"]},
+    )
 
 
 class AskResponse(BaseModel):
@@ -124,6 +128,16 @@ def ingest(
         status=result.status,
         vectors_cleared=result.vectors_cleared,
     )
+
+
+def resolve_model(model: str | None) -> str:
+    """Use the default when model is omitted or Swagger's placeholder 'string'."""
+    if not model:
+        return DEFAULT_MODEL
+    cleaned = model.strip()
+    if not cleaned or cleaned.lower() == "string":
+        return DEFAULT_MODEL
+    return cleaned
 
 
 def compute_cost_usd(model: str, prompt_tokens: int, completion_tokens: int) -> float:
@@ -235,7 +249,7 @@ def call_model_unsafe(prompt: str, model: str) -> tuple[Answer, int, int, int]:
 def ask(body: AskRequest) -> AskResponse:
     """Retrieve context from Pinecone, then answer with structured output."""
 
-    model = body.model or DEFAULT_MODEL
+    model = resolve_model(body.model)
     last_error: str | None = None
 
     try:
@@ -279,6 +293,11 @@ def ask(body: AskRequest) -> AskResponse:
         except (ValidationError, ValueError) as exc:
             last_error = str(exc)
             continue
+        except APIError as exc:
+            raise HTTPException(
+                status_code=502,
+                detail=f"OpenAI API error: {exc.message}",
+            ) from exc
 
     raise HTTPException(
         status_code=502,
