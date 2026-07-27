@@ -1,6 +1,8 @@
-# Local / notebook deps — not needed on Render.
+# Local / notebook / Streamlit UI — not needed on Render.
 -r requirements.txt
 
+streamlit
+httpx
 langchain>=1.0
 langchain-core>=0.1.0
 langchain-community>=0.0.20

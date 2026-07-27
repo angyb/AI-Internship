@@ -109,6 +109,20 @@ curl -s -X POST "https://your-app.onrender.com/ask" \
   -d '{"question": "How do I add students to my class?"}'
 ```
 
+## Streamlit demo UI
+
+Minimal UI that calls `/ingest` and `/ask` on your live API (no RAG logic in Streamlit).
+
+```bash
+cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+export RAG_API_URL=https://your-app.onrender.com   # or set in .env
+streamlit run demo_page.py
+```
+
+**Assignment screenshot:** capture the **Ask** tab after a successful question — show the sidebar with your Render URL, the answer, chunk_ids/sources under Citations, and (optionally) the **Ingest** tab with a pasted document + success message.
+
 ## 📝 License
 
 This notebook is part of The AI Internship curriculum.

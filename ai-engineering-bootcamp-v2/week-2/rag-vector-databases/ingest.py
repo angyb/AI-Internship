@@ -33,6 +33,7 @@ DOCUMENT_GLOBS = (
     DOCS_DIR / "zendesk" / "pdf",
     DOCS_DIR / "website" / "md",
     DOCS_DIR / "website" / "pdf",
+    DOCS_DIR / "northwind",
 )
 
 
@@ -319,6 +320,75 @@ def upsert_chunks(chunks: list[Document]) -> int:
 
     flush_batch()
     return total_indexed
+
+
+def delete_vectors_for_document(document_id: str) -> int:
+    """Remove all vectors for one document_id before re-ingesting pasted text."""
+    index = _pinecone_index()
+    index.delete(filter={"document_id": document_id})
+    return 0
+
+
+def ingest_text(
+    document_id: str,
+    text: str,
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    replace_existing: bool = True,
+    source: str | None = None,
+) -> IngestResult:
+    """Chunk, embed, and upsert a single pasted document."""
+    doc_id = document_id.strip()
+    body = _strip_invisible_chars(text.strip())
+    if not doc_id:
+        raise ValueError("document_id must not be empty")
+    if not body:
+        raise ValueError("text must not be empty")
+
+    doc_source = source or f"ui/{doc_id}"
+    chunks = chunk_text(body, doc_id, doc_source, chunk_size, chunk_overlap)
+    if not chunks:
+        raise ValueError("No chunks produced from text")
+
+    if replace_existing:
+        delete_vectors_for_document(doc_id)
+
+    chunks_indexed = upsert_chunks(chunks)
+    return IngestResult(
+        document_id=doc_id,
+        chunks_indexed=chunks_indexed,
+        status="ok",
+        vectors_cleared=0,
+    )
+
+
+def ingest_file(
+    path: Path | str,
+    document_id: str | None = None,
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    replace_existing: bool = True,
+) -> IngestResult:
+    """Read one text file from disk and upsert it without touching other documents."""
+    file_path = Path(path).resolve()
+    if not file_path.is_file():
+        raise ValueError(f"File not found: {file_path}")
+
+    text = file_path.read_text(encoding="utf-8")
+    doc_id = (document_id or file_path.stem).strip()
+    try:
+        source = str(file_path.relative_to(DOCS_DIR))
+    except ValueError:
+        source = str(file_path)
+
+    return ingest_text(
+        document_id=doc_id,
+        text=text,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        replace_existing=replace_existing,
+        source=source,
+    )
 
 
 def ingest_documents(

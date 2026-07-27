@@ -16,6 +16,7 @@ from ingest import (
     DEFAULT_CHUNK_SIZE,
     RetrievedChunk,
     ingest_documents,
+    ingest_text,
     retrieve_chunks_diverse,
 )
 
@@ -86,6 +87,11 @@ class IngestResponse(BaseModel):
     vectors_cleared: int
 
 
+class IngestDocumentRequest(BaseModel):
+    document_id: str = Field(description="Identifier stored in Pinecone metadata for retrieval citations.")
+    text: str = Field(description="Raw document text to chunk, embed, and upsert.")
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -96,22 +102,37 @@ def ingest(
     chunk_size: int = DEFAULT_CHUNK_SIZE,
     chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
     clear_index: bool = True,
+    body: IngestDocumentRequest | None = None,
 ) -> IngestResponse:
-    """Load week-2/documents, chunk, embed, and upsert into Pinecone.
+    """Ingest documents into Pinecone.
 
-    By default, clears the index before upserting so stale vectors from prior
-    ingest runs are removed.
+    With a JSON body ``{"document_id": "...", "text": "..."}``, chunks and upserts
+    that single pasted document (replacing any prior vectors for the same document_id).
 
-    curl example:
+    With no body, loads the full week-2/documents corpus from disk. By default,
+    clears the index before a full-corpus upsert.
+
+    curl examples:
       curl -X POST "http://127.0.0.1:8000/ingest?chunk_size=800&chunk_overlap=100"
+      curl -X POST "http://127.0.0.1:8000/ingest" \\
+        -H "Content-Type: application/json" \\
+        -d '{"document_id":"my-note","text":"Zearn supports closed captioning."}'
     """
 
     try:
-        result = ingest_documents(
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
-            clear_index_first=clear_index,
-        )
+        if body is not None:
+            result = ingest_text(
+                document_id=body.document_id,
+                text=body.text,
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
+            )
+        else:
+            result = ingest_documents(
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
+                clear_index_first=clear_index,
+            )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except KeyError as exc:
