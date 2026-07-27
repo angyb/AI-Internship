@@ -92,6 +92,21 @@ class IngestDocumentRequest(BaseModel):
     text: str = Field(description="Raw document text to chunk, embed, and upsert.")
 
 
+class RetrieveRequest(BaseModel):
+    question: str
+
+
+class RetrievedChunkOut(BaseModel):
+    chunk_id: str
+    document_id: str
+    text: str
+    source: str
+
+
+class RetrieveResponse(BaseModel):
+    chunks: list[RetrievedChunkOut]
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -209,6 +224,33 @@ def retrieve_context(question: str) -> tuple[list[RetrievedChunk], str, list[str
             sources.append(label)
 
     return chunks, context, chunk_ids, sources
+
+
+@app.post("/retrieve")
+def retrieve(body: RetrieveRequest) -> RetrieveResponse:
+    """Return top-k retrieved chunks with text (for eval and debugging)."""
+
+    try:
+        chunks, _context, _chunk_ids, _sources = retrieve_context(body.question)
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Missing required environment variable: {exc.args[0]}",
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+
+    return RetrieveResponse(
+        chunks=[
+            RetrievedChunkOut(
+                chunk_id=chunk.chunk_id,
+                document_id=chunk.title,
+                text=chunk.text,
+                source=chunk.source,
+            )
+            for chunk in chunks
+        ]
+    )
 
 
 def build_grounding_prompt(question: str, context: str) -> str:

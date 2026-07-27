@@ -146,7 +146,17 @@ pip install -r requirements-dev.txt
 python eval_golden.py
 ```
 
-The script upserts the Northwind handbook before eval (so questions 2–3 can hit). Skip with `--skip-northwind-upsert` if already indexed.
+**Against your live Render API** (after deploying the latest code with `POST /retrieve`):
+
+```bash
+python eval_golden.py \
+  --api-url https://ai-internship-i3lw.onrender.com \
+  --skip-northwind-upsert
+```
+
+Or set `RAG_API_URL` in `.env` and omit `--api-url`. RAGAS scoring still runs locally (needs `OPENAI_API_KEY` on your machine); retrieval and `/ask` go through Render.
+
+The script upserts the Northwind handbook before eval unless you pass `--skip-northwind-upsert`.
 
 **Assignment screenshot:** terminal output showing the per-question table with all three metrics and the averages block at the bottom.
 
