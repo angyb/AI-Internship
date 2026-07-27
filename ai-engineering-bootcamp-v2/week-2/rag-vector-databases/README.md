@@ -123,6 +123,33 @@ streamlit run demo_page.py
 
 **Assignment screenshot:** capture the **Ask** tab after a successful question — show the sidebar with your Render URL, the answer, chunk_ids/sources under Citations, and (optionally) the **Ingest** tab with a pasted document + success message.
 
+## Golden-set evaluation
+
+Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinecone pipeline.
+
+**Files:**
+- `golden_set.json` — 5 questions with human-written reference answers and expected `document_id`s
+- `eval_golden.py` — runs retrieval + `/ask` generation, then scores with RAGAS
+
+**Metrics tracked:**
+
+| Metric | What it measures |
+|--------|------------------|
+| `retrieval_hit` | Did top-k chunks include the expected `document_id`? (binary) |
+| `faithfulness` | Is the answer supported by retrieved context? (RAGAS) |
+| `answer_correctness` | How close is the answer to the reference? (RAGAS — your **correctness** score) |
+
+```bash
+cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+python eval_golden.py
+```
+
+The script upserts the Northwind handbook before eval (so questions 2–3 can hit). Skip with `--skip-northwind-upsert` if already indexed.
+
+**Assignment screenshot:** terminal output showing the per-question table with all three metrics and the averages block at the bottom.
+
 ## 📝 License
 
 This notebook is part of The AI Internship curriculum.
