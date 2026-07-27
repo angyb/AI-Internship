@@ -16,7 +16,7 @@ from ingest import (
     DEFAULT_CHUNK_SIZE,
     RetrievedChunk,
     ingest_documents,
-    retrieve_chunks,
+    retrieve_chunks_diverse,
 )
 
 _ENV_PATH = Path(__file__).resolve().parent / ".env"
@@ -27,6 +27,8 @@ client = OpenAI()
 
 DEFAULT_MODEL = "gpt-4o"
 RETRIEVAL_K = 5
+RETRIEVAL_FETCH_K = 10
+MAX_CHUNKS_PER_DOCUMENT = 2
 
 # Grounding prompt template — filled after retrieval with numbered chunks.
 GROUNDING_PROMPT_TEMPLATE = Template("""\
@@ -37,6 +39,7 @@ Rules:
 - Cite the document_id for each chunk you use in your answer (e.g. [document_id: accessibility]).
 - If the context is insufficient to answer the question, refuse clearly in your answer \
 and set sources_needed to true.
+- Follow the question's requested format (e.g. bullet list, succinct, names only without descriptions).
 
 Retrieved context:
 $context
@@ -149,7 +152,12 @@ def format_retrieved_context(chunks: list[RetrievedChunk]) -> str:
 
 def retrieve_context(question: str) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
     """Embed the question, retrieve top-k chunks, and format context."""
-    chunks = retrieve_chunks(question, k=RETRIEVAL_K)
+    chunks = retrieve_chunks_diverse(
+        question,
+        k=RETRIEVAL_K,
+        fetch_k=RETRIEVAL_FETCH_K,
+        max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+    )
 
     if not chunks:
         return [], "", [], []
