@@ -109,6 +109,23 @@ curl -s -X POST "https://your-app.onrender.com/ask" \
   -d '{"question": "How do I add students to my class?"}'
 ```
 
+## Hybrid search (BM25 + vectors)
+
+Retrieval combines **Pinecone dense search** with an in-process **BM25 keyword index**, fused via reciprocal rank fusion (RRF). This helps exact-term queries (e.g. `director`, `09:00`, `POL-101`) while keeping semantic matches strong.
+
+- **Default:** hybrid is on for `/ask`, `/retrieve`, and `/eval`
+- **Render startup:** BM25 rebuilds from existing Pinecone vectors (so pasted ingests work without local files)
+- **Ingest sync:** every `POST /ingest` updates both Pinecone and BM25
+- **Disable:** set `HYBRID_SEARCH=false` in the environment to fall back to dense-only
+- **Compare in Swagger:** `POST /retrieve` accepts `"use_hybrid": false` for dense-only debugging
+
+Debug side-by-side rankings locally:
+
+```bash
+python debug_retrieve.py "director approval fully remote"
+python debug_retrieve.py --dense-only "director approval fully remote"
+```
+
 ## Streamlit demo UI
 
 Minimal UI that calls `/ingest` and `/ask` on your live API (no RAG logic in Streamlit).

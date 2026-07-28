@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import logging
+import os
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 from string import Template
 
@@ -18,12 +21,35 @@ from ingest import (
     ingest_documents,
     ingest_text,
     retrieve_chunks_diverse,
+    retrieve_chunks_hybrid,
 )
 
 _ENV_PATH = Path(__file__).resolve().parent / ".env"
 load_dotenv(_ENV_PATH)
 
-app = FastAPI(title="Week 2 RAG API")
+logger = logging.getLogger(__name__)
+
+
+def hybrid_search_enabled() -> bool:
+    return os.getenv("HYBRID_SEARCH", "true").lower() != "false"
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    if hybrid_search_enabled():
+        from bm25_index import get_bm25_index
+
+        start = time.perf_counter()
+        try:
+            chunk_count = get_bm25_index().rebuild_from_pinecone()
+            elapsed = time.perf_counter() - start
+            logger.info("BM25 index rebuilt: %d chunks in %.1fs", chunk_count, elapsed)
+        except Exception as exc:
+            logger.warning("BM25 rebuild from Pinecone failed: %s", exc)
+    yield
+
+
+app = FastAPI(title="Week 2 RAG API", lifespan=lifespan)
 client = OpenAI()
 
 DEFAULT_MODEL = "gpt-4o"
@@ -94,6 +120,10 @@ class IngestDocumentRequest(BaseModel):
 
 class RetrieveRequest(BaseModel):
     question: str
+    use_hybrid: bool = Field(
+        default=True,
+        description="Combine dense vector search with BM25 keyword search (RRF fusion).",
+    )
 
 
 class RetrievedChunkOut(BaseModel):
@@ -234,14 +264,26 @@ def format_retrieved_context(chunks: list[RetrievedChunk]) -> str:
     return "\n\n".join(parts)
 
 
-def retrieve_context(question: str) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
+def retrieve_context(
+    question: str,
+    *,
+    use_hybrid: bool = True,
+) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
     """Embed the question, retrieve top-k chunks, and format context."""
-    chunks = retrieve_chunks_diverse(
-        question,
-        k=RETRIEVAL_K,
-        fetch_k=RETRIEVAL_FETCH_K,
-        max_per_document=MAX_CHUNKS_PER_DOCUMENT,
-    )
+    if use_hybrid and hybrid_search_enabled():
+        chunks = retrieve_chunks_hybrid(
+            question,
+            k=RETRIEVAL_K,
+            fetch_k=RETRIEVAL_FETCH_K,
+            max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+        )
+    else:
+        chunks = retrieve_chunks_diverse(
+            question,
+            k=RETRIEVAL_K,
+            fetch_k=RETRIEVAL_FETCH_K,
+            max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+        )
 
     if not chunks:
         return [], "", [], []
@@ -265,7 +307,10 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
     """Return top-k retrieved chunks with text (for eval and debugging)."""
 
     try:
-        chunks, _context, _chunk_ids, _sources = retrieve_context(body.question)
+        chunks, _context, _chunk_ids, _sources = retrieve_context(
+            body.question,
+            use_hybrid=body.use_hybrid,
+        )
     except KeyError as exc:
         raise HTTPException(
             status_code=500,

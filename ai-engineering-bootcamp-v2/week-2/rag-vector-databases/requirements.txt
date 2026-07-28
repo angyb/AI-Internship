@@ -11,3 +11,4 @@ langchain-text-splitters
 pymupdf
 pypdf
 ragas>=0.4.3
+rank-bm25

@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+import pandas as pd
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
@@ -209,7 +210,7 @@ def _print_row_status(
     print(f"       answer: {preview}\n")
 
 
-def score_with_ragas(eval_rows: list[dict]):
+def score_with_ragas(eval_rows: list[dict]) -> pd.DataFrame:
     ragas_rows = [
         {
             "user_input": row["user_input"],
@@ -224,12 +225,41 @@ def score_with_ragas(eval_rows: list[dict]):
     judge_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-4o-mini", temperature=0))
     judge_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings(model="text-embedding-3-small"))
 
-    return evaluate(
+    result = evaluate(
         dataset=dataset,
         metrics=[faithfulness, answer_correctness],
         llm=judge_llm,
         embeddings=judge_embeddings,
     )
+    df = result.to_pandas().copy()
+
+    # RAGAS can return NaN for individual rows on Render (timeouts / rate limits).
+    # Retry missing scores one row at a time before giving up.
+    for index in range(len(eval_rows)):
+        missing_metrics: list = []
+        if "faithfulness" in df.columns and _safe_float(df.iloc[index]["faithfulness"]) is None:
+            missing_metrics.append(faithfulness)
+        if (
+            "answer_correctness" in df.columns
+            and _safe_float(df.iloc[index]["answer_correctness"]) is None
+        ):
+            missing_metrics.append(answer_correctness)
+        if not missing_metrics:
+            continue
+
+        retry_result = evaluate(
+            dataset=EvaluationDataset.from_list([ragas_rows[index]]),
+            metrics=missing_metrics,
+            llm=judge_llm,
+            embeddings=judge_embeddings,
+        )
+        retry_df = retry_result.to_pandas()
+        for metric in missing_metrics:
+            column = metric.name
+            if column in retry_df.columns and column in df.columns:
+                df.at[index, column] = retry_df.iloc[0][column]
+
+    return df
 
 
 def _safe_float(value: Any) -> float | None:
@@ -246,23 +276,22 @@ def _safe_float(value: Any) -> float | None:
 
 def build_eval_result(
     eval_rows: list[dict],
-    ragas_result,
+    scores_df: pd.DataFrame,
     *,
     golden_set_path: Path,
     api_url: str | None = None,
 ) -> dict[str, Any]:
-    df = ragas_result.to_pandas()
     questions: list[dict[str, Any]] = []
 
     for index, row in enumerate(eval_rows):
-        faithfulness = (
-            _safe_float(df.iloc[index]["faithfulness"])
-            if "faithfulness" in df.columns
+        faithfulness_score = (
+            _safe_float(scores_df.iloc[index]["faithfulness"])
+            if "faithfulness" in scores_df.columns
             else None
         )
         correctness = (
-            _safe_float(df.iloc[index]["answer_correctness"])
-            if "answer_correctness" in df.columns
+            _safe_float(scores_df.iloc[index]["answer_correctness"])
+            if "answer_correctness" in scores_df.columns
             else None
         )
         questions.append({
@@ -271,7 +300,7 @@ def build_eval_result(
             "expected_document_ids": row["expected_document_ids"],
             "retrieved_document_ids": row["retrieved_document_ids"],
             "retrieval_hit": row["retrieval_hit"],
-            "faithfulness": faithfulness,
+            "faithfulness": faithfulness_score,
             "answer_correctness": correctness,
             "answer": row["response"],
             "sources_needed": row["sources_needed"],
@@ -279,9 +308,13 @@ def build_eval_result(
 
     retrieval_hits = sum(1 for row in eval_rows if row["retrieval_hit"])
     question_count = len(eval_rows)
-    avg_faithfulness = df["faithfulness"].mean() if "faithfulness" in df.columns else float("nan")
+    avg_faithfulness = (
+        scores_df["faithfulness"].mean() if "faithfulness" in scores_df.columns else float("nan")
+    )
     avg_correctness = (
-        df["answer_correctness"].mean() if "answer_correctness" in df.columns else float("nan")
+        scores_df["answer_correctness"].mean()
+        if "answer_correctness" in scores_df.columns
+        else float("nan")
     )
 
     return {

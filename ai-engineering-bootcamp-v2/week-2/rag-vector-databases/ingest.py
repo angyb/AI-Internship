@@ -13,6 +13,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pinecone import Pinecone
 from pypdf import PdfReader
 
+from bm25_index import ensure_bm25_ready, get_bm25_index
+
 try:
     import fitz  # pymupdf
 except ImportError:
@@ -26,6 +28,7 @@ DEFAULT_CHUNK_SIZE = 800
 DEFAULT_CHUNK_OVERLAP = 100
 UPSERT_BATCH_SIZE = 100
 METADATA_TEXT_KEY = "text"
+RRF_K = 60
 INVISIBLE_CHAR_RE = re.compile(r"[\u200b-\u200d\ufeff\u2060]")
 
 DOCUMENT_GLOBS = (
@@ -62,6 +65,15 @@ class DebugRetrievedChunk:
     chunk_index: int
     source: str
     text: str
+    chunk_id: str = ""
+    rank: int = 0
+
+
+@dataclass
+class HybridDebugResult:
+    dense: list[DebugRetrievedChunk]
+    bm25: list[DebugRetrievedChunk]
+    fused: list[DebugRetrievedChunk]
 
 
 def _parse_markdown_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -251,6 +263,7 @@ def clear_index() -> int:
     previous_count = int(stats.total_vector_count or 0)
     if previous_count:
         index.delete(delete_all=True)
+    get_bm25_index().clear()
     return previous_count
 
 
@@ -319,11 +332,13 @@ def upsert_chunks(chunks: list[Document]) -> int:
                 flush_batch()
 
     flush_batch()
+    get_bm25_index().upsert_chunks(chunks, _chunk_id)
     return total_indexed
 
 
 def delete_vectors_for_document(document_id: str) -> int:
     """Remove all vectors for one document_id before re-ingesting pasted text."""
+    get_bm25_index().delete_document(document_id)
     index = _pinecone_index()
     index.delete(filter={"document_id": document_id})
     return 0
@@ -422,24 +437,97 @@ def retrieve_chunks(question: str, k: int = 3) -> list[RetrievedChunk]:
     query_vector = embeddings.embed_query(question)
     results = index.query(vector=query_vector, top_k=k, include_metadata=True)
 
+    return [_match_to_retrieved_chunk(match) for match in results.get("matches", [])]
+
+
+def _match_to_retrieved_chunk(match: dict) -> RetrievedChunk:
+    metadata = match.get("metadata") or {}
+    document_id = str(metadata.get("document_id", ""))
+    chunk_index_raw = metadata.get("chunk_index", -1)
+    chunk_index = int(chunk_index_raw) if chunk_index_raw is not None else -1
+    chunk_id = str(match.get("id") or _chunk_id(document_id, chunk_index))
+    return RetrievedChunk(
+        text=str(metadata.get(METADATA_TEXT_KEY, "")),
+        source_url=str(metadata.get("source_url", "")),
+        title=document_id,
+        source=str(metadata.get("source", "")),
+        chunk_id=chunk_id,
+        chunk_index=chunk_index,
+    )
+
+
+def retrieve_chunks_bm25(question: str, k: int = 3) -> list[RetrievedChunk]:
+    bm25_index = ensure_bm25_ready()
     chunks: list[RetrievedChunk] = []
-    for match in results.get("matches", []):
-        metadata = match.get("metadata") or {}
-        document_id = str(metadata.get("document_id", ""))
-        chunk_index_raw = metadata.get("chunk_index", -1)
-        chunk_index = int(chunk_index_raw) if chunk_index_raw is not None else -1
-        chunk_id = str(match.get("id") or _chunk_id(document_id, chunk_index))
+
+    for chunk_id, _score in bm25_index.search(question, k=k):
+        record = bm25_index.get_record(chunk_id)
+        if record is None:
+            continue
         chunks.append(
             RetrievedChunk(
-                text=str(metadata.get(METADATA_TEXT_KEY, "")),
-                source_url=str(metadata.get("source_url", "")),
-                title=document_id,
-                source=str(metadata.get("source", "")),
-                chunk_id=chunk_id,
-                chunk_index=chunk_index,
+                text=record.text,
+                source_url=record.source_url,
+                title=record.document_id,
+                source=record.source,
+                chunk_id=record.chunk_id,
+                chunk_index=record.chunk_index,
             )
         )
     return chunks
+
+
+def reciprocal_rank_fusion(
+    dense_chunks: list[RetrievedChunk],
+    bm25_chunks: list[RetrievedChunk],
+    rrf_k: int = RRF_K,
+) -> list[RetrievedChunk]:
+    scores: dict[str, float] = {}
+    chunk_map: dict[str, RetrievedChunk] = {}
+
+    for rank, chunk in enumerate(dense_chunks):
+        chunk_map[chunk.chunk_id] = chunk
+        scores[chunk.chunk_id] = scores.get(chunk.chunk_id, 0.0) + 1.0 / (rrf_k + rank + 1)
+
+    for rank, chunk in enumerate(bm25_chunks):
+        chunk_map[chunk.chunk_id] = chunk
+        scores[chunk.chunk_id] = scores.get(chunk.chunk_id, 0.0) + 1.0 / (rrf_k + rank + 1)
+
+    ranked_ids = sorted(scores, key=scores.get, reverse=True)
+    return [chunk_map[chunk_id] for chunk_id in ranked_ids]
+
+
+def _apply_diverse_filter(
+    candidates: list[RetrievedChunk],
+    k: int,
+    max_per_document: int,
+) -> list[RetrievedChunk]:
+    selected: list[RetrievedChunk] = []
+    per_document: dict[str, int] = {}
+    for chunk in candidates:
+        doc_id = chunk.title or chunk.source
+        if per_document.get(doc_id, 0) >= max_per_document:
+            continue
+        selected.append(chunk)
+        per_document[doc_id] = per_document.get(doc_id, 0) + 1
+        if len(selected) >= k:
+            break
+    return selected
+
+
+def retrieve_chunks_hybrid(
+    question: str,
+    k: int = 6,
+    fetch_k: int = 12,
+    max_per_document: int = 2,
+) -> list[RetrievedChunk]:
+    """Combine dense Pinecone search with BM25 via reciprocal rank fusion."""
+
+    fetch_k = max(fetch_k, k)
+    dense_candidates = retrieve_chunks(question, k=fetch_k)
+    bm25_candidates = retrieve_chunks_bm25(question, k=fetch_k)
+    fused_candidates = reciprocal_rank_fusion(dense_candidates, bm25_candidates)
+    return _apply_diverse_filter(fused_candidates, k=k, max_per_document=max_per_document)
 
 
 def retrieve_chunks_diverse(
@@ -455,18 +543,7 @@ def retrieve_chunks_diverse(
     """
     fetch_k = max(fetch_k, k)
     candidates = retrieve_chunks(question, k=fetch_k)
-
-    selected: list[RetrievedChunk] = []
-    per_document: dict[str, int] = {}
-    for chunk in candidates:
-        doc_id = chunk.title or chunk.source
-        if per_document.get(doc_id, 0) >= max_per_document:
-            continue
-        selected.append(chunk)
-        per_document[doc_id] = per_document.get(doc_id, 0) + 1
-        if len(selected) >= k:
-            break
-    return selected
+    return _apply_diverse_filter(candidates, k=k, max_per_document=max_per_document)
 
 
 def debug_retrieve(question: str, k: int = 5) -> list[DebugRetrievedChunk]:
@@ -479,16 +556,60 @@ def debug_retrieve(question: str, k: int = 5) -> list[DebugRetrievedChunk]:
     results = index.query(vector=query_vector, top_k=k, include_metadata=True)
 
     chunks: list[DebugRetrievedChunk] = []
-    for match in results.get("matches", []):
+    for rank, match in enumerate(results.get("matches", []), start=1):
         metadata = match.get("metadata") or {}
         chunk_index = metadata.get("chunk_index", -1)
+        document_id = str(metadata.get("document_id", ""))
+        chunk_index_int = int(chunk_index) if chunk_index is not None else -1
         chunks.append(
             DebugRetrievedChunk(
                 score=float(match.get("score", 0.0)),
-                document_id=str(metadata.get("document_id", "")),
-                chunk_index=int(chunk_index) if chunk_index is not None else -1,
+                document_id=document_id,
+                chunk_index=chunk_index_int,
                 source=str(metadata.get("source", "")),
                 text=str(metadata.get(METADATA_TEXT_KEY, "")),
+                chunk_id=str(match.get("id") or _chunk_id(document_id, chunk_index_int)),
+                rank=rank,
             )
         )
     return chunks
+
+
+def _retrieved_to_debug(
+    chunks: list[RetrievedChunk],
+    scores: list[float] | None = None,
+) -> list[DebugRetrievedChunk]:
+    debug_chunks: list[DebugRetrievedChunk] = []
+    for rank, chunk in enumerate(chunks, start=1):
+        score = scores[rank - 1] if scores and rank - 1 < len(scores) else 0.0
+        debug_chunks.append(
+            DebugRetrievedChunk(
+                score=score,
+                document_id=chunk.title,
+                chunk_index=chunk.chunk_index,
+                source=chunk.source,
+                text=chunk.text,
+                chunk_id=chunk.chunk_id,
+                rank=rank,
+            )
+        )
+    return debug_chunks
+
+
+def debug_retrieve_hybrid(question: str, k: int = 5) -> HybridDebugResult:
+    """Return dense, BM25, and fused rankings side-by-side for debugging."""
+
+    dense_chunks = retrieve_chunks(question, k=k)
+    bm25_raw = get_bm25_index().search(question, k=k)
+    bm25_chunks = retrieve_chunks_bm25(question, k=k)
+    bm25_scores = [score for _chunk_id, score in bm25_raw]
+    fused_chunks = reciprocal_rank_fusion(
+        retrieve_chunks(question, k=max(k, 10)),
+        retrieve_chunks_bm25(question, k=max(k, 10)),
+    )[:k]
+
+    return HybridDebugResult(
+        dense=_retrieved_to_debug(dense_chunks),
+        bm25=_retrieved_to_debug(bm25_chunks, bm25_scores),
+        fused=_retrieved_to_debug(fused_chunks),
+    )

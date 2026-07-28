@@ -238,9 +238,21 @@ with eval_tab:
             with c1:
                 st.metric("Retrieval hit", f"{hits}/{count}")
             with c2:
-                st.metric("Faithfulness (avg)", f"{faith:.4f}" if faith is not None else "—")
+                st.metric(
+                    "Faithfulness (avg)",
+                    f"{faith:.4f}" if faith is not None else "unavailable",
+                )
             with c3:
-                st.metric("Correctness (avg)", f"{correctness:.4f}" if correctness is not None else "—")
+                st.metric(
+                    "Correctness (avg)",
+                    f"{correctness:.4f}" if correctness is not None else "unavailable",
+                )
+
+            if faith is None or correctness is None:
+                st.warning(
+                    "Some RAGAS scores came back empty (common on Render under load). "
+                    "Re-run eval once — scores usually fill in on retry."
+                )
 
             rows = []
             for item in data.get("questions", []):
