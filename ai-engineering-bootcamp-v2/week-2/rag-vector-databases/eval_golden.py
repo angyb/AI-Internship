@@ -99,8 +99,12 @@ def collect_eval_rows_local(golden_set: list[dict], *, verbose: bool = False) ->
         question = item["question"]
         reference = item["reference"]
         expected_docs = item.get("expected_document_ids", [])
+        document_filter = expected_docs or None
 
-        chunks, context, chunk_ids, _sources = retrieve_context(question)
+        chunks, context, chunk_ids, _sources = retrieve_context(
+            question,
+            document_ids=document_filter,
+        )
         retrieved_doc_ids = [chunk.title for chunk in chunks if chunk.title]
         hit = retrieval_hit(retrieved_doc_ids, expected_docs)
 
@@ -135,10 +139,14 @@ def collect_eval_rows_api(
         question = item["question"]
         reference = item["reference"]
         expected_docs = item.get("expected_document_ids", [])
+        document_filter = expected_docs or None
+        request_payload: dict = {"question": question}
+        if document_filter:
+            request_payload["document_ids"] = document_filter
 
         retrieve_resp = httpx.post(
             f"{base}/retrieve",
-            json={"question": question},
+            json=request_payload,
             timeout=120.0,
         )
         retrieve_resp.raise_for_status()
@@ -146,7 +154,7 @@ def collect_eval_rows_api(
 
         ask_resp = httpx.post(
             f"{base}/ask",
-            json={"question": question},
+            json=request_payload,
             timeout=120.0,
         )
         ask_resp.raise_for_status()
@@ -274,6 +282,38 @@ def _safe_float(value: Any) -> float | None:
     return result
 
 
+def get_eval_config() -> dict[str, Any]:
+    """Retrieval/chunking settings used during golden-set eval."""
+
+    from ingest import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE
+
+    try:
+        from main import (
+            RETRIEVAL_FETCH_K,
+            RETRIEVAL_K,
+            MAX_CHUNKS_PER_DOCUMENT,
+            hybrid_search_enabled,
+        )
+
+        return {
+            "chunk_size": DEFAULT_CHUNK_SIZE,
+            "chunk_overlap": DEFAULT_CHUNK_OVERLAP,
+            "k": RETRIEVAL_K,
+            "fetch_k": RETRIEVAL_FETCH_K,
+            "max_per_document": MAX_CHUNKS_PER_DOCUMENT,
+            "hybrid_search": hybrid_search_enabled(),
+        }
+    except ImportError:
+        return {
+            "chunk_size": DEFAULT_CHUNK_SIZE,
+            "chunk_overlap": DEFAULT_CHUNK_OVERLAP,
+            "k": None,
+            "fetch_k": None,
+            "max_per_document": None,
+            "hybrid_search": None,
+        }
+
+
 def build_eval_result(
     eval_rows: list[dict],
     scores_df: pd.DataFrame,
@@ -299,6 +339,8 @@ def build_eval_result(
             "reference": row["reference"],
             "expected_document_ids": row["expected_document_ids"],
             "retrieved_document_ids": row["retrieved_document_ids"],
+            "chunk_ids": row.get("chunk_ids", []),
+            "retrieved_contexts": row.get("retrieved_contexts", []),
             "retrieval_hit": row["retrieval_hit"],
             "faithfulness": faithfulness_score,
             "answer_correctness": correctness,
@@ -321,6 +363,7 @@ def build_eval_result(
         "golden_set": golden_set_path.name,
         "mode": "api" if api_url else "local",
         "api_url": api_url,
+        "config": get_eval_config(),
         "question_count": question_count,
         "averages": {
             "retrieval_hit": retrieval_hits / question_count if question_count else 0.0,
@@ -365,23 +408,78 @@ def run_eval(
     )
 
 
+def print_eval_config(config: dict[str, Any]) -> None:
+    print("=" * 72)
+    print("Retrieval config")
+    print("=" * 72)
+    print(f"  chunk_size:         {config.get('chunk_size')}")
+    print(f"  chunk_overlap:      {config.get('chunk_overlap')}")
+    print(f"  k:                  {config.get('k')}")
+    print(f"  fetch_k:            {config.get('fetch_k')}")
+    print(f"  max_per_document:   {config.get('max_per_document')}")
+    hybrid = config.get("hybrid_search")
+    print(f"  hybrid_search:      {hybrid if hybrid is not None else '—'}")
+    print()
+
+
+def _print_retrieved_chunks(item: dict[str, Any]) -> None:
+    chunk_ids = item.get("chunk_ids") or []
+    contexts = item.get("retrieved_contexts") or []
+
+    if not chunk_ids and not contexts:
+        print("     chunks:            (none)")
+        return
+
+    print("     chunks:")
+    for index, chunk_id in enumerate(chunk_ids):
+        text = contexts[index] if index < len(contexts) else ""
+        print(f"       - chunk_id: {chunk_id}")
+        if text:
+            for line in text.splitlines():
+                print(f"         {line}")
+        print()
+
+
+def _format_score(value: float | None, *, decimals: int = 2) -> str:
+    if value is None:
+        return "—"
+    return f"{value:.{decimals}f}"
+
+
+def _print_per_question_scores_table(questions: list[dict[str, Any]]) -> None:
+    rows = [
+        {
+            "Question": item["question"],
+            "Hit": "✅" if item["retrieval_hit"] else "❌",
+            "Faithfulness": _format_score(item["faithfulness"]),
+            "Correctness": _format_score(item["answer_correctness"]),
+        }
+        for item in questions
+    ]
+    print(pd.DataFrame(rows).to_string(index=False))
+
+
 def print_summary_from_result(result: dict[str, Any], api_url: str | None = None) -> None:
     if api_url:
         print(f"Evaluated via API: {api_url.rstrip('/')}\n")
 
+    print_eval_config(result.get("config", get_eval_config()))
+
+    print("=" * 72)
+    print("Questions and answers")
+    print("=" * 72)
+    for index, item in enumerate(result["questions"], start=1):
+        print(f"Q{index}: {item['question']}")
+        _print_retrieved_chunks(item)
+        print(f"     reference: {item['reference']}")
+        print(f"     answer:    {item['answer']}")
+        print()
+
     print("=" * 72)
     print("Per-question scores")
     print("=" * 72)
-    for item in result["questions"]:
-        hit_label = "HIT" if item["retrieval_hit"] else "MISS"
-        faith = item["faithfulness"]
-        correctness = item["answer_correctness"]
-        faith_str = f"{faith:.4f}" if faith is not None else "—"
-        corr_str = f"{correctness:.4f}" if correctness is not None else "—"
-        print(f"[{hit_label}] {item['question']}")
-        print(f"       faithfulness={faith_str}  answer_correctness={corr_str}")
-        print(f"       expected: {item['expected_document_ids']}")
-        print(f"       retrieved: {item['retrieved_document_ids']}\n")
+    _print_per_question_scores_table(result["questions"])
+    print()
 
     averages = result["averages"]
     print("=" * 72)

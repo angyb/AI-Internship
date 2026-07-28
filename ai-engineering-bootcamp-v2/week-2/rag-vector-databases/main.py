@@ -89,6 +89,10 @@ class Answer(BaseModel):
 class AskRequest(BaseModel):
     question: str
     force_bad: bool = False
+    document_ids: list[str] = Field(
+        default_factory=list,
+        description="Optional metadata filter — restrict retrieval to these document_id values.",
+    )
     model: str = Field(
         default=DEFAULT_MODEL,
         description="OpenAI model to use.",
@@ -123,6 +127,10 @@ class RetrieveRequest(BaseModel):
     use_hybrid: bool = Field(
         default=True,
         description="Combine dense vector search with BM25 keyword search (RRF fusion).",
+    )
+    document_ids: list[str] = Field(
+        default_factory=list,
+        description="Optional metadata filter — restrict retrieval to these document_id values.",
     )
 
 
@@ -268,14 +276,17 @@ def retrieve_context(
     question: str,
     *,
     use_hybrid: bool = True,
+    document_ids: list[str] | None = None,
 ) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
     """Embed the question, retrieve top-k chunks, and format context."""
+    filter_ids = document_ids or None
     if use_hybrid and hybrid_search_enabled():
         chunks = retrieve_chunks_hybrid(
             question,
             k=RETRIEVAL_K,
             fetch_k=RETRIEVAL_FETCH_K,
             max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+            document_ids=filter_ids,
         )
     else:
         chunks = retrieve_chunks_diverse(
@@ -283,6 +294,7 @@ def retrieve_context(
             k=RETRIEVAL_K,
             fetch_k=RETRIEVAL_FETCH_K,
             max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+            document_ids=filter_ids,
         )
 
     if not chunks:
@@ -310,6 +322,7 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
         chunks, _context, _chunk_ids, _sources = retrieve_context(
             body.question,
             use_hybrid=body.use_hybrid,
+            document_ids=body.document_ids or None,
         )
     except KeyError as exc:
         raise HTTPException(
@@ -395,7 +408,10 @@ def ask(body: AskRequest) -> AskResponse:
     last_error: str | None = None
 
     try:
-        _chunks, context, chunk_ids, sources = retrieve_context(body.question)
+        _chunks, context, chunk_ids, sources = retrieve_context(
+            body.question,
+            document_ids=body.document_ids or None,
+        )
     except KeyError as exc:
         raise HTTPException(
             status_code=500,

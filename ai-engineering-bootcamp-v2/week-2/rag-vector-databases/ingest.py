@@ -31,13 +31,9 @@ METADATA_TEXT_KEY = "text"
 RRF_K = 60
 INVISIBLE_CHAR_RE = re.compile(r"[\u200b-\u200d\ufeff\u2060]")
 
-DOCUMENT_GLOBS = (
-    DOCS_DIR / "zendesk" / "md",
-    DOCS_DIR / "zendesk" / "pdf",
-    DOCS_DIR / "website" / "md",
-    DOCS_DIR / "website" / "pdf",
-    DOCS_DIR / "northwind",
-)
+# Any .md / .pdf / .txt under documents/ is ingested (recursive). Skip crawl metadata.
+SUPPORTED_SUFFIXES = {".md", ".pdf", ".txt"}
+SKIP_FILENAMES = {"manifest.json", ".DS_Store"}
 
 
 @dataclass
@@ -170,25 +166,52 @@ def _load_pdf(path: Path) -> list[Document]:
     return documents
 
 
-def load_documents() -> list[Document]:
+def _load_text(path: Path) -> Document | None:
+    try:
+        body = _strip_invisible_chars(path.read_text(encoding="utf-8"))
+    except OSError:
+        return None
+
+    if not body.strip():
+        return None
+
+    return Document(
+        page_content=body,
+        metadata={
+            "document_id": path.stem,
+            "source": str(path.relative_to(DOCS_DIR)),
+            "title": path.stem,
+            "source_url": "",
+        },
+    )
+
+
+def _load_document_file(path: Path) -> list[Document]:
+    suffix = path.suffix.lower()
+    if suffix == ".md":
+        doc = _load_markdown(path)
+        return [doc] if doc is not None else []
+    if suffix == ".pdf":
+        return _load_pdf(path)
+    if suffix == ".txt":
+        doc = _load_text(path)
+        return [doc] if doc is not None else []
+    return []
+
+
+def load_documents(root: Path | None = None) -> list[Document]:
+    """Load all supported files under ``documents/`` (or ``root`` if provided)."""
     documents: list[Document] = []
+    docs_root = (root or DOCS_DIR).resolve()
+    if not docs_root.exists():
+        return documents
 
-    for folder in DOCUMENT_GLOBS:
-        if not folder.exists():
+    for path in sorted(docs_root.rglob("*")):
+        if not path.is_file() or path.name in SKIP_FILENAMES:
             continue
-
-        for path in sorted(folder.iterdir()):
-            if not path.is_file() or path.name == "manifest.json":
-                continue
-
-            if path.suffix.lower() == ".md":
-                doc = _load_markdown(path)
-                if doc is not None:
-                    documents.append(doc)
-            elif path.suffix.lower() == ".pdf":
-                documents.extend(_load_pdf(path))
-            else:
-                continue
+        if path.suffix.lower() not in SUPPORTED_SUFFIXES:
+            continue
+        documents.extend(_load_document_file(path))
 
     return documents
 
@@ -249,6 +272,17 @@ def chunk_documents(
 def _chunk_id(document_id: str, chunk_index: int) -> str:
     safe_id = str(document_id).replace("/", "_")
     return f"{safe_id}__chunk_{chunk_index}"
+
+
+def _pinecone_document_filter(document_ids: list[str] | None) -> dict | None:
+    if not document_ids:
+        return None
+    cleaned = [doc_id.strip() for doc_id in document_ids if doc_id.strip()]
+    if not cleaned:
+        return None
+    if len(cleaned) == 1:
+        return {"document_id": cleaned[0]}
+    return {"document_id": {"$in": cleaned}}
 
 
 def _pinecone_index():
@@ -430,12 +464,25 @@ def ingest_documents(
     )
 
 
-def retrieve_chunks(question: str, k: int = 3) -> list[RetrievedChunk]:
+def retrieve_chunks(
+    question: str,
+    k: int = 3,
+    document_ids: list[str] | None = None,
+) -> list[RetrievedChunk]:
     embeddings = _embeddings_client()
     index = _pinecone_index()
 
     query_vector = embeddings.embed_query(question)
-    results = index.query(vector=query_vector, top_k=k, include_metadata=True)
+    query_kwargs: dict = {
+        "vector": query_vector,
+        "top_k": k,
+        "include_metadata": True,
+    }
+    metadata_filter = _pinecone_document_filter(document_ids)
+    if metadata_filter:
+        query_kwargs["filter"] = metadata_filter
+
+    results = index.query(**query_kwargs)
 
     return [_match_to_retrieved_chunk(match) for match in results.get("matches", [])]
 
@@ -456,11 +503,15 @@ def _match_to_retrieved_chunk(match: dict) -> RetrievedChunk:
     )
 
 
-def retrieve_chunks_bm25(question: str, k: int = 3) -> list[RetrievedChunk]:
+def retrieve_chunks_bm25(
+    question: str,
+    k: int = 3,
+    document_ids: list[str] | None = None,
+) -> list[RetrievedChunk]:
     bm25_index = ensure_bm25_ready()
     chunks: list[RetrievedChunk] = []
 
-    for chunk_id, _score in bm25_index.search(question, k=k):
+    for chunk_id, _score in bm25_index.search(question, k=k, document_ids=document_ids):
         record = bm25_index.get_record(chunk_id)
         if record is None:
             continue
@@ -520,12 +571,13 @@ def retrieve_chunks_hybrid(
     k: int = 6,
     fetch_k: int = 12,
     max_per_document: int = 2,
+    document_ids: list[str] | None = None,
 ) -> list[RetrievedChunk]:
     """Combine dense Pinecone search with BM25 via reciprocal rank fusion."""
 
     fetch_k = max(fetch_k, k)
-    dense_candidates = retrieve_chunks(question, k=fetch_k)
-    bm25_candidates = retrieve_chunks_bm25(question, k=fetch_k)
+    dense_candidates = retrieve_chunks(question, k=fetch_k, document_ids=document_ids)
+    bm25_candidates = retrieve_chunks_bm25(question, k=fetch_k, document_ids=document_ids)
     fused_candidates = reciprocal_rank_fusion(dense_candidates, bm25_candidates)
     return _apply_diverse_filter(fused_candidates, k=k, max_per_document=max_per_document)
 
@@ -535,6 +587,7 @@ def retrieve_chunks_diverse(
     k: int = 6,
     fetch_k: int = 12,
     max_per_document: int = 2,
+    document_ids: list[str] | None = None,
 ) -> list[RetrievedChunk]:
     """Retrieve top chunks while limiting how many come from the same document.
 
@@ -542,7 +595,7 @@ def retrieve_chunks_diverse(
     to a per-document cap so one long PDF does not dominate the context window.
     """
     fetch_k = max(fetch_k, k)
-    candidates = retrieve_chunks(question, k=fetch_k)
+    candidates = retrieve_chunks(question, k=fetch_k, document_ids=document_ids)
     return _apply_diverse_filter(candidates, k=k, max_per_document=max_per_document)
 
 

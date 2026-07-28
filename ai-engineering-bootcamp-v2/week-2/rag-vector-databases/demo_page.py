@@ -256,13 +256,13 @@ with eval_tab:
 
             rows = []
             for item in data.get("questions", []):
+                faith = item.get("faithfulness")
+                correctness = item.get("answer_correctness")
                 rows.append({
                     "Question": item.get("question", ""),
-                    "Retrieval hit": item.get("retrieval_hit"),
-                    "Faithfulness": item.get("faithfulness"),
-                    "Correctness": item.get("answer_correctness"),
-                    "Expected docs": ", ".join(item.get("expected_document_ids", [])),
-                    "Retrieved docs": ", ".join(item.get("retrieved_document_ids", [])),
+                    "Hit": "✅" if item.get("retrieval_hit") else "❌",
+                    "Faithfulness": f"{faith:.2f}" if faith is not None else "—",
+                    "Correctness": f"{correctness:.2f}" if correctness is not None else "—",
                 })
 
             if rows:

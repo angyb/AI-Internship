@@ -88,7 +88,12 @@ class BM25Index:
 
         self._rebuild_bm25()
 
-    def search(self, query: str, k: int) -> list[tuple[str, float]]:
+    def search(
+        self,
+        query: str,
+        k: int,
+        document_ids: list[str] | None = None,
+    ) -> list[tuple[str, float]]:
         if self._bm25 is None or not self._chunk_ids:
             return []
 
@@ -96,17 +101,28 @@ class BM25Index:
         if not tokens:
             return []
 
+        allowed = (
+            {doc_id.strip().lower() for doc_id in document_ids if doc_id.strip()}
+            if document_ids
+            else None
+        )
+
         scores = self._bm25.get_scores(tokens)
         ranked = sorted(
             zip(self._chunk_ids, scores, strict=True),
             key=lambda item: item[1],
             reverse=True,
         )
-        return [
-            (chunk_id, float(score))
-            for chunk_id, score in ranked[:k]
-            if score > 0
-        ]
+        results: list[tuple[str, float]] = []
+        for chunk_id, score in ranked:
+            if score <= 0:
+                continue
+            if allowed and self._records[chunk_id].document_id.lower() not in allowed:
+                continue
+            results.append((chunk_id, float(score)))
+            if len(results) >= k:
+                break
+        return results
 
     def get_record(self, chunk_id: str) -> ChunkRecord | None:
         return self._records.get(chunk_id)
