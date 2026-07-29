@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """Push local .env variables to a Render web service.
 
-Requires:
-  export RENDER_API_KEY=rnd_...   # https://dashboard.render.com/u/settings#api-keys
-  export RENDER_SERVICE_ID=srv_... # Service → Settings → scroll to bottom
+Credentials (local only — never synced to Render):
+  RENDER_API_KEY=rnd_...      # https://dashboard.render.com/u/settings#api-keys
+  RENDER_SERVICE_ID=srv_...   # Service → Settings → Service ID
+
+Add both to your local `.env`, or export them in the shell.
 
 Usage:
   python sync_render_env.py
   python sync_render_env.py --dry-run
-  python sync_render_env.py --deploy   # trigger deploy after sync
+  python sync_render_env.py --deploy   # sync + trigger Render redeploy
 
 Alternatively, in Render Dashboard → Environment → "Add from .env", paste the
 output of:  python sync_render_env.py --print-bulk
@@ -28,8 +30,14 @@ from dotenv import dotenv_values
 THIS_DIR = Path(__file__).resolve().parent
 DEFAULT_ENV = THIS_DIR / ".env"
 
-# Keys managed locally only (not needed on Render API server)
-SKIP_KEYS = frozenset({"RAG_API_URL"})
+# Local-only keys — never push to the Render service
+SKIP_KEYS = frozenset(
+    {
+        "RAG_API_URL",
+        "RENDER_API_KEY",
+        "RENDER_SERVICE_ID",
+    }
+)
 
 
 def load_env_pairs(path: Path) -> list[dict[str, str]]:
@@ -123,14 +131,24 @@ def resolve_service_id(api_key: str, slug_hint: str | None) -> str | None:
     return None
 
 
+def load_local_credentials(env_file: Path) -> tuple[str, str]:
+    """Read Render API credentials from the shell env or local .env file."""
+    from dotenv import load_dotenv
+
+    load_dotenv(env_file)
+    api_key = os.getenv("RENDER_API_KEY", "").strip()
+    service_id = os.getenv("RENDER_SERVICE_ID", "").strip()
+    return api_key, service_id
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Sync local .env to Render.")
     parser.add_argument("--env-file", type=Path, default=DEFAULT_ENV)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--print-bulk", action="store_true", help="Print .env bulk paste for Dashboard")
     parser.add_argument("--deploy", action="store_true", help="Trigger deploy after sync")
-    parser.add_argument("--service-id", default=os.getenv("RENDER_SERVICE_ID", "").strip())
-    parser.add_argument("--api-key", default=os.getenv("RENDER_API_KEY", "").strip())
+    parser.add_argument("--service-id", default="")
+    parser.add_argument("--api-key", default="")
     args = parser.parse_args()
 
     if not args.env_file.is_file():
@@ -146,15 +164,17 @@ def main() -> None:
         print_bulk_env(pairs)
         return
 
-    api_key = args.api_key
+    file_api_key, file_service_id = load_local_credentials(args.env_file)
+    api_key = (args.api_key or file_api_key).strip()
     if not api_key:
         print(
-            "Set RENDER_API_KEY (https://dashboard.render.com/u/settings#api-keys)",
+            "Set RENDER_API_KEY in .env or the shell "
+            "(https://dashboard.render.com/u/settings#api-keys)",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    service_id = args.service_id
+    service_id = (args.service_id or file_service_id).strip()
     if not service_id:
         service_id = resolve_service_id(api_key, "rag") or resolve_service_id(api_key, "internship")
     if not service_id:

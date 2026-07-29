@@ -107,13 +107,23 @@ If you see `Could not import module "main"`, the **Root Directory** is wrong or 
 
 **Option B — Render API (automated)**
 
+Add to your local `.env` (never commit real values):
+
+```env
+RENDER_API_KEY=rnd_...
+RENDER_SERVICE_ID=srv_...
+```
+
+Then sync and redeploy in one command:
+
 ```bash
-export RENDER_API_KEY=rnd_...   # Account Settings → API Keys
-export RENDER_SERVICE_ID=srv_... # Service → Settings → Service ID
+cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
 python sync_render_env.py --deploy
 ```
 
-After changing `CHUNK_SIZE`, `CHUNK_OVERLAP`, or `EMBEDDING_MODEL`, run `POST /ingest` again on Render.
+Preview without sending: `python sync_render_env.py --dry-run`
+
+**When to re-run sync:** after any change to local `.env` that should match Render (retrieval, rerank, models, chunk size, etc.). If you change `CHUNK_SIZE`, `CHUNK_OVERLAP`, or `EMBEDDING_MODEL`, also run `POST /ingest` on Render after deploy finishes.
 
 After deploy, ingest documents once (from your machine or a one-off shell):
 
