@@ -47,12 +47,7 @@ THIS_DIR = Path(__file__).resolve().parent
 DEFAULT_GOLDEN_SET = THIS_DIR / "golden_set.json"
 DEFAULT_API_URL = os.getenv("RAG_API_URL", "").strip()
 
-from eval_format import (
-    averages_rows,
-    per_question_score_rows,
-    questions_and_answers_rows,
-    retrieval_config_rows,
-)
+from eval_format import format_eval_report_markdown
 
 
 def load_golden_set(path: Path) -> list[dict]:
@@ -69,7 +64,8 @@ def retrieval_hit(retrieved_document_ids: list[str], expected_document_ids: list
 
 
 def collect_eval_rows_local(golden_set: list[dict], *, verbose: bool = False) -> list[dict]:
-    from main import DEFAULT_MODEL, build_grounding_prompt, call_model_structured, retrieve_context
+    from model_config import answer_model
+    from main import generate_grounded_answer, retrieve_context
 
     rows: list[dict] = []
     for item in golden_set:
@@ -82,12 +78,11 @@ def collect_eval_rows_local(golden_set: list[dict], *, verbose: bool = False) ->
             question,
             document_ids=document_filter,
         )
-        retrieved_doc_ids = [chunk.title for chunk in chunks if chunk.title]
+        retrieved_doc_ids = [chunk.document_id for chunk in chunks if chunk.document_id]
         hit = retrieval_hit(retrieved_doc_ids, expected_docs)
 
-        prompt = build_grounding_prompt(question, context)
-        answer, _tokens, _prompt_tokens, _completion_tokens = call_model_structured(
-            prompt, DEFAULT_MODEL
+        answer, _tokens, _answer_pt, _answer_ct, _route, _ext_pt, _ext_ct = generate_grounded_answer(
+            question, context, answer_model()
         )
 
         rows.append(_build_row(
@@ -191,7 +186,7 @@ def _print_row_status(
     print(f"[{status}] {question}")
     print(f"       expected: {expected_docs}")
     print(f"       retrieved: {retrieved_doc_ids}")
-    preview = answer_text[:160] + ("..." if len(answer_text) > 160 else "")
+    preview = answer_text
     print(f"       answer: {preview}\n")
 
 
@@ -206,9 +201,13 @@ def score_with_ragas(eval_rows: list[dict]) -> pd.DataFrame:
         for row in eval_rows
     ]
 
+    from model_config import embedding_model, ragas_judge_model
+
     dataset = EvaluationDataset.from_list(ragas_rows)
-    judge_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-4o-mini", temperature=0))
-    judge_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings(model="text-embedding-3-small"))
+    judge_llm = LangchainLLMWrapper(
+        ChatOpenAI(model=ragas_judge_model(), temperature=0)
+    )
+    judge_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings(model=embedding_model()))
 
     result = evaluate(
         dataset=dataset,
@@ -262,33 +261,80 @@ def _safe_float(value: Any) -> float | None:
 def get_eval_config() -> dict[str, Any]:
     """Retrieval/chunking settings used during golden-set eval."""
 
-    from ingest import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, excluded_document_ids_from_env
+    from ingest import excluded_document_ids_from_env
 
     try:
-        from main import (
-            RETRIEVAL_FETCH_K,
-            RETRIEVAL_K,
-            MAX_CHUNKS_PER_DOCUMENT,
-            hybrid_search_enabled,
+        from retrieval_config import (
+            chunk_overlap,
+            chunk_size,
+            max_chunks_per_document,
+            max_context_chunks,
+            max_context_chunks_enabled,
+            neighbor_chunk_radius,
+            neighbor_chunks_enabled,
+            neighbor_merge_enabled,
+            retrieval_fetch_k,
+            retrieval_k,
         )
-        from rerank import rerank_candidates_count, rerank_enabled, rerank_model_name
+        from main import hybrid_search_enabled, two_step_generation_enabled
+        from generation_config import (
+            answer_verbosity,
+            citations_enabled,
+            prompt_conflict_resolution_enabled,
+        )
+        from model_config import (
+            answer_model,
+            embedding_model,
+            extraction_model,
+            generation_temperature,
+            ragas_judge_model,
+        )
+        from question_classifier import question_routing_enabled
+        from rerank import (
+            context_order_by_rerank_score_enabled,
+            relevance_filter_enabled,
+            relevance_min_chunks,
+            relevance_min_score_gap,
+            rerank_candidates_count,
+            rerank_enabled,
+            rerank_model_name,
+        )
 
         return {
-            "chunk_size": DEFAULT_CHUNK_SIZE,
-            "chunk_overlap": DEFAULT_CHUNK_OVERLAP,
-            "k": RETRIEVAL_K,
-            "fetch_k": RETRIEVAL_FETCH_K,
-            "max_per_document": MAX_CHUNKS_PER_DOCUMENT,
+            "chunk_size": chunk_size(),
+            "chunk_overlap": chunk_overlap(),
+            "k": retrieval_k(),
+            "fetch_k": retrieval_fetch_k(),
+            "max_per_document": max_chunks_per_document(),
             "hybrid_search": hybrid_search_enabled(),
             "rerank_enabled": rerank_enabled(),
             "rerank_candidates": rerank_candidates_count(),
             "rerank_model": rerank_model_name(),
+            "neighbor_chunks_enabled": neighbor_chunks_enabled(),
+            "neighbor_chunk_radius": neighbor_chunk_radius(),
+            "neighbor_merge_enabled": neighbor_merge_enabled(),
+            "max_context_chunks_enabled": max_context_chunks_enabled(),
+            "max_context_chunks": max_context_chunks(),
             "exclude_document_ids": excluded_document_ids_from_env(),
+            "two_step_generation": two_step_generation_enabled(),
+            "question_routing_enabled": question_routing_enabled(),
+            "answer_verbosity": answer_verbosity(),
+            "citations_enabled": citations_enabled(),
+            "relevance_filter_enabled": relevance_filter_enabled(),
+            "relevance_min_score_gap": relevance_min_score_gap(),
+            "relevance_min_chunks": relevance_min_chunks(),
+            "prompt_conflict_resolution_enabled": prompt_conflict_resolution_enabled(),
+            "context_order_by_rerank_score": context_order_by_rerank_score_enabled(),
+            "answer_model": answer_model(),
+            "extraction_model": extraction_model(),
+            "embedding_model": embedding_model(),
+            "ragas_judge_model": ragas_judge_model(),
+            "generation_temperature": generation_temperature(),
         }
     except ImportError:
         return {
-            "chunk_size": DEFAULT_CHUNK_SIZE,
-            "chunk_overlap": DEFAULT_CHUNK_OVERLAP,
+            "chunk_size": None,
+            "chunk_overlap": None,
             "k": None,
             "fetch_k": None,
             "max_per_document": None,
@@ -296,6 +342,11 @@ def get_eval_config() -> dict[str, Any]:
             "rerank_enabled": None,
             "rerank_candidates": None,
             "rerank_model": None,
+            "neighbor_chunks_enabled": None,
+            "neighbor_chunk_radius": None,
+            "neighbor_merge_enabled": None,
+            "max_context_chunks_enabled": None,
+            "max_context_chunks": None,
             "exclude_document_ids": excluded_document_ids_from_env(),
         }
 
@@ -387,43 +438,11 @@ def run_eval(
     )
 
 
-def print_eval_config(config: dict[str, Any]) -> None:
-    print("Retrieval config")
-    print(pd.DataFrame(retrieval_config_rows(config)).to_string(index=False))
-    print()
-
-
-def _print_per_question_scores_table(questions: list[dict[str, Any]]) -> None:
-    print(pd.DataFrame(per_question_score_rows(questions)).to_string(index=False))
-
-
-def _print_averages_table(averages: dict[str, Any]) -> None:
-    print(pd.DataFrame(averages_rows(averages)).to_string(index=False))
-
-
-def _print_questions_and_answers_table(questions: list[dict[str, Any]]) -> None:
-    df = pd.DataFrame(questions_and_answers_rows(questions))
-    with pd.option_context("display.max_colwidth", None, "display.width", None):
-        print(df.to_string(index=False))
-
-
 def print_summary_from_result(result: dict[str, Any], api_url: str | None = None) -> None:
+    """Print the full eval report (all sections from eval_format, never truncated)."""
     if api_url:
         print(f"Evaluated via API: {api_url.rstrip('/')}\n")
-
-    print_eval_config(result.get("config", get_eval_config()))
-
-    averages = result["averages"]
-    print("Averages")
-    _print_averages_table(averages)
-    print()
-
-    print("Per-question scores")
-    _print_per_question_scores_table(result["questions"])
-    print()
-
-    print("Questions and answers")
-    _print_questions_and_answers_table(result["questions"])
+    print(format_eval_report_markdown(result))
     print()
 
 

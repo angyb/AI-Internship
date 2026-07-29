@@ -6,6 +6,7 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      # Secrets — set values in Render Dashboard (never commit)
       - key: OPENAI_API_KEY
         sync: false
       - key: PINECONE_API_KEY
@@ -14,9 +15,81 @@ services:
         sync: false
       - key: PINECONE_HOST
         sync: false
+
+      # OpenAI models
+      - key: ANSWER_MODEL
+        value: gpt-4o
+      - key: EXTRACTION_MODEL
+        value: gpt-4o-mini
+      - key: EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: RAGAS_JUDGE_MODEL
+        value: gpt-4o-mini
+      - key: GENERATION_TEMPERATURE
+        value: "0"
+
+      # Retrieval toggles
+      - key: HYBRID_SEARCH
+        value: "true"
       - key: EXCLUDE_DOCUMENT_IDS
         value: employee_handbook
+      - key: RETRIEVAL_K
+        value: "5"
+      - key: RETRIEVAL_FETCH_K
+        value: "10"
+      - key: MAX_CHUNKS_PER_DOCUMENT
+        value: "1"
+
+      # Ingest chunking (used by POST /ingest when query params omitted)
+      - key: CHUNK_SIZE
+        value: "500"
+      - key: CHUNK_OVERLAP
+        value: "80"
+
+      # Neighbor-chunk expansion
+      - key: NEIGHBOR_CHUNKS_ENABLED
+        value: "false"
+      - key: NEIGHBOR_CHUNK_RADIUS
+        value: "1"
+      - key: NEIGHBOR_MERGE_ENABLED
+        value: "false"
+
+      # Cap LLM context blocks after neighbor expand/merge
+      - key: MAX_CONTEXT_CHUNKS_ENABLED
+        value: "true"
+      - key: MAX_CONTEXT_CHUNKS
+        value: "5"
+
+      # Local cross-encoder reranking
       - key: RERANK_ENABLED
         value: "true"
       - key: RERANK_CANDIDATES
-        value: "20"
+        value: "30"
+      - key: RERANK_MODEL
+        value: cross-encoder/ms-marco-MiniLM-L-6-v2
+      - key: RERANK_CANDIDATE_MAX_PER_DOC
+        value: "5"
+
+      # Generation
+      - key: TWO_STEP_GENERATION
+        value: "false"
+      - key: QUESTION_ROUTING_ENABLED
+        value: "true"
+      - key: ANSWER_VERBOSITY
+        value: concise
+      - key: CITATIONS_ENABLED
+        value: "false"
+
+      # Pre-generation relevance filter
+      - key: RELEVANCE_FILTER_ENABLED
+        value: "true"
+      - key: RELEVANCE_MIN_SCORE_GAP
+        value: "2.5"
+      - key: RELEVANCE_MIN_CHUNKS
+        value: "1"
+
+      # Prompt / context assembly
+      - key: PROMPT_CONFLICT_RESOLUTION_ENABLED
+        value: "true"
+      - key: CONTEXT_ORDER_BY_RERANK_SCORE
+        value: "true"

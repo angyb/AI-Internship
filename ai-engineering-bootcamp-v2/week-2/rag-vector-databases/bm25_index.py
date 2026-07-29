@@ -25,6 +25,7 @@ class ChunkRecord:
     source: str
     text: str
     chunk_index: int
+    title: str = ""
     source_url: str = ""
 
 
@@ -83,6 +84,7 @@ class BM25Index:
                     source=str(chunk.metadata.get("source", "")),
                     text=chunk.page_content,
                     chunk_index=chunk_index,
+                    title=str(chunk.metadata.get("title", "")),
                     source_url=str(chunk.metadata.get("source_url", "")),
                 )
 
@@ -182,6 +184,7 @@ class BM25Index:
                     source=str(metadata.get("source", "")),
                     text=text,
                     chunk_index=chunk_index,
+                    title=str(metadata.get("title", "")),
                     source_url=str(metadata.get("source_url", "")),
                 )
 

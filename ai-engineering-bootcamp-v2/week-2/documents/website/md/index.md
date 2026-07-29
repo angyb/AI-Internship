@@ -24,7 +24,7 @@ Zearn is the top-rated math learning platform that helps kids explore concepts, 
 
 Paper-and-pencil problem solving in every lesson
 
-Built on the concrete- to pictorial-to- abstract approach
+Built on the concrete-to pictorial-to-abstract approach
 
 ## How Zearn works.
 

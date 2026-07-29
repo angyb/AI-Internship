@@ -25,7 +25,7 @@ Zearn Math is made by teachers to reinforce and deepen teacher-led instruction. 
 
 Research is clear: students need both automaticity with math facts and deep understanding of concepts to be successful in math. Zearn Math incorporates this balance every time a student logs in.
 
-## Built on the concrete- pictorial-abstract approach
+## Built on the concrete-pictorial-abstract approach
 
 Zearn Math is designed to reflect the science of how kids learn — moving from concrete experiences to visual models to abstract reasoning — in order to build mastery that lasts.
 

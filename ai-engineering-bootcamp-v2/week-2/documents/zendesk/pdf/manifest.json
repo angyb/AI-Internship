@@ -2,7 +2,7 @@
   "crawled_at": "2026-07-28T17:24:19Z",
   "source": "https://help.zearn.org/api/v2/help_center/en-us",
   "articles_scanned": 138,
-  "unique_pdfs": 58,
+  "unique_pdfs": 45,
   "removed_stale": 0,
   "downloaded": 14,
   "skipped_existing": 44,
@@ -977,17 +977,6 @@
   ],
   "pdfs": [
     {
-      "url": "https://drive.google.com/file/d/1V6MgCbf5e1drxk_goA2eIJRWjajda4Hi/view",
-      "filename": "1V6MgCbf5e1drxk_goA2eIJRWjajda4Hi.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/115007927987-Compare-Zearn-Math-Accounts"
-      ],
-      "bytes": 136433,
-      "sha256": "a37ffbfeaf4a98c162cbd555e8bfd4d2b03ac8a721edd59ac7adaf3039a1baff",
-      "error": null,
-      "status": "ok"
-    },
-    {
       "url": "https://webassets.zearn.org/Implementation/AdminSnapshotReportNavigationGuide.pdf",
       "filename": "AdminSnapshotReportNavigationGuide.pdf",
       "found_on_articles": [
@@ -996,28 +985,6 @@
       ],
       "bytes": 1700157,
       "sha256": "18bcebc9a4477ab356d28eaf437616bedac433b981ec16d95717e8e65ed3aeea",
-      "error": null,
-      "status": "skipped_existing"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/AnchorCharts/DownloadableWeeklyGoals.pdf",
-      "filename": "DownloadableWeeklyGoals.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360002279413-Brainy-weekly-lesson-tracker"
-      ],
-      "bytes": 873004,
-      "sha256": "adb61bb459cc0815340aca6002dfe95d1a612e52eca48deeb4fd6fc659b0ecb1",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ClassSnapshotReportNavigationGuide.pdf",
-      "filename": "ClassSnapshotReportNavigationGuide.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/33459243548183-Class-Snapshot-Report"
-      ],
-      "bytes": 1458420,
-      "sha256": "097d3bd9258166cf6477fdcf3327c74425e8383becfe0c313a25ec457b977f47",
       "error": null,
       "status": "skipped_existing"
     },
@@ -1033,6 +1000,17 @@
       "status": "skipped_existing"
     },
     {
+      "url": "https://webassets.zearn.org/Implementation/ClassSnapshotReportNavigationGuide.pdf",
+      "filename": "ClassSnapshotReportNavigationGuide.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/33459243548183-Class-Snapshot-Report"
+      ],
+      "bytes": 1458420,
+      "sha256": "097d3bd9258166cf6477fdcf3327c74425e8383becfe0c313a25ec457b977f47",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
       "url": "https://webassets.zearn.org/Implementation/ExportsCenterNavigationGuide.pdf",
       "filename": "ExportsCenterNavigationGuide.pdf",
       "found_on_articles": [
@@ -1041,6 +1019,17 @@
       ],
       "bytes": 1043381,
       "sha256": "cb0fbd2f312a1a1531faaccfdd515cc5962a0df64ef40bfbf87217d43d041760",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/G05M01_AssessmentRubric_CC.pdf",
+      "filename": "G05M01_AssessmentRubric_CC.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments"
+      ],
+      "bytes": 649712,
+      "sha256": "aa89754f9f2a58b6e6932b778d7d3f3840c1a7c1cdf15738194bdcbfe8c3b44b",
       "error": null,
       "status": "skipped_existing"
     },
@@ -1068,17 +1057,6 @@
       "sha256": "db46ebd1ed0e8b48eff95a69bd790c4700924c40580852f2f36c146886bddc7c",
       "error": null,
       "status": "skipped_existing"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/GoalTracker.pdf",
-      "filename": "GoalTracker.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/5896758965271-Printed-goal-tracker"
-      ],
-      "bytes": 857270,
-      "sha256": "bc86efb85dafce912987d36d787b78e0ca831885ca53d2475723df13ffa42f79",
-      "error": null,
-      "status": "ok"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/Guide_to_Assistive_Tech.pdf",
@@ -1205,13 +1183,13 @@
       "status": "skipped_existing"
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/SupportingEurekaMath2K5withZearnMath.pdf",
-      "filename": "SupportingEurekaMath2K5withZearnMath.pdf",
+      "url": "https://webassets.zearn.org/Implementation/SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
+      "filename": "SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
-      "bytes": 1798094,
-      "sha256": "8bf128197d2f55c4476500c66109bb14738a29159a29d7f1398e4de0acc6d3b2",
+      "bytes": 1974532,
+      "sha256": "0d6fb063d651ddfda042b640bd828b8d0751daff1efe3ccb4dabf0d1017a474b",
       "error": null,
       "status": "skipped_existing"
     },
@@ -1227,6 +1205,17 @@
       "status": "skipped_existing"
     },
     {
+      "url": "https://webassets.zearn.org/Implementation/SupportingEurekaMath2K5withZearnMath.pdf",
+      "filename": "SupportingEurekaMath2K5withZearnMath.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1798094,
+      "sha256": "8bf128197d2f55c4476500c66109bb14738a29159a29d7f1398e4de0acc6d3b2",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
       "url": "https://webassets.zearn.org/Implementation/SupportingExperienceMathSouthCarolinawithZearnMath.pdf",
       "filename": "SupportingExperienceMathSouthCarolinawithZearnMath.pdf",
       "found_on_articles": [
@@ -1238,6 +1227,17 @@
       "status": "skipped_existing"
     },
     {
+      "url": "https://webassets.zearn.org/Implementation/Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
+      "filename": "Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1891412,
+      "sha256": "887dced1bed70c3255be284da3be74b6bcc8be2660dea87340c59d92bd694a95",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
       "url": "https://webassets.zearn.org/Implementation/SupportingIM_K5withZearnMath.pdf",
       "filename": "SupportingIM_K5withZearnMath.pdf",
       "found_on_articles": [
@@ -1245,6 +1245,17 @@
       ],
       "bytes": 1981482,
       "sha256": "a2235753cb9602f97ba9d9a539bea0cc627cdf3ec0c977124e6c3ab7b6432442",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
+      "filename": "SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1894122,
+      "sha256": "2f11a917368da7413842a8d86b57106471e1a414a5018e03fc159527546d7f94",
       "error": null,
       "status": "skipped_existing"
     },
@@ -1315,35 +1326,24 @@
       "status": "skipped_existing"
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
-      "filename": "SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
+      "url": "https://drive.google.com/file/d/1V6MgCbf5e1drxk_goA2eIJRWjajda4Hi/view",
+      "filename": "Zearn_Account_Comparison.pdf",
       "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+        "https://help.zearn.org/hc/en-us/articles/115007927987-Compare-Zearn-Math-Accounts"
       ],
-      "bytes": 1974532,
-      "sha256": "0d6fb063d651ddfda042b640bd828b8d0751daff1efe3ccb4dabf0d1017a474b",
+      "bytes": 136433,
+      "sha256": "a37ffbfeaf4a98c162cbd555e8bfd4d2b03ac8a721edd59ac7adaf3039a1baff",
       "error": null,
-      "status": "skipped_existing"
+      "status": "manual"
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
-      "filename": "Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
+      "url": "https://webassets.zearn.org/Implementation/Zearn_FlexibleMathPlatform.pdf",
+      "filename": "Zearn_FlexibleMathPlatform.pdf",
       "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+        "https://help.zearn.org/hc/en-us/articles/22137674192151-Use-Zearn-across-instructional-times"
       ],
-      "bytes": 1891412,
-      "sha256": "887dced1bed70c3255be284da3be74b6bcc8be2660dea87340c59d92bd694a95",
-      "error": null,
-      "status": "skipped_existing"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
-      "filename": "SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
-      ],
-      "bytes": 1894122,
-      "sha256": "2f11a917368da7413842a8d86b57106471e1a414a5018e03fc159527546d7f94",
+      "bytes": 65737,
+      "sha256": "13f1095aa250adc198b207961c0a763c51ad906d10a56ab09303a5989934197d",
       "error": null,
       "status": "skipped_existing"
     },
@@ -1366,6 +1366,17 @@
       ],
       "bytes": 1726469,
       "sha256": "ff14be97672e66556b0750cce32fa919ba5c74cf8903970e588ba9553b347853",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnenVisionK8Alignment.pdf",
+      "filename": "ZearnenVisionK8Alignment.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
+      ],
+      "bytes": 1950492,
+      "sha256": "81ac81c91d092ce89607010aa6af03ad66bca01e863bb5dcfec68129017a1162",
       "error": null,
       "status": "skipped_existing"
     },
@@ -1403,6 +1414,17 @@
       "status": "skipped_existing"
     },
     {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMath_StudentReportOverview.pdf",
+      "filename": "ZearnMath_StudentReportOverview.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360052430653-School-Account-Student-Report"
+      ],
+      "bytes": 363636,
+      "sha256": "cfb1bbb8887b7dcec27e25010396e843ef22c8b1b52540ed803a8518458d0bce",
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
       "url": "https://webassets.zearn.org/Implementation/ZearnMathDigitalPlatformNavigationGuide.pdf",
       "filename": "ZearnMathDigitalPlatformNavigationGuide.pdf",
       "found_on_articles": [
@@ -1417,105 +1439,6 @@
       "status": "skipped_existing"
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG1.pdf",
-      "filename": "ZearnMathMissionCertificatesG1.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 580337,
-      "sha256": "6dc7908110de10f2ca8ef6bbe1c6c6c03831d082d2278722cc1ab71d8351004d",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG2.pdf",
-      "filename": "ZearnMathMissionCertificatesG2.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 795851,
-      "sha256": "5d2da89b66694a9ea89f0383f84c45fedfad5b8e66d9de32efa00b020e08c0ca",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG3.pdf",
-      "filename": "ZearnMathMissionCertificatesG3.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 705034,
-      "sha256": "34d71a96dfa1f8ed008acdc597fa487bd47d1f00effc1cfe3a3d46e4b11e9ede",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG4.pdf",
-      "filename": "ZearnMathMissionCertificatesG4.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 677871,
-      "sha256": "bde556a49ed581a441608f298074a80a57147d6086d379d4876ab2e8cf90c716",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG5.pdf",
-      "filename": "ZearnMathMissionCertificatesG5.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 591185,
-      "sha256": "a75cdc1bb08d2a9508a7ea85cf600d3d5bc782e4d575f2d9eca6293c6e8d2a13",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG6.pdf",
-      "filename": "ZearnMathMissionCertificatesG6.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 529675,
-      "sha256": "2775e94bf3e967b2e4d0bdb45cf516320a763b39c4fd1c2e93d3a01a70d7d069",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG7.pdf",
-      "filename": "ZearnMathMissionCertificatesG7.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 559445,
-      "sha256": "8598e0fc342d128558bdcd8ee5de604429a90e3446d457df460dddf493ee274e",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG8.pdf",
-      "filename": "ZearnMathMissionCertificatesG8.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 568448,
-      "sha256": "f59623c7144b147dc2c357d3b689b6b0173e3413f448f96c8f03e75b9b9a9ed0",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesK.pdf",
-      "filename": "ZearnMathMissionCertificatesK.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
-      ],
-      "bytes": 577317,
-      "sha256": "534ef5bac5a51dd7570df79996b830a5085f302be4ff6296956cf46dbf5ad924",
-      "error": null,
-      "status": "ok"
-    },
-    {
       "url": "https://webassets.zearn.org/Implementation/ZearnMathOverview%5BCoreComplement%5D.pdf",
       "filename": "ZearnMathOverview[CoreComplement].pdf",
       "found_on_articles": [
@@ -1523,17 +1446,6 @@
       ],
       "bytes": 1244387,
       "sha256": "71fa3e1ae87a1e2d119a1966cfa18184a0652c3a30fd01cdff6eab8475ffb30b",
-      "error": null,
-      "status": "skipped_existing"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMath_StudentReportOverview.pdf",
-      "filename": "ZearnMath_StudentReportOverview.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360052430653-School-Account-Student-Report"
-      ],
-      "bytes": 363636,
-      "sha256": "cfb1bbb8887b7dcec27e25010396e843ef22c8b1b52540ed803a8518458d0bce",
       "error": null,
       "status": "skipped_existing"
     },
@@ -1569,61 +1481,8 @@
       "sha256": "a9159de17a5c996b13a9827ab37c1d02af052698961540dcd02b30ba698c06d3",
       "error": null,
       "status": "skipped_existing"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnTags2018.pdf",
-      "filename": "ZearnTags2018.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/360010655213-Zearn-tags-for-students"
-      ],
-      "bytes": 800445,
-      "sha256": "22722100d1f32db5cfc1556eaf04bb9d37ba5e59937ee249abd3f6078d799f7a",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/Zearn_FlexibleMathPlatform.pdf",
-      "filename": "Zearn_FlexibleMathPlatform.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/22137674192151-Use-Zearn-across-instructional-times"
-      ],
-      "bytes": 65737,
-      "sha256": "13f1095aa250adc198b207961c0a763c51ad906d10a56ab09303a5989934197d",
-      "error": null,
-      "status": "skipped_existing"
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnenVisionK8Alignment.pdf",
-      "filename": "ZearnenVisionK8Alignment.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
-      ],
-      "bytes": 1950492,
-      "sha256": "81ac81c91d092ce89607010aa6af03ad66bca01e863bb5dcfec68129017a1162",
-      "error": null,
-      "status": "skipped_existing"
-    },
-    {
-      "url": "https://webassets.zearn.org/resources/G05M01_Assessment.pdf",
-      "filename": "G05M01_Assessment.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments"
-      ],
-      "bytes": 240568,
-      "sha256": "ca3e00f95635a37edd48b9de5b0d4fbf21e6596e5846ddf7a1f5fe75141fde5b",
-      "error": null,
-      "status": "ok"
-    },
-    {
-      "url": "https://webassets.zearn.org/resources/G05M01_AssessmentRubric_CC.pdf",
-      "filename": "G05M01_AssessmentRubric_CC.pdf",
-      "found_on_articles": [
-        "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments"
-      ],
-      "bytes": 649712,
-      "sha256": "aa89754f9f2a58b6e6932b778d7d3f3840c1a7c1cdf15738194bdcbfe8c3b44b",
-      "error": null,
-      "status": "skipped_existing"
     }
-  ]
+  ],
+  "pruned_at": "2026-07-29T19:18:49Z",
+  "pruned_removed": 14
 }

@@ -2,7 +2,7 @@
   "crawled_at": "2026-07-28T17:28:08Z",
   "sitemap": "https://about.zearn.org/sitemap.xml",
   "pages_scanned": 127,
-  "unique_pdfs": 185,
+  "unique_pdfs": 106,
   "removed_stale": 0,
   "downloaded": 0,
   "skipped_existing": 0,
@@ -773,176 +773,11 @@
   ],
   "pdfs": [
     {
-      "url": "https://drive.google.com/file/d/1V6MgCbf5e1drxk_goA2eIJRWjajda4Hi/view",
-      "filename": "1V6MgCbf5e1drxk_goA2eIJRWjajda4Hi.pdf",
+      "url": "https://webassets.zearn.org/Implementation/accelerationmethodology.pdf",
+      "filename": "accelerationmethodology.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/getting-started"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CelebrationCertificateAwesomeSauce.pdf",
-      "filename": "CelebrationCertificateAwesomeSauce.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/celebration-certificates"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterArabic.pdf",
-      "filename": "CleverParentLetterArabic.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterBengali.pdf",
-      "filename": "CleverParentLetterBengali.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterChinese.pdf",
-      "filename": "CleverParentLetterChinese.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterFrench.pdf",
-      "filename": "CleverParentLetterFrench.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterGerman.pdf",
-      "filename": "CleverParentLetterGerman.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterGujarati.pdf",
-      "filename": "CleverParentLetterGujarati.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterHaitian.pdf",
-      "filename": "CleverParentLetterHaitian.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterHindi.pdf",
-      "filename": "CleverParentLetterHindi.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterKorean.pdf",
-      "filename": "CleverParentLetterKorean.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterPortuguese.pdf",
-      "filename": "CleverParentLetterPortuguese.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterRussian.pdf",
-      "filename": "CleverParentLetterRussian.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterTagalog.pdf",
-      "filename": "CleverParentLetterTagalog.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterUrdu.pdf",
-      "filename": "CleverParentLetterUrdu.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/CleverParentLetterVietnamese.pdf",
-      "filename": "CleverParentLetterVietnamese.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
+        "https://about.zearn.org/insights/publications-catch-up-and-move-forward"
       ],
       "bytes": null,
       "sha256": null,
@@ -954,17 +789,6 @@
       "status": "discovered",
       "found_on_pages": [
         "https://about.zearn.org/research-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/DidYourBrainJustGetBigger.pdf",
-      "filename": "DidYourBrainJustGetBigger.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/celebration-certificates"
       ],
       "bytes": null,
       "sha256": null,
@@ -999,20 +823,6 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/EfficacyResearchMethodology.pdf",
-      "filename": "EfficacyResearchMethodology.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/insights/zearn-impact-large-southern-district",
-        "https://about.zearn.org/insights/zearn-impact-statewide-study-nebraska",
-        "https://about.zearn.org/insights/zearn-impact-study-dcps",
-        "https://about.zearn.org/insights/zearn-impact-study-louisiana"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
       "url": "https://webassets.zearn.org/Implementation/EfficacyResearch_2022_StatewideStudy_NE.pdf",
       "filename": "EfficacyResearch_2022_StatewideStudy_NE.pdf",
       "status": "discovered",
@@ -1039,6 +849,17 @@
       "bytes": null,
       "sha256": null,
       "error": null
+    },
+    {
+      "url": "https://docs.google.com/viewerng/viewer?url=https://webassets.zearn.org/Implementation/EfficacyResearchMethodology.pdf",
+      "filename": "EfficacyResearchMethodology.pdf",
+      "found_on_pages": [
+        "https://about.zearn.org/research-library"
+      ],
+      "bytes": 325812,
+      "sha256": "e592b020a00095a0df922e2dafcbbb75e7204219f5962a0632977566ef7ce673",
+      "error": null,
+      "status": "manual"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/EvaluationofZearnSupplementalwithDedicatedImplementationSupport.pdf",
@@ -1159,28 +980,6 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/InoticedYourMathWork.pdf",
-      "filename": "InoticedYourMathWork.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/celebration-certificates"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/KeepItGoing.pdf",
-      "filename": "KeepItGoing.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/celebration-certificates"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
       "url": "https://webassets.zearn.org/Implementation/KindergartenNavigationGuide.pdf",
       "filename": "KindergartenNavigationGuide.pdf",
       "status": "discovered",
@@ -1203,221 +1002,12 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/LaunchZearnMathCurriculumPD.pdf",
-      "filename": "LaunchZearnMathCurriculumPD.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/professional-development"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
       "url": "https://webassets.zearn.org/Implementation/LoginExperiencethroughClever.pdf",
       "filename": "LoginExperiencethroughClever.pdf",
       "status": "discovered",
       "found_on_pages": [
         "https://about.zearn.org/school-account-resources",
         "https://about.zearn.org/texas/resources"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_AllStar_BulletinBoard.pdf",
-      "filename": "LouisianaMathChallenge_AllStar_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_AllStar_Certificate.pdf",
-      "filename": "LouisianaMathChallenge_AllStar_Certificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_AllStar_StudentLessonTracker.pdf",
-      "filename": "LouisianaMathChallenge_AllStar_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EndZone_BulletinBoard.pdf",
-      "filename": "LouisianaMathChallenge_EndZone_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EndZone_Certificate.pdf",
-      "filename": "LouisianaMathChallenge_EndZone_Certificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EndZone_StudentLessonTracker.pdf",
-      "filename": "LouisianaMathChallenge_EndZone_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_EnglishFamilyFlyer.pdf",
-      "filename": "LouisianaMathChallenge_EnglishFamilyFlyer.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_MardiGras_BulletinBoard.pdf",
-      "filename": "LouisianaMathChallenge_MardiGras_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_MardiGras_Certificate.pdf",
-      "filename": "LouisianaMathChallenge_MardiGras_Certificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_MardiGras_StudentLessonTracker.pdf",
-      "filename": "LouisianaMathChallenge_MardiGras_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpaceRace_BulletinBoard.pdf",
-      "filename": "LouisianaMathChallenge_SpaceRace_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpaceRace_Certificates.pdf",
-      "filename": "LouisianaMathChallenge_SpaceRace_Certificates.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpaceRace_StudentLessonTracker.pdf",
-      "filename": "LouisianaMathChallenge_SpaceRace_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_SpanishFamilyFlyer.pdf",
-      "filename": "LouisianaMathChallenge_SpanishFamilyFlyer.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_TeacherFlyer.pdf",
-      "filename": "LouisianaMathChallenge_TeacherFlyer.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_WinterGames_BulletinBoard.pdf",
-      "filename": "LouisianaMathChallenge_WinterGames_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_WinterGames_Certificates.pdf",
-      "filename": "LouisianaMathChallenge_WinterGames_Certificates.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/LouisianaMathChallenge_WinterGames_StudentLessonTracker.pdf",
-      "filename": "LouisianaMathChallenge_WinterGames_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana/math-challenges"
       ],
       "bytes": null,
       "sha256": null,
@@ -1462,33 +1052,11 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/MathTutoringWithZearn_DigitalLessonOverview.pdf",
-      "filename": "MathTutoringWithZearn_DigitalLessonOverview.pdf",
+      "url": "https://webassets.zearn.org/Implementation/NavigatingSpanishTranslatedContent.pdf",
+      "filename": "NavigatingSpanishTranslatedContent.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/tutoring-with-zearn-math"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/NYCPS2023EducatorTraining.pdf",
-      "filename": "NYCPS2023EducatorTraining.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/virginia"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/NYCPSAdminTraining2023.pdf",
-      "filename": "NYCPSAdminTraining2023.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/virginia"
+        "https://about.zearn.org/zearn-in-spanish"
       ],
       "bytes": null,
       "sha256": null,
@@ -1506,11 +1074,11 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/NavigatingSpanishTranslatedContent.pdf",
-      "filename": "NavigatingSpanishTranslatedContent.pdf",
+      "url": "https://webassets.zearn.org/Implementation/Ohio_ImpactStudy.pdf",
+      "filename": "Ohio_ImpactStudy.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/zearn-in-spanish"
+        "https://about.zearn.org/research-library"
       ],
       "bytes": null,
       "sha256": null,
@@ -1528,44 +1096,11 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/OhioHowWeLearnPoster.pdf",
-      "filename": "OhioHowWeLearnPoster.pdf",
+      "url": "https://webassets.zearn.org/Implementation/ParentandCaregiverGuidetoZearn.pdf",
+      "filename": "ParentandCaregiverGuidetoZearn.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/ohio"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/OhioKeepRockingPoster.pdf",
-      "filename": "OhioKeepRockingPoster.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/ohio"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/OhioMissionCertificate.pdf",
-      "filename": "OhioMissionCertificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/ohio"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/Ohio_ImpactStudy.pdf",
-      "filename": "Ohio_ImpactStudy.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/research-library"
+        "https://about.zearn.org/math-resources/family-support"
       ],
       "bytes": null,
       "sha256": null,
@@ -1583,156 +1118,11 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/ParentandCaregiverGuideToZearn_Spanish.pdf",
-      "filename": "ParentandCaregiverGuideToZearn_Spanish.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/family-support"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ParentandCaregiverGuidetoZearn.pdf",
-      "filename": "ParentandCaregiverGuidetoZearn.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/family-support"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ProudOfYouCertificate.pdf",
-      "filename": "ProudOfYouCertificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/celebration-certificates"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
       "url": "https://webassets.zearn.org/Implementation/SCDistrictLeaderImplementationGuide.pdf",
       "filename": "SCDistrictLeaderImplementationGuide.pdf",
       "status": "discovered",
       "found_on_pages": [
         "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EndZone_BulletinBoard.pdf",
-      "filename": "SouthCarolinaMathChallenge_EndZone_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EndZone_Certificate.pdf",
-      "filename": "SouthCarolinaMathChallenge_EndZone_Certificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EndZone_StudentLessonTracker.pdf",
-      "filename": "SouthCarolinaMathChallenge_EndZone_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_EnglishFamilyFlyer.pdf",
-      "filename": "SouthCarolinaMathChallenge_EnglishFamilyFlyer.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_SpanishFamilyFlyer.pdf",
-      "filename": "SouthCarolinaMathChallenge_SpanishFamilyFlyer.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SouthCarolinaMathChallenge_TeacherFlyer.pdf",
-      "filename": "SouthCarolinaMathChallenge_TeacherFlyer.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/StayCoolAndMathOn.pdf",
-      "filename": "StayCoolAndMathOn.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/celebration-certificates"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SummerBrainyChallenge.pdf",
-      "filename": "SummerBrainyChallenge.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-learning-acceleration/grade-1",
-        "https://about.zearn.org/math-learning-acceleration/grade-3",
-        "https://about.zearn.org/math-learning-acceleration/grade-4",
-        "https://about.zearn.org/math-learning-acceleration/grade-5",
-        "https://about.zearn.org/math-learning-acceleration/grade-6",
-        "https://about.zearn.org/math-learning-acceleration/grade-7",
-        "https://about.zearn.org/math-learning-acceleration/grade-8",
-        "https://about.zearn.org/math-learning-acceleration/kindergarten",
-        "https://about.zearn.org/math-resources/math-motivation-supplies",
-        "https://about.zearn.org/summer-math"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/SummerBrainyChallenge_Neutral.pdf",
-      "filename": "SummerBrainyChallenge_Neutral.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana",
-        "https://about.zearn.org/ohio",
-        "https://about.zearn.org/south-carolina",
-        "https://about.zearn.org/texas/resources",
-        "https://about.zearn.org/virginia"
       ],
       "bytes": null,
       "sha256": null,
@@ -1765,39 +1155,6 @@
         "https://about.zearn.org/math-learning-acceleration/kindergarten",
         "https://about.zearn.org/summer-math",
         "https://about.zearn.org/zearn-in-spanish"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/TexasBiggerBrainsPoster.pdf",
-      "filename": "TexasBiggerBrainsPoster.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/texas/resources"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/TexasHowWeLearnPoster.pdf",
-      "filename": "TexasHowWeLearnPoster.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/texas/resources"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/TexasMissionCertificate.pdf",
-      "filename": "TexasMissionCertificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/texas/resources"
       ],
       "bytes": null,
       "sha256": null,
@@ -1854,397 +1211,11 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/ZearnBundle-BulletinBoard.pdf",
-      "filename": "ZearnBundle-BulletinBoard.pdf",
+      "url": "https://webassets.zearn.org/Implementation/Zearn_factsheet.pdf",
+      "filename": "Zearn_factsheet.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnBundle-CelebrationCertificatesTags.pdf",
-      "filename": "ZearnBundle-CelebrationCertificatesTags.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnBundle-LessonTrackers.pdf",
-      "filename": "ZearnBundle-LessonTrackers.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnDataDeepDive.pdf",
-      "filename": "ZearnDataDeepDive.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/professional-development"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnHelpersForParents.pdf",
-      "filename": "ZearnHelpersForParents.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/family-support"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnHelpersForParentsSpanish.pdf",
-      "filename": "ZearnHelpersForParentsSpanish.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/family-support"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnLoginParentLetterSpanish.pdf",
-      "filename": "ZearnLoginParentLetterSpanish.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_AllStar_BulletinBoard.pdf",
-      "filename": "ZearnMathChallenge_AllStar_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_AllStar_Certificate.pdf",
-      "filename": "ZearnMathChallenge_AllStar_Certificate.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_AllStar_StudentLessonTracker.pdf",
-      "filename": "ZearnMathChallenge_AllStar_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_SpaceRace_BulletinBoard.pdf",
-      "filename": "ZearnMathChallenge_SpaceRace_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_SpaceRace_Certificates.pdf",
-      "filename": "ZearnMathChallenge_SpaceRace_Certificates.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_SpaceRace_StudentLessonTracker.pdf",
-      "filename": "ZearnMathChallenge_SpaceRace_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_WinterGames_BulletinBoard.pdf",
-      "filename": "ZearnMathChallenge_WinterGames_BulletinBoard.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_WinterGames_Certificates.pdf",
-      "filename": "ZearnMathChallenge_WinterGames_Certificates.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathChallenge_WinterGames_StudentLessonTracker.pdf",
-      "filename": "ZearnMathChallenge_WinterGames_StudentLessonTracker.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/math-motivation-supplies"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathDigitalPlatformNavigationGuide.pdf",
-      "filename": "ZearnMathDigitalPlatformNavigationGuide.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathEfficacyResearchLargeSouthernDistrict.pdf",
-      "filename": "ZearnMathEfficacyResearchLargeSouthernDistrict.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/insights/zearn-impact-large-southern-district",
-        "https://about.zearn.org/research-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathG1LessonSampleGuide.pdf",
-      "filename": "ZearnMathG1LessonSampleGuide.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/course-guides"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathG2LessonSampleGuide.pdf",
-      "filename": "ZearnMathG2LessonSampleGuide.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/course-guides"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathG3LessonSampleGuide.pdf",
-      "filename": "ZearnMathG3LessonSampleGuide.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/course-guides"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathG4LessonSampleGuide.pdf",
-      "filename": "ZearnMathG4LessonSampleGuide.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/course-guides"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathG5LessonSampleGuide.pdf",
-      "filename": "ZearnMathG5LessonSampleGuide.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/course-guides"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathKLessonSampleGuide.pdf",
-      "filename": "ZearnMathKLessonSampleGuide.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/math-resources/course-guides"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathMSProgramOverview.pdf",
-      "filename": "ZearnMathMSProgramOverview.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/middle-school-math"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMathOverview%5BCoreComplement%5D.pdf",
-      "filename": "ZearnMathOverview[CoreComplement].pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/virginia"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnMath_FlexiblePlatform_Texas.pdf",
-      "filename": "ZearnMath_FlexiblePlatform_Texas.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/texas/resources"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnOrientationWebinar.pdf",
-      "filename": "ZearnOrientationWebinar.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/school-account-resources"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnParentLetterEnglish.pdf",
-      "filename": "ZearnParentLetterEnglish.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnParentLetters.pdf",
-      "filename": "ZearnParentLetters.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/family-engagement-library"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_LA.pdf",
-      "filename": "ZearnSummerIntensiveSeries_LA.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/louisiana"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_Neutral.pdf",
-      "filename": "ZearnSummerIntensiveSeries_Neutral.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/summer-math"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_OH.pdf",
-      "filename": "ZearnSummerIntensiveSeries_OH.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/ohio"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_SC.pdf",
-      "filename": "ZearnSummerIntensiveSeries_SC.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/south-carolina"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_TX.pdf",
-      "filename": "ZearnSummerIntensiveSeries_TX.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/texas/resources"
-      ],
-      "bytes": null,
-      "sha256": null,
-      "error": null
-    },
-    {
-      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_VA.pdf",
-      "filename": "ZearnSummerIntensiveSeries_VA.pdf",
-      "status": "discovered",
-      "found_on_pages": [
-        "https://about.zearn.org/virginia"
+        "https://about.zearn.org/news"
       ],
       "bytes": null,
       "sha256": null,
@@ -2280,33 +1251,111 @@
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/Zearn_factsheet.pdf",
-      "filename": "Zearn_factsheet.pdf",
+      "url": "https://webassets.zearn.org/Implementation/ZearnDataDeepDive.pdf",
+      "filename": "ZearnDataDeepDive.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/news"
+        "https://about.zearn.org/professional-development"
       ],
       "bytes": null,
       "sha256": null,
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/accelerationmethodology.pdf",
-      "filename": "accelerationmethodology.pdf",
+      "url": "https://webassets.zearn.org/Implementation/ZearnHelpersForParents.pdf",
+      "filename": "ZearnHelpersForParents.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/insights/publications-catch-up-and-move-forward"
+        "https://about.zearn.org/math-resources/family-support"
       ],
       "bytes": null,
       "sha256": null,
       "error": null
     },
     {
-      "url": "https://webassets.zearn.org/Implementation/zearnmath_certificates_in_spanish_trabajo_de_matematicas.pdf",
-      "filename": "zearnmath_certificates_in_spanish_trabajo_de_matematicas.pdf",
+      "url": "https://webassets.zearn.org/Implementation/ZearnMath_FlexiblePlatform_Texas.pdf",
+      "filename": "ZearnMath_FlexiblePlatform_Texas.pdf",
       "status": "discovered",
       "found_on_pages": [
-        "https://about.zearn.org/celebration-certificates"
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathDigitalPlatformNavigationGuide.pdf",
+      "filename": "ZearnMathDigitalPlatformNavigationGuide.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/math-resources"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathEfficacyResearchLargeSouthernDistrict.pdf",
+      "filename": "ZearnMathEfficacyResearchLargeSouthernDistrict.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/insights/zearn-impact-large-southern-district",
+        "https://about.zearn.org/research-library"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMSProgramOverview.pdf",
+      "filename": "ZearnMathMSProgramOverview.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/middle-school-math"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathOverview%5BCoreComplement%5D.pdf",
+      "filename": "ZearnMathOverview[CoreComplement].pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnOrientationWebinar.pdf",
+      "filename": "ZearnOrientationWebinar.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/school-account-resources"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnParentLetterEnglish.pdf",
+      "filename": "ZearnParentLetterEnglish.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnParentLetters.pdf",
+      "filename": "ZearnParentLetters.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/family-engagement-library"
       ],
       "bytes": null,
       "sha256": null,
@@ -2876,6 +1925,74 @@
       "bytes": null,
       "sha256": null,
       "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_LA.pdf",
+      "filename": "ZearnSummerIntensiveSeries_LA.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/louisiana"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_Neutral.pdf",
+      "filename": "ZearnSummerIntensiveSeries_Neutral.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/summer-math"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_OH.pdf",
+      "filename": "ZearnSummerIntensiveSeries_OH.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/ohio"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_SC.pdf",
+      "filename": "ZearnSummerIntensiveSeries_SC.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/south-carolina"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_TX.pdf",
+      "filename": "ZearnSummerIntensiveSeries_TX.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/texas/resources"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnSummerIntensiveSeries_VA.pdf",
+      "filename": "ZearnSummerIntensiveSeries_VA.pdf",
+      "status": "discovered",
+      "found_on_pages": [
+        "https://about.zearn.org/virginia"
+      ],
+      "bytes": null,
+      "sha256": null,
+      "error": null
     }
-  ]
+  ],
+  "pruned_at": "2026-07-29T19:18:49Z",
+  "pruned_removed": 80
 }

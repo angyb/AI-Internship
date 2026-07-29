@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 from dataclasses import dataclass
@@ -14,6 +15,9 @@ from pinecone import Pinecone
 from pypdf import PdfReader
 
 from bm25_index import ensure_bm25_ready, get_bm25_index
+from model_config import embedding_model
+from retrieval_config import chunk_overlap as configured_chunk_overlap
+from retrieval_config import chunk_size as configured_chunk_size
 
 try:
     import fitz  # pymupdf
@@ -23,17 +27,30 @@ except ImportError:
 THIS_DIR = Path(__file__).resolve().parent
 DOCS_DIR = THIS_DIR.parent / "documents"
 
-EMBEDDING_MODEL = "text-embedding-3-small"
-DEFAULT_CHUNK_SIZE = 800
+EMBEDDING_MODEL = "text-embedding-3-small"  # fallback label; use embedding_model() at runtime
+DEFAULT_CHUNK_SIZE = 800  # fallback; ingest uses configured_chunk_size() when unset
 DEFAULT_CHUNK_OVERLAP = 100
 UPSERT_BATCH_SIZE = 100
+
+
+def resolve_chunk_settings(
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None,
+) -> tuple[int, int]:
+    return (
+        chunk_size if chunk_size is not None else configured_chunk_size(),
+        chunk_overlap if chunk_overlap is not None else configured_chunk_overlap(),
+    )
 METADATA_TEXT_KEY = "text"
 RRF_K = 60
 INVISIBLE_CHAR_RE = re.compile(r"[\u200b-\u200d\ufeff\u2060]")
+H1_RE = re.compile(r"^#\s+(.+)$", re.MULTILINE)
 
 # Any .md / .pdf / .txt under documents/ is ingested (recursive). Skip crawl metadata.
 SUPPORTED_SUFFIXES = {".md", ".pdf", ".txt"}
 SKIP_FILENAMES = {"manifest.json", ".DS_Store"}
+
+_pdf_manifest_cache: dict[Path, dict[str, str]] = {}
 
 
 @dataclass
@@ -47,11 +64,13 @@ class IngestResult:
 @dataclass
 class RetrievedChunk:
     text: str
-    source_url: str
+    document_id: str
     title: str
+    source_url: str
     source: str
     chunk_id: str = ""
     chunk_index: int = -1
+    merged_chunk_ids: list[str] | None = None
 
 
 @dataclass
@@ -93,6 +112,57 @@ def _strip_invisible_chars(text: str) -> str:
     return INVISIBLE_CHAR_RE.sub("", text)
 
 
+def humanize_document_id(document_id: str) -> str:
+    return re.sub(r"\s+", " ", document_id.replace("_", " ").replace("-", " ")).strip()
+
+
+def resolve_document_title(
+    body: str,
+    *,
+    frontmatter: dict[str, str] | None = None,
+    document_id: str = "",
+) -> str:
+    """Title from frontmatter `title`, first markdown H1, then humanized document_id."""
+    if frontmatter:
+        fm_title = frontmatter.get("title", "").strip()
+        if fm_title:
+            return fm_title
+
+    for match in H1_RE.finditer(body):
+        heading = match.group(1).strip()
+        if heading:
+            return heading
+
+    if document_id:
+        return humanize_document_id(document_id)
+    return ""
+
+
+def resolve_pdf_document_title(page_texts: list[str], document_id: str) -> str:
+    """Best-effort title from the first PDF page (first sentence or line)."""
+    for raw_text in page_texts:
+        normalized = _normalize_pdf_text(raw_text)
+        if not normalized:
+            continue
+        first_sentence = normalized.split(". ")[0].strip()
+        if 10 <= len(first_sentence) <= 120:
+            return first_sentence
+        if len(normalized) <= 120:
+            return normalized
+        break
+    return humanize_document_id(document_id)
+
+
+def display_title_for_chunk(
+    document_id: str,
+    metadata_title: str = "",
+) -> str:
+    title = metadata_title.strip()
+    if title and title != document_id:
+        return title
+    return humanize_document_id(document_id) if document_id else title
+
+
 def _load_markdown(path: Path) -> Document | None:
     try:
         raw = path.read_text(encoding="utf-8")
@@ -105,10 +175,11 @@ def _load_markdown(path: Path) -> Document | None:
         return None
 
     document_id = frontmatter.get("doc_id", path.stem)
+    title = resolve_document_title(body, frontmatter=frontmatter, document_id=document_id)
     metadata = {
         "document_id": document_id,
         "source": str(path.relative_to(DOCS_DIR)),
-        "title": frontmatter.get("title", path.stem),
+        "title": title,
         "source_url": frontmatter.get("source_url", ""),
     }
     return Document(page_content=body, metadata=metadata)
@@ -143,13 +214,47 @@ def _extract_pdf_page_texts(path: Path) -> list[tuple[int, str]]:
     ]
 
 
+def _load_pdf_manifest_urls(manifest_path: Path) -> dict[str, str]:
+    """Map PDF filename → direct download URL from a crawl manifest."""
+    if manifest_path in _pdf_manifest_cache:
+        return _pdf_manifest_cache[manifest_path]
+
+    urls: dict[str, str] = {}
+    if not manifest_path.is_file():
+        _pdf_manifest_cache[manifest_path] = urls
+        return urls
+
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        _pdf_manifest_cache[manifest_path] = urls
+        return urls
+
+    for entry in data.get("pdfs", []):
+        filename = str(entry.get("filename", "")).strip()
+        url = str(entry.get("url", "")).strip()
+        if filename and url:
+            urls[filename] = url
+
+    _pdf_manifest_cache[manifest_path] = urls
+    return urls
+
+
+def _source_url_for_pdf(path: Path) -> str:
+    """Resolve direct PDF URL from ``manifest.json`` in the same directory."""
+    return _load_pdf_manifest_urls(path.parent / "manifest.json").get(path.name, "")
+
+
 def _load_pdf(path: Path) -> list[Document]:
     """Load one Document per non-empty PDF page."""
+    page_texts = _extract_pdf_page_texts(path)
+    document_id = path.stem
+    title = resolve_pdf_document_title([text for _, text in page_texts], document_id)
     base_metadata = {
-        "document_id": path.stem,
+        "document_id": document_id,
         "source": str(path.relative_to(DOCS_DIR)),
-        "title": path.stem,
-        "source_url": "",
+        "title": title,
+        "source_url": _source_url_for_pdf(path),
     }
 
     documents: list[Document] = []
@@ -180,7 +285,7 @@ def _load_text(path: Path) -> Document | None:
         metadata={
             "document_id": path.stem,
             "source": str(path.relative_to(DOCS_DIR)),
-            "title": path.stem,
+            "title": resolve_document_title(body, document_id=path.stem),
             "source_url": "",
         },
     )
@@ -237,20 +342,26 @@ def chunk_text(
     source: str,
     chunk_size: int = DEFAULT_CHUNK_SIZE,
     chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    *,
+    title: str = "",
+    source_url: str = "",
 ) -> list[Document]:
     splitter = _make_splitter(chunk_size, chunk_overlap)
-    doc = Document(
-        page_content=text,
-        metadata={"document_id": document_id, "source": source},
-    )
+    metadata: dict[str, str] = {"document_id": document_id, "source": source}
+    if title:
+        metadata["title"] = title
+    if source_url:
+        metadata["source_url"] = source_url
+    doc = Document(page_content=text, metadata=metadata)
     return splitter.split_documents([doc])
 
 
 def chunk_documents(
     documents: list[Document],
-    chunk_size: int = DEFAULT_CHUNK_SIZE,
-    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None,
 ) -> list[Document]:
+    chunk_size, chunk_overlap = resolve_chunk_settings(chunk_size, chunk_overlap)
     splitter = _make_splitter(chunk_size, chunk_overlap)
 
     markdown_docs = [doc for doc in documents if not _is_pdf_page_document(doc)]
@@ -336,7 +447,7 @@ def clear_index() -> int:
 
 
 def _embeddings_client() -> OpenAIEmbeddings:
-    return OpenAIEmbeddings(model=EMBEDDING_MODEL)
+    return OpenAIEmbeddings(model=embedding_model())
 
 
 def _chunk_to_metadata(chunk: Document, chunk_index: int) -> dict[str, str | int]:
@@ -346,6 +457,12 @@ def _chunk_to_metadata(chunk: Document, chunk_index: int) -> dict[str, str | int
         "chunk_index": chunk_index,
         "source": str(chunk.metadata.get("source", "")),
     }
+    title = str(chunk.metadata.get("title", "")).strip()
+    if title:
+        metadata["title"] = title
+    source_url = str(chunk.metadata.get("source_url", "")).strip()
+    if source_url:
+        metadata["source_url"] = source_url
     page_number = chunk.metadata.get("page_number")
     if page_number is not None:
         metadata["page_number"] = int(page_number)
@@ -415,12 +532,13 @@ def delete_vectors_for_document(document_id: str) -> int:
 def ingest_text(
     document_id: str,
     text: str,
-    chunk_size: int = DEFAULT_CHUNK_SIZE,
-    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None,
     replace_existing: bool = True,
     source: str | None = None,
 ) -> IngestResult:
     """Chunk, embed, and upsert a single pasted document."""
+    chunk_size, chunk_overlap = resolve_chunk_settings(chunk_size, chunk_overlap)
     doc_id = document_id.strip()
     body = _strip_invisible_chars(text.strip())
     if not doc_id:
@@ -429,7 +547,21 @@ def ingest_text(
         raise ValueError("text must not be empty")
 
     doc_source = source or f"ui/{doc_id}"
-    chunks = chunk_text(body, doc_id, doc_source, chunk_size, chunk_overlap)
+    frontmatter: dict[str, str] = {}
+    body_text = body
+    if body.startswith("---"):
+        frontmatter, body_text = _parse_markdown_frontmatter(body)
+    title = resolve_document_title(body_text, frontmatter=frontmatter or None, document_id=doc_id)
+    source_url = frontmatter.get("source_url", "") if frontmatter else ""
+    chunks = chunk_text(
+        body_text,
+        doc_id,
+        doc_source,
+        chunk_size,
+        chunk_overlap,
+        title=title,
+        source_url=source_url,
+    )
     if not chunks:
         raise ValueError("No chunks produced from text")
 
@@ -448,8 +580,8 @@ def ingest_text(
 def ingest_file(
     path: Path | str,
     document_id: str | None = None,
-    chunk_size: int = DEFAULT_CHUNK_SIZE,
-    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None,
     replace_existing: bool = True,
 ) -> IngestResult:
     """Read one text file from disk and upsert it without touching other documents."""
@@ -475,8 +607,8 @@ def ingest_file(
 
 
 def ingest_documents(
-    chunk_size: int = DEFAULT_CHUNK_SIZE,
-    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None,
     clear_index_first: bool = True,
 ) -> IngestResult:
     raw_docs = load_documents()
@@ -522,20 +654,28 @@ def retrieve_chunks(
     return [_match_to_retrieved_chunk(match) for match in results.get("matches", [])]
 
 
+def _retrieved_chunk_from_metadata(metadata: dict, *, chunk_id: str) -> RetrievedChunk:
+    document_id = str(metadata.get("document_id", ""))
+    chunk_index_raw = metadata.get("chunk_index", -1)
+    chunk_index = int(chunk_index_raw) if chunk_index_raw is not None else -1
+    return RetrievedChunk(
+        text=str(metadata.get(METADATA_TEXT_KEY, "")),
+        document_id=document_id,
+        title=display_title_for_chunk(document_id, str(metadata.get("title", ""))),
+        source_url=str(metadata.get("source_url", "")),
+        source=str(metadata.get("source", "")),
+        chunk_id=chunk_id,
+        chunk_index=chunk_index,
+    )
+
+
 def _match_to_retrieved_chunk(match: dict) -> RetrievedChunk:
     metadata = match.get("metadata") or {}
     document_id = str(metadata.get("document_id", ""))
     chunk_index_raw = metadata.get("chunk_index", -1)
     chunk_index = int(chunk_index_raw) if chunk_index_raw is not None else -1
     chunk_id = str(match.get("id") or _chunk_id(document_id, chunk_index))
-    return RetrievedChunk(
-        text=str(metadata.get(METADATA_TEXT_KEY, "")),
-        source_url=str(metadata.get("source_url", "")),
-        title=document_id,
-        source=str(metadata.get("source", "")),
-        chunk_id=chunk_id,
-        chunk_index=chunk_index,
-    )
+    return _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
 
 
 def retrieve_chunks_bm25(
@@ -559,8 +699,9 @@ def retrieve_chunks_bm25(
         chunks.append(
             RetrievedChunk(
                 text=record.text,
+                document_id=record.document_id,
+                title=display_title_for_chunk(record.document_id, record.title),
                 source_url=record.source_url,
-                title=record.document_id,
                 source=record.source,
                 chunk_id=record.chunk_id,
                 chunk_index=record.chunk_index,
@@ -597,7 +738,7 @@ def apply_diverse_filter(
     selected: list[RetrievedChunk] = []
     per_document: dict[str, int] = {}
     for chunk in candidates:
-        doc_id = chunk.title or chunk.source
+        doc_id = chunk.document_id or chunk.source
         if per_document.get(doc_id, 0) >= max_per_document:
             continue
         selected.append(chunk)
@@ -605,6 +746,173 @@ def apply_diverse_filter(
         if len(selected) >= k:
             break
     return selected
+
+
+def _record_to_retrieved_chunk(record) -> RetrievedChunk:
+    return RetrievedChunk(
+        text=record.text,
+        document_id=record.document_id,
+        title=display_title_for_chunk(record.document_id, record.title),
+        source_url=record.source_url,
+        source=record.source,
+        chunk_id=record.chunk_id,
+        chunk_index=record.chunk_index,
+    )
+
+
+def lookup_chunk_by_id(chunk_id: str) -> RetrievedChunk | None:
+    """Resolve a chunk by id from the in-process BM25 index, then Pinecone."""
+    record = get_bm25_index().get_record(chunk_id)
+    if record is not None:
+        return _record_to_retrieved_chunk(record)
+
+    index = _pinecone_index()
+    fetched = index.fetch(ids=[chunk_id])
+    vector = (fetched.vectors or {}).get(chunk_id)
+    if vector is None:
+        return None
+
+    metadata = vector.metadata or {}
+    return _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
+
+
+def _group_hit_with_neighbors(hit: RetrievedChunk, radius: int) -> list[RetrievedChunk]:
+    group = [hit]
+    seen = {hit.chunk_id}
+
+    if hit.chunk_index < 0 or not hit.document_id:
+        return group
+
+    document_id = hit.document_id
+    for offset in sorted(range(-radius, radius + 1), key=lambda value: abs(value)):
+        if offset == 0:
+            continue
+        neighbor_index = hit.chunk_index + offset
+        if neighbor_index < 0:
+            continue
+        neighbor_id = _chunk_id(document_id, neighbor_index)
+        if neighbor_id in seen:
+            continue
+        neighbor = lookup_chunk_by_id(neighbor_id)
+        if neighbor is None or not neighbor.text.strip():
+            continue
+        group.append(neighbor)
+        seen.add(neighbor_id)
+
+    return group
+
+
+def merge_neighbor_chunks(hits: list[RetrievedChunk], *, radius: int) -> list[RetrievedChunk]:
+    """Combine each hit with chunk_index ± radius into one block for the LLM."""
+    if radius <= 0 or not hits:
+        return hits
+
+    merged: list[RetrievedChunk] = []
+    for hit in hits:
+        group = _group_hit_with_neighbors(hit, radius)
+        group.sort(key=lambda chunk: chunk.chunk_index if chunk.chunk_index >= 0 else 0)
+
+        texts: list[str] = []
+        seen_text: set[str] = set()
+        for chunk in group:
+            text = chunk.text.strip()
+            if text and text not in seen_text:
+                texts.append(text)
+                seen_text.add(text)
+
+        chunk_ids = [chunk.chunk_id for chunk in group]
+        indices = [chunk.chunk_index for chunk in group if chunk.chunk_index >= 0]
+        merged.append(
+            RetrievedChunk(
+                text="\n\n".join(texts),
+                document_id=hit.document_id,
+                title=hit.title,
+                source_url=hit.source_url,
+                source=hit.source,
+                chunk_id=hit.chunk_id,
+                chunk_index=min(indices) if indices else hit.chunk_index,
+                merged_chunk_ids=chunk_ids,
+            )
+        )
+
+    return merged
+
+
+def cap_context_chunks(chunks: list[RetrievedChunk], max_chunks: int) -> list[RetrievedChunk]:
+    if max_chunks <= 0 or len(chunks) <= max_chunks:
+        return chunks
+    return chunks[:max_chunks]
+
+
+def prepare_context_chunks(
+    hits: list[RetrievedChunk],
+    *,
+    radius: int,
+    expand_neighbors: bool,
+    merge_neighbors: bool,
+    max_chunks: int | None,
+) -> list[RetrievedChunk]:
+    """Neighbor expand/merge and optional cap — applied after diverse filter."""
+    if not hits:
+        return hits
+
+    if expand_neighbors and radius > 0:
+        if merge_neighbors:
+            chunks = merge_neighbor_chunks(hits, radius=radius)
+        else:
+            chunks = expand_neighbor_chunks(hits, radius=radius)
+    else:
+        chunks = list(hits)
+
+    if max_chunks is not None:
+        chunks = cap_context_chunks(chunks, max_chunks)
+    return chunks
+
+
+def chunk_ids_for_context(chunks: list[RetrievedChunk]) -> list[str]:
+    """Flatten chunk ids for API/eval (includes merged neighbor ids)."""
+    ids: list[str] = []
+    for chunk in chunks:
+        if chunk.merged_chunk_ids:
+            ids.extend(chunk.merged_chunk_ids)
+        elif chunk.chunk_id:
+            ids.append(chunk.chunk_id)
+    return ids
+
+
+def expand_neighbor_chunks(chunks: list[RetrievedChunk], *, radius: int) -> list[RetrievedChunk]:
+    """Append adjacent chunks (same document_id) for each retrieved hit."""
+    if radius <= 0 or not chunks:
+        return chunks
+
+    expanded: list[RetrievedChunk] = []
+    seen: set[str] = set()
+
+    for chunk in chunks:
+        if chunk.chunk_id not in seen:
+            expanded.append(chunk)
+            seen.add(chunk.chunk_id)
+
+        if chunk.chunk_index < 0 or not chunk.document_id:
+            continue
+
+        document_id = chunk.document_id
+        for offset in sorted(range(-radius, radius + 1), key=lambda value: abs(value)):
+            if offset == 0:
+                continue
+            neighbor_index = chunk.chunk_index + offset
+            if neighbor_index < 0:
+                continue
+            neighbor_id = _chunk_id(document_id, neighbor_index)
+            if neighbor_id in seen:
+                continue
+            neighbor = lookup_chunk_by_id(neighbor_id)
+            if neighbor is None or not neighbor.text.strip():
+                continue
+            expanded.append(neighbor)
+            seen.add(neighbor_id)
+
+    return expanded
 
 
 def retrieve_chunks_hybrid(
@@ -700,7 +1008,7 @@ def _retrieved_to_debug(
         debug_chunks.append(
             DebugRetrievedChunk(
                 score=score,
-                document_id=chunk.title,
+                document_id=chunk.document_id,
                 chunk_index=chunk.chunk_index,
                 source=chunk.source,
                 text=chunk.text,

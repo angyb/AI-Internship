@@ -30,7 +30,8 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 
 DEFAULT_API_URL = os.getenv("RAG_API_URL", "http://127.0.0.1:8000")
 WORKDIR_CMD = "ai-engineering-bootcamp-v2/week-2/rag-vector-databases"
-CITATION_RE = re.compile(r"\[document_id:\s*([^\]]+)\]", re.IGNORECASE)
+CITATION_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+LEGACY_CITATION_RE = re.compile(r"\[document_id:\s*([^\]]+)\]", re.IGNORECASE)
 
 SAMPLE_INGEST = {
     "document_id": "demo-accessibility",
@@ -76,8 +77,12 @@ def call_json(
         return 0, {"error": str(exc)}
 
 
-def extract_citations(answer_text: str) -> list[str]:
-    return [match.strip() for match in CITATION_RE.findall(answer_text)]
+def extract_citations(answer_text: str) -> list[tuple[str, str]]:
+    """Return (label, url) pairs — markdown links or legacy document_id citations."""
+    links = CITATION_LINK_RE.findall(answer_text)
+    if links:
+        return [(title.strip(), url.strip()) for title, url in links]
+    return [(doc_id.strip(), "") for doc_id in LEGACY_CITATION_RE.findall(answer_text)]
 
 
 def render_api_error(status: int, data: dict | str) -> None:
@@ -198,9 +203,17 @@ with ask_tab:
                     st.metric("Tokens", data.get("tokens_used", "—"))
 
                 if inline_citations:
-                    st.markdown("**document_id cited in answer**")
-                    for doc_id in dict.fromkeys(inline_citations):
-                        st.markdown(f"- `{doc_id}`")
+                    st.markdown("**Citations in answer**")
+                    seen: set[tuple[str, str]] = set()
+                    for label, url in inline_citations:
+                        key = (label, url)
+                        if key in seen:
+                            continue
+                        seen.add(key)
+                        if url:
+                            st.markdown(f"- [{label}]({url})")
+                        else:
+                            st.markdown(f"- `{label}`")
 
                 if chunk_ids:
                     st.markdown("**chunk_ids returned by API**")

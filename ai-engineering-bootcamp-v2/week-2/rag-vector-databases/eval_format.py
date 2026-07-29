@@ -7,7 +7,7 @@ from typing import Any
 
 # Strip grounding citations from displayed answers (RAGAS still scores the raw answer).
 _ANSWER_CITATION_RE = re.compile(
-    r"\s*\[(?:document_id:\s*[^\]]+|[^\]:]+:\s*[^\]]+)\]\.?"
+    r"\s*(?:\[[^\]]+\]\([^)]+\)|\[(?:document_id:\s*[^\]]+|[^\]:]+:\s*[^\]]+)\])\.?"
 )
 
 
@@ -18,11 +18,22 @@ def format_answer_for_display(answer: str) -> str:
     return "\n".join(line for line in lines if line)
 
 
+def unique_chunk_ids(chunk_ids: list[str]) -> list[str]:
+    """Preserve order, drop duplicates (neighbor merge can repeat ids)."""
+    seen: set[str] = set()
+    unique: list[str] = []
+    for chunk_id in chunk_ids:
+        if chunk_id and chunk_id not in seen:
+            seen.add(chunk_id)
+            unique.append(chunk_id)
+    return unique
+
+
 def questions_and_answers_rows(questions: list[dict[str, Any]]) -> list[dict[str, str]]:
     """One row per golden-set question for the Q&A table."""
     rows: list[dict[str, str]] = []
     for item in questions:
-        chunk_ids = item.get("chunk_ids") or []
+        chunk_ids = unique_chunk_ids(item.get("chunk_ids") or [])
         rows.append(
             {
                 "Question": item["question"],
@@ -58,6 +69,82 @@ def retrieval_config_rows(config: dict[str, Any]) -> list[dict[str, str]]:
         {"Setting": "rerank_enabled", "Value": _format_bool(config.get("rerank_enabled"))},
         {"Setting": "rerank_candidates", "Value": str(config.get("rerank_candidates", "—"))},
         {"Setting": "rerank_model", "Value": str(config.get("rerank_model", "—"))},
+        {
+            "Setting": "neighbor_chunks_enabled",
+            "Value": _format_bool(config.get("neighbor_chunks_enabled")),
+        },
+        {
+            "Setting": "neighbor_chunk_radius",
+            "Value": str(config.get("neighbor_chunk_radius", "—")),
+        },
+        {
+            "Setting": "neighbor_merge_enabled",
+            "Value": _format_bool(config.get("neighbor_merge_enabled")),
+        },
+        {
+            "Setting": "max_context_chunks_enabled",
+            "Value": _format_bool(config.get("max_context_chunks_enabled")),
+        },
+        {
+            "Setting": "max_context_chunks",
+            "Value": str(config.get("max_context_chunks", "—")),
+        },
+        {
+            "Setting": "two_step_generation",
+            "Value": _format_bool(config.get("two_step_generation")),
+        },
+        {
+            "Setting": "question_routing_enabled",
+            "Value": _format_bool(config.get("question_routing_enabled")),
+        },
+        {
+            "Setting": "answer_verbosity",
+            "Value": str(config.get("answer_verbosity", "—")),
+        },
+        {
+            "Setting": "citations_enabled",
+            "Value": _format_bool(config.get("citations_enabled")),
+        },
+        {
+            "Setting": "relevance_filter_enabled",
+            "Value": _format_bool(config.get("relevance_filter_enabled")),
+        },
+        {
+            "Setting": "relevance_min_score_gap",
+            "Value": str(config.get("relevance_min_score_gap", "—")),
+        },
+        {
+            "Setting": "relevance_min_chunks",
+            "Value": str(config.get("relevance_min_chunks", "—")),
+        },
+        {
+            "Setting": "prompt_conflict_resolution_enabled",
+            "Value": _format_bool(config.get("prompt_conflict_resolution_enabled")),
+        },
+        {
+            "Setting": "context_order_by_rerank_score",
+            "Value": _format_bool(config.get("context_order_by_rerank_score")),
+        },
+        {
+            "Setting": "answer_model",
+            "Value": str(config.get("answer_model", "—")),
+        },
+        {
+            "Setting": "extraction_model",
+            "Value": str(config.get("extraction_model", "—")),
+        },
+        {
+            "Setting": "embedding_model",
+            "Value": str(config.get("embedding_model", "—")),
+        },
+        {
+            "Setting": "ragas_judge_model",
+            "Value": str(config.get("ragas_judge_model", "—")),
+        },
+        {
+            "Setting": "generation_temperature",
+            "Value": str(config.get("generation_temperature", "—")),
+        },
     ]
     excluded = config.get("exclude_document_ids") or []
     if excluded:

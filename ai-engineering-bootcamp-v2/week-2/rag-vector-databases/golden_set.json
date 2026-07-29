@@ -1,27 +1,27 @@
 [
   {
     "question": "How do I add students to my class?",
-    "reference": "Students who already have an existing Zearn account can join your class with your class code. To add students new to Zearn to your class, follow the steps below:\n\n1. Navigate to Roster at the top of your Zearn account.\n2. Choose the desired class from the Switch Class dropdown menu.\n3. Click Add Students.\n4. Type or paste your student's name into the box under \u201cNew Students\u201d and click Next.\n5. Edit student passwords and usernames as needed and click Next.\n6. Choose a grade, Mission, and Topic for your students and click Finish.\n7. Follow the steps on the \u201cCongratulations\u201d page to get your students started.",
+    "reference": "Students who already have an existing Zearn account can join your class with your class code. To add students without a Zearn account to your class, follow the steps below:\n\n1. Navigate to Roster at the top of your Zearn account.\n2. Choose the desired class from the Switch Class dropdown menu.\n3. Click Add Students.\n4. Type or paste your student's name into the box under \u201cNew Students\u201d and click Next.\n5. Edit student passwords and usernames as needed and click Next.\n6. Choose a grade, Mission, and Topic for your students and click Finish.\n7. Follow the steps on the \u201cCongratulations\u201d page to get your students started.",
     "expected_document_ids": ["add-students-to-your-class"]
   },
   {
-    "question": "What is a Tower Alert?",
+    "question": "What causes a Tower Alert and what is its purpose?",
     "reference": "If a student is struggling in the Tower of Power, the independent practice portion of an Independent Digital Lesson, they receive scaffolded support the moment they need it; this is called a Boost. If students receive three Boosts in the same Tower of Power, a Tower Alert is generated for their teacher. Their teacher receives an alert in the Tower Alerts Report, enabling them to provide tailored, differentiated support for that student.",
-    "expected_document_ids": ["tower-alerts-report","independent-practice-tower-of-power","liveview-report","boosts"]
+    "expected_document_ids": ["boosts", "tower-alerts-report","independent-practice-tower-of-power","liveview-report"]
   },
   {
     "question": "What is LEAP?",
-    "reference": "The LEAP mathematics assessment is a statewide standardized mathematics assessment for students in Grades 3-8, aligned to the Louisiana Student Standards for Mathematics. The test is conducted in both online and paper-based formats in the spring of each school year.",
+    "reference": "The LEAP (Louisiana Educational Assessment Program)  mathematics assessment is a statewide standardized mathematics assessment for students in Grades 3-8, aligned to the Louisiana Student Standards for Mathematics. The test is conducted in both online and paper-based formats in the spring of each school year.",
     "expected_document_ids": ["EvaluationofZearnSupplementalwithDedicatedImplementationSupport","insights-zearn-impact-study-louisiana"]
   },
   {
-    "question": "Is Zearn based on learning science?",
-    "reference": "Zearn Math is designed to reflect the science of how kids learn — moving from concrete experiences to visual models to abstract reasoning — in order to build mastery that lasts.",
-    "expected_document_ids": ["how-zearn-math-works","mission"]
+    "question": "How has Zearn incorporated the science of learning into its product?",
+    "reference": "Zearn Math incorporates the science of learning by using the concrete-pictorial-abstract approach, which reflects how kids learn. This method involves moving from concrete experiences to visual models to abstract reasoning, helping to build lasting mastery. Additionally, Zearn Math lessons adapt to provide support and scaffolding when students struggle, ensuring they can work through challenges without sacrificing grade-level rigor. The lessons also integrate paper-and-pencil problem solving, allowing students to reflect on new concepts and demonstrate their thinking beyond the screen.",
+    "expected_document_ids": ["how-zearn-math-works","index", "press-releases-evidence-for-essa.md", "why-zearn-math.md"]
   },
   {
-    "question": "Which Zearn accounts are free?",
-    "reference": "Zearn is free for individual students and individual teachers with one classroom of up to 35 students.",
-    "expected_document_ids": ["getting-started","Zearn_Account_Comparison", "add-your-class"]
+    "question": "Who can get a free Zearn account?",
+    "reference": "Individuals can sign up for a free Individual Account to access Zearn Math lessons. Teachers with one classroom of up to 35 students can also access Zearn Math instructional materials.",
+    "expected_document_ids": ["getting-started","Zearn_Account_Comparison", "add-your-class", "Create-an-Individual-Account","Log-in-away-from-school"]
   }
 ]

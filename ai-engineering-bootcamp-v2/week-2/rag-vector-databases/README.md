@@ -86,7 +86,7 @@ Deploy the Week 2 RAG API (`main.py`) as a Render **Web Service** from this GitH
    - **Runtime:** Python
    - **Build Command:** `pip install -r requirements.txt`
    - **Start Command:** `python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. **Environment** → add:
+4. **Environment** — sync from your local `.env` (see [Sync env to Render](#sync-env-to-render) below), or add keys manually. Minimum required secrets:
    - `OPENAI_API_KEY`
    - `PINECONE_API_KEY`
    - `PINECONE_INDEX_NAME`
@@ -94,6 +94,26 @@ Deploy the Week 2 RAG API (`main.py`) as a Render **Web Service** from this GitH
 5. Deploy, then open your service URL (for example `https://your-app.onrender.com/docs`).
 
 If you see `Could not import module "main"`, the **Root Directory** is wrong or empty.
+
+### Sync env to Render
+
+`render.yaml` lists every non-secret variable with values matching `.env.example`. To push your **local** `.env` (including API keys) to the Render Dashboard:
+
+**Option A — Dashboard bulk paste (no API key)**
+
+1. Generate a paste file: `python sync_render_env.py --print-bulk > .env.render.bulk`
+2. Render → your service → **Environment** → **Add from .env**
+3. Paste the contents of `.env.render.bulk` → **Save and deploy**
+
+**Option B — Render API (automated)**
+
+```bash
+export RENDER_API_KEY=rnd_...   # Account Settings → API Keys
+export RENDER_SERVICE_ID=srv_... # Service → Settings → Service ID
+python sync_render_env.py --deploy
+```
+
+After changing `CHUNK_SIZE`, `CHUNK_OVERLAP`, or `EMBEDDING_MODEL`, run `POST /ingest` again on Render.
 
 After deploy, ingest documents once (from your machine or a one-off shell):
 
@@ -119,15 +139,79 @@ Retrieval combines **Pinecone dense search** with an in-process **BM25 keyword i
 - **Disable:** set `HYBRID_SEARCH=false` in the environment to fall back to dense-only
 - **Compare in Swagger:** `POST /retrieve` accepts `"use_hybrid": false` for dense-only debugging
 
+## Retrieval tuning (env)
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `RETRIEVAL_K` | `5` | Final chunks passed to the LLM |
+| `RETRIEVAL_FETCH_K` | `10` | Candidate pool when reranking is off |
+| `MAX_CHUNKS_PER_DOCUMENT` | `2` | Per-document cap in final context |
+| `NEIGHBOR_CHUNKS_ENABLED` | `true` | Append adjacent chunks for each hit |
+| `NEIGHBOR_CHUNK_RADIUS` | `1` | How many neighbors on each side (`chunk_index ± N`) |
+| `NEIGHBOR_MERGE_ENABLED` | `true` | Merge each hit + neighbors into one block per `(document_id, hit)` |
+| `MAX_CONTEXT_CHUNKS_ENABLED` | `true` | Cap blocks sent to the LLM after expand/merge |
+| `MAX_CONTEXT_CHUNKS` | `5` | Maximum context blocks when cap is enabled |
+
+After diverse filtering, neighbor expansion loads `chunk_index ± radius` from the same `document_id` (BM25 index first, Pinecone fetch fallback). When merge is on, each hit becomes a single concatenated block; `MAX_CONTEXT_CHUNKS` then trims to the top blocks in retrieval order.
+
 ## Cross-encoder reranking (local, free)
 
 After hybrid/dense retrieval, a **local cross-encoder** re-scores the top candidates and keeps the best `k` for the LLM context. No Cohere or other paid rerank API — runs on CPU via [sentence-transformers](https://www.sbert.net/docs/pretrained_cross-encoder.html).
 
 - **Default model:** `cross-encoder/ms-marco-MiniLM-L-6-v2` (~80MB, downloaded on first startup)
-- **Flow:** fetch `RERANK_CANDIDATES` (default 20) → cross-encoder score → per-document cap → final `k=5`
+- **Flow:** fetch `RERANK_CANDIDATES` (default 30) → cross-encoder score → per-document cap → final `k=5`
 - **Render:** model loads at startup (same lifespan as BM25 rebuild); first deploy build installs PyTorch CPU + sentence-transformers
 - **Disable:** `RERANK_ENABLED=false` or `"use_rerank": false` on `POST /retrieve`
 - **Override model:** `RERANK_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2`
+
+## Grounded generation
+
+`/ask` routes each question to a **type-specific prompt** (how-to, comparison, research, report, etc.) via regex heuristics — no extra LLM call.
+
+| Toggle | Values | Default | Effect |
+|--------|--------|---------|--------|
+| `TWO_STEP_GENERATION` | `true` / `false` | `false` | When `true`: extract facts from chunks, then answer from facts only (~2× generation tokens). When `false`: single-step answer directly from retrieved chunks (closer to source wording). |
+| `QUESTION_ROUTING_ENABLED` | `true` / `false` | `true` | When `false`, uses the generic `general` template for all questions. |
+| `ANSWER_VERBOSITY` | `concise` / `complete` | `concise` | `concise`: answer only what was asked; omit tangential details. `complete`: include related limits, triggers, and alternative paths. |
+| `CITATIONS_ENABLED` | `true` / `false` | `false` | When `true`, prompts require markdown-link citations `[Title](url)` in answers. |
+| `PROMPT_PROFILE` | type name or unset | unset | Force a prompt type for testing (e.g. `how_to`). |
+
+Shared prompt rules (via `generation_config.py`): prefer verbatim source phrasing; do not add navigation, prerequisites, or comparisons unless the question asks for them.
+
+- **Response field:** `/ask` returns `question_type` — the route chosen for that question.
+
+## Pre-generation relevance filter
+
+After neighbor expansion/merge, context blocks are scored with the same local cross-encoder used for reranking. Blocks scoring more than `RELEVANCE_MIN_SCORE_GAP` below the best block are dropped before the prompt is built.
+
+| Toggle | Values | Default | Effect |
+|--------|--------|---------|--------|
+| `RELEVANCE_FILTER_ENABLED` | `true` / `false` | `true` | Enable/disable the filter |
+| `RELEVANCE_MIN_SCORE_GAP` | float | `1.0` | Max allowed score drop from the best block |
+| `RELEVANCE_MIN_CHUNKS` | int | `1` | Always keep at least this many blocks |
+
+Tune `RELEVANCE_MIN_SCORE_GAP` if too many good chunks are dropped (increase) or boilerplate PDFs still leak through (decrease).
+
+## Ingest chunking
+
+| Toggle | Default | Effect |
+|--------|---------|--------|
+| `CHUNK_SIZE` | `800` | Character chunk size for `POST /ingest` (when query params omitted) |
+| `CHUNK_OVERLAP` | `100` | Overlap between consecutive chunks |
+
+Changing these requires re-ingesting the corpus for vectors to match.
+
+## OpenAI models
+
+| Toggle | Default | Effect |
+|--------|---------|--------|
+| `ANSWER_MODEL` | `gpt-4o` | Chat model for `/ask` step 2 — structured answer generation. Override per request via `"model"` in the JSON body. |
+| `EXTRACTION_MODEL` | falls back to `ANSWER_MODEL` | Chat model for two-step step 1 — fact extraction from retrieved chunks. Only used when `TWO_STEP_GENERATION=true`. |
+| `EMBEDDING_MODEL` | `text-embedding-3-small` | Embeds questions at retrieval time and documents at ingest. Changing this requires re-ingest. |
+| `RAGAS_JUDGE_MODEL` | `gpt-4o-mini` | LLM used by golden-set eval to score faithfulness and answer_correctness. |
+| `GENERATION_TEMPERATURE` | `0` | Temperature for answer generation and fact extraction. |
+
+Restart uvicorn after changing model env vars.
 
 ## Document scope for general queries
 

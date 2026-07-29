@@ -7,7 +7,6 @@ import os
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from string import Template
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -15,15 +14,35 @@ from openai import APIError, OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
 from ingest import (
-    DEFAULT_CHUNK_OVERLAP,
-    DEFAULT_CHUNK_SIZE,
     RetrievedChunk,
     apply_diverse_filter,
+    chunk_ids_for_context,
     ingest_documents,
     ingest_text,
+    prepare_context_chunks,
     resolve_retrieval_filters,
     retrieve_chunks_diverse,
     retrieve_chunks_hybrid,
+)
+from generation_config import prompt_substitution_vars
+from model_config import answer_model, extraction_model, generation_temperature
+from question_classifier import QuestionType, classify_question
+from question_prompts import (
+    get_fact_extraction_template,
+    get_grounding_template,
+    get_single_step_template,
+)
+from retrieval_config import (
+    chunk_overlap as configured_chunk_overlap,
+    chunk_size as configured_chunk_size,
+    max_chunks_per_document,
+    max_context_chunks,
+    max_context_chunks_enabled,
+    neighbor_chunk_radius,
+    neighbor_chunks_enabled,
+    neighbor_merge_enabled,
+    retrieval_fetch_k,
+    retrieval_k,
 )
 
 _ENV_PATH = Path(__file__).resolve().parent / ".env"
@@ -34,6 +53,10 @@ logger = logging.getLogger(__name__)
 
 def hybrid_search_enabled() -> bool:
     return os.getenv("HYBRID_SEARCH", "true").lower() != "false"
+
+
+def two_step_generation_enabled() -> bool:
+    return os.getenv("TWO_STEP_GENERATION", "true").lower() != "false"
 
 
 @asynccontextmanager
@@ -49,16 +72,22 @@ async def lifespan(_app: FastAPI):
         except Exception as exc:
             logger.warning("BM25 rebuild from Pinecone failed: %s", exc)
 
-    try:
-        from rerank import warmup_reranker
+    from rerank import (
+        context_order_by_rerank_score_enabled,
+        relevance_filter_enabled,
+        rerank_enabled,
+        warmup_reranker,
+    )
 
+    if rerank_enabled() or relevance_filter_enabled() or context_order_by_rerank_score_enabled():
         start = time.perf_counter()
-        warmup_reranker()
-        elapsed = time.perf_counter() - start
-        if elapsed > 0.01:
-            logger.info("Cross-encoder reranker ready in %.1fs", elapsed)
-    except Exception as exc:
-        logger.warning("Cross-encoder reranker warmup failed: %s", exc)
+        try:
+            warmup_reranker()
+            elapsed = time.perf_counter() - start
+            if elapsed > 0.01:
+                logger.info("Cross-encoder reranker ready in %.1fs", elapsed)
+        except Exception as exc:
+            logger.warning("Cross-encoder reranker warmup failed: %s", exc)
 
     yield
 
@@ -66,26 +95,7 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(title="Week 2 RAG API", lifespan=lifespan)
 client = OpenAI()
 
-DEFAULT_MODEL = "gpt-4o"
-RETRIEVAL_K = 5
-RETRIEVAL_FETCH_K = 10
-MAX_CHUNKS_PER_DOCUMENT = 2
-
-# Grounding prompt template — filled after retrieval with numbered chunks.
-GROUNDING_PROMPT_TEMPLATE = Template("""\
-Answer the question using ONLY the retrieved context below.
-
-Rules:
-- Use ONLY facts from the context chunks. Do not use outside knowledge.
-- Cite the document_id for each chunk you use in your answer (e.g. [document_id: accessibility]).
-- If the context is insufficient to answer the question, refuse clearly in your answer \
-and set sources_needed to true.
-- Follow the question's requested format (e.g. bullet list, succinct, names only without descriptions).
-
-Retrieved context:
-$context
-
-Question: $question""")
+DEFAULT_MODEL = answer_model()
 
 MODEL_PRICES_PER_1K: dict[str, tuple[float, float]] = {
     "gpt-4o": (0.0025, 0.01),
@@ -115,9 +125,9 @@ class AskRequest(BaseModel):
             "Pass [] to search the full index."
         ),
     )
-    model: str = Field(
-        default=DEFAULT_MODEL,
-        description="OpenAI model to use.",
+    model: str | None = Field(
+        default=None,
+        description=f"OpenAI chat model for answer generation. Omit to use ANSWER_MODEL env ({answer_model()}).",
         examples=["gpt-4o", "gpt-4o-mini", "o3-mini"],
     )
 
@@ -130,6 +140,10 @@ class AskResponse(BaseModel):
     cost_usd: float
     sources: list[str]
     chunk_ids: list[str]
+    question_type: str = Field(
+        default="general",
+        description="Heuristic question-type route used for step 1/2 prompts.",
+    )
 
 
 class IngestResponse(BaseModel):
@@ -228,8 +242,8 @@ def health() -> dict[str, str]:
 
 @app.post("/ingest")
 def ingest(
-    chunk_size: int = DEFAULT_CHUNK_SIZE,
-    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None,
     clear_index: bool = True,
     body: IngestDocumentRequest | None = None,
 ) -> IngestResponse:
@@ -249,17 +263,19 @@ def ingest(
     """
 
     try:
+        effective_chunk_size = chunk_size if chunk_size is not None else configured_chunk_size()
+        effective_chunk_overlap = chunk_overlap if chunk_overlap is not None else configured_chunk_overlap()
         if body is not None:
             result = ingest_text(
                 document_id=body.document_id,
                 text=body.text,
-                chunk_size=chunk_size,
-                chunk_overlap=chunk_overlap,
+                chunk_size=effective_chunk_size,
+                chunk_overlap=effective_chunk_overlap,
             )
         else:
             result = ingest_documents(
-                chunk_size=chunk_size,
-                chunk_overlap=chunk_overlap,
+                chunk_size=effective_chunk_size,
+                chunk_overlap=effective_chunk_overlap,
                 clear_index_first=clear_index,
             )
     except ValueError as exc:
@@ -281,19 +297,40 @@ def ingest(
 
 
 def resolve_model(model: str | None) -> str:
-    """Normalize model name; fall back to default for empty or Swagger placeholders."""
+    """Normalize model name; fall back to ANSWER_MODEL env for empty or Swagger placeholders."""
+    default = answer_model()
     if not model:
-        return DEFAULT_MODEL
+        return default
     cleaned = model.strip()
     if not cleaned or cleaned.lower() == "string":
-        return DEFAULT_MODEL
+        return default
     return cleaned
 
 
 def compute_cost_usd(model: str, prompt_tokens: int, completion_tokens: int) -> float:
-    prices = MODEL_PRICES_PER_1K.get(model, MODEL_PRICES_PER_1K[DEFAULT_MODEL])
+    default = answer_model()
+    prices = MODEL_PRICES_PER_1K.get(model, MODEL_PRICES_PER_1K.get(default, (0.0025, 0.01)))
     input_per_1k, output_per_1k = prices
     return (prompt_tokens / 1000 * input_per_1k) + (completion_tokens / 1000 * output_per_1k)
+
+
+def compute_generation_cost_usd(
+    answer_model_name: str,
+    answer_prompt_tokens: int,
+    answer_completion_tokens: int,
+    *,
+    extraction_model_name: str | None = None,
+    extraction_prompt_tokens: int = 0,
+    extraction_completion_tokens: int = 0,
+) -> float:
+    cost = compute_cost_usd(answer_model_name, answer_prompt_tokens, answer_completion_tokens)
+    if extraction_prompt_tokens or extraction_completion_tokens:
+        cost += compute_cost_usd(
+            extraction_model_name or extraction_model(),
+            extraction_prompt_tokens,
+            extraction_completion_tokens,
+        )
+    return cost
 
 
 def _source_label(chunk: RetrievedChunk) -> str:
@@ -301,15 +338,20 @@ def _source_label(chunk: RetrievedChunk) -> str:
         return chunk.source_url
     if chunk.title:
         return chunk.title
-    return chunk.source or "unknown"
+    return chunk.source or chunk.document_id or "unknown"
 
 
 def format_retrieved_context(chunks: list[RetrievedChunk]) -> str:
     """Format top-k chunks for the grounding prompt."""
     parts: list[str] = []
     for i, chunk in enumerate(chunks, start=1):
+        if chunk.merged_chunk_ids:
+            chunk_label = ", ".join(chunk.merged_chunk_ids)
+        else:
+            chunk_label = chunk.chunk_id
+        url_part = f" | url: {chunk.source_url}" if chunk.source_url else ""
         parts.append(
-            f"[{i}] chunk_id: {chunk.chunk_id} | document_id: {chunk.title}\n{chunk.text}"
+            f"[{i}] title: {chunk.title}{url_part} | document_id: {chunk.document_id} | chunk_id: {chunk_label}\n{chunk.text}"
         )
     return "\n\n".join(parts)
 
@@ -323,17 +365,26 @@ def retrieve_context(
     exclude_document_ids: list[str] | None = None,
 ) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
     """Embed the question, retrieve top-k chunks, and format context."""
-    from rerank import rerank_candidates_count, rerank_candidate_max_per_document, rerank_chunks, rerank_enabled
+    from rerank import (
+        filter_chunks_by_relevance,
+        order_chunks_by_rerank_score,
+        rerank_candidate_max_per_document,
+        rerank_candidates_count,
+        rerank_chunks,
+        rerank_enabled,
+    )
 
     filter_ids, exclude_ids = resolve_retrieval_filters(document_ids, exclude_document_ids)
     do_rerank = rerank_enabled() if use_rerank is None else use_rerank
+    final_k = retrieval_k()
+    final_max_per_doc = max_chunks_per_document()
 
     if do_rerank:
         candidate_k = rerank_candidates_count()
         candidate_max_per_doc = rerank_candidate_max_per_document()
     else:
-        candidate_k = RETRIEVAL_FETCH_K
-        candidate_max_per_doc = MAX_CHUNKS_PER_DOCUMENT
+        candidate_k = retrieval_fetch_k()
+        candidate_max_per_doc = final_max_per_doc
 
     if use_hybrid and hybrid_search_enabled():
         candidates = retrieve_chunks_hybrid(
@@ -359,15 +410,27 @@ def retrieve_context(
 
     chunks = apply_diverse_filter(
         candidates,
-        k=RETRIEVAL_K,
-        max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+        k=final_k,
+        max_per_document=final_max_per_doc,
     )
+
+    context_cap = max_context_chunks() if max_context_chunks_enabled() else None
+    chunks = prepare_context_chunks(
+        chunks,
+        radius=neighbor_chunk_radius(),
+        expand_neighbors=neighbor_chunks_enabled(),
+        merge_neighbors=neighbor_merge_enabled(),
+        max_chunks=context_cap,
+    )
+
+    chunks = filter_chunks_by_relevance(question, chunks)
+    chunks = order_chunks_by_rerank_score(question, chunks)
 
     if not chunks:
         return [], "", [], []
 
     context = format_retrieved_context(chunks)
-    chunk_ids = [chunk.chunk_id for chunk in chunks]
+    chunk_ids = chunk_ids_for_context(chunks)
 
     sources: list[str] = []
     seen: set[str] = set()
@@ -404,7 +467,7 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
         chunks=[
             RetrievedChunkOut(
                 chunk_id=chunk.chunk_id,
-                document_id=chunk.title,
+                document_id=chunk.document_id,
                 text=chunk.text,
                 source=chunk.source,
             )
@@ -413,14 +476,136 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
     )
 
 
-def build_grounding_prompt(question: str, context: str) -> str:
-    if not context:
-        return GROUNDING_PROMPT_TEMPLATE.substitute(
-            context="(No relevant chunks were retrieved.)",
+def build_fact_extraction_prompt(
+    question: str,
+    context: str,
+    question_type: QuestionType,
+) -> str:
+    return get_fact_extraction_template(question_type).substitute(
+        context=context,
+        question=question,
+        **prompt_substitution_vars(for_extraction=True),
+    )
+
+
+def build_grounding_prompt(
+    question: str,
+    context: str,
+    question_type: QuestionType,
+    *,
+    extracted_facts: str | None = None,
+) -> str:
+    prompt_vars = prompt_substitution_vars(for_extraction=False)
+    if extracted_facts is not None:
+        return get_grounding_template(question_type).substitute(
+            extracted_facts=extracted_facts,
             question=question,
+            **prompt_vars,
         )
 
-    return GROUNDING_PROMPT_TEMPLATE.substitute(context=context, question=question)
+    empty_context = "(No relevant chunks were retrieved.)"
+    if not context.strip():
+        context = empty_context
+
+    return get_single_step_template(question_type).substitute(
+        context=context,
+        question=question,
+        **prompt_vars,
+    )
+
+
+def extract_facts(
+    question: str,
+    context: str,
+    model: str,
+    question_type: QuestionType,
+) -> tuple[str, int, int, int]:
+    """Step 1 — pull grouped facts from retrieved chunks (plain-text completion)."""
+    prompt = build_fact_extraction_prompt(question, context, question_type)
+    completion = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=generation_temperature(),
+    )
+
+    facts = (completion.choices[0].message.content or "").strip()
+    usage = completion.usage
+    total = usage.total_tokens if usage else 0
+    prompt_tokens = usage.prompt_tokens if usage else 0
+    completion_tokens = usage.completion_tokens if usage else 0
+    return facts, total, prompt_tokens, completion_tokens
+
+
+def generate_grounded_answer(
+    question: str,
+    context: str,
+    model: str,
+    *,
+    force_bad: bool = False,
+    question_type: QuestionType | None = None,
+) -> tuple[Answer, int, int, int, QuestionType, int, int]:
+    """Step 1 extract facts (optional), step 2 structured answer.
+
+    Returns extraction prompt/completion token counts (0 when single-step).
+    """
+    total_tokens = 0
+    prompt_tokens = 0
+    completion_tokens = 0
+    extraction_prompt_tokens = 0
+    extraction_completion_tokens = 0
+    route = question_type or classify_question(question)
+    logger.debug("Question routed to prompt type: %s", route)
+
+    if not context.strip():
+        prompt = build_grounding_prompt(
+            question,
+            context,
+            route,
+            extracted_facts="(No relevant chunks were retrieved.)",
+        )
+    elif two_step_generation_enabled():
+        extract_model = extraction_model()
+        facts, step_tokens, step_prompt_tokens, step_completion_tokens = extract_facts(
+            question, context, extract_model, route
+        )
+        extraction_prompt_tokens = step_prompt_tokens
+        extraction_completion_tokens = step_completion_tokens
+        total_tokens += step_tokens
+        prompt_tokens += step_prompt_tokens
+        completion_tokens += step_completion_tokens
+        logger.debug("Fact extraction model: %s", extract_model)
+        prompt = build_grounding_prompt(
+            question,
+            context,
+            route,
+            extracted_facts=facts or "(No facts extracted.)",
+        )
+    else:
+        prompt = build_grounding_prompt(question, context, route)
+
+    if force_bad:
+        answer, step_tokens, step_prompt_tokens, step_completion_tokens = call_model_unsafe(
+            prompt, model
+        )
+    else:
+        answer, step_tokens, step_prompt_tokens, step_completion_tokens = call_model_structured(
+            prompt, model
+        )
+
+    total_tokens += step_tokens
+    prompt_tokens += step_prompt_tokens
+    completion_tokens += step_completion_tokens
+    answer_prompt_tokens = step_prompt_tokens
+    answer_completion_tokens = step_completion_tokens
+    return (
+        answer,
+        total_tokens,
+        answer_prompt_tokens,
+        answer_completion_tokens,
+        route,
+        extraction_prompt_tokens,
+        extraction_completion_tokens,
+    )
 
 
 def call_model_structured(prompt: str, model: str) -> tuple[Answer, int, int, int]:
@@ -429,6 +614,7 @@ def call_model_structured(prompt: str, model: str) -> tuple[Answer, int, int, in
         model=model,
         messages=[{"role": "user", "content": prompt}],
         response_format=Answer,
+        temperature=generation_temperature(),
     )
 
     parsed = completion.choices[0].message.parsed
@@ -489,24 +675,29 @@ def ask(body: AskRequest) -> AskResponse:
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
 
-    prompt = build_grounding_prompt(body.question, context)
-
     for attempt in range(2):
         try:
             start = time.perf_counter()
 
             use_bad_path = body.force_bad and attempt == 0
-            if use_bad_path:
-                answer, tokens_used, prompt_tokens, completion_tokens = call_model_unsafe(
-                    prompt, model
-                )
-            else:
-                answer, tokens_used, prompt_tokens, completion_tokens = call_model_structured(
-                    prompt, model
-                )
+            question_type = classify_question(body.question)
+            answer, tokens_used, answer_prompt_tokens, answer_completion_tokens, route, ext_prompt_tokens, ext_completion_tokens = generate_grounded_answer(
+                body.question,
+                context,
+                model,
+                force_bad=use_bad_path,
+                question_type=question_type,
+            )
 
             latency_ms = int((time.perf_counter() - start) * 1000)
-            cost_usd = compute_cost_usd(model, prompt_tokens, completion_tokens)
+            cost_usd = compute_generation_cost_usd(
+                model,
+                answer_prompt_tokens,
+                answer_completion_tokens,
+                extraction_model_name=extraction_model() if ext_prompt_tokens or ext_completion_tokens else None,
+                extraction_prompt_tokens=ext_prompt_tokens,
+                extraction_completion_tokens=ext_completion_tokens,
+            )
 
             return AskResponse(
                 answer=answer,
@@ -516,6 +707,7 @@ def ask(body: AskRequest) -> AskResponse:
                 cost_usd=round(cost_usd, 6),
                 sources=sources,
                 chunk_ids=chunk_ids,
+                question_type=route,
             )
         except (ValidationError, ValueError) as exc:
             last_error = str(exc)
