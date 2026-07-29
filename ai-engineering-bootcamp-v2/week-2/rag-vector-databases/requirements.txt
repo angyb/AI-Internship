@@ -1,5 +1,11 @@
 # Production deps for the Week 2 RAG FastAPI service (Render).
 # For the notebook locally: pip install -r requirements-dev.txt
+#
+# CPU-only PyTorch — must appear before sentence-transformers so pip does not
+# pull the default CUDA/nvidia stack (~2GB+) on Linux (Render).
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.5.0
 
 fastapi[standard]
 openai

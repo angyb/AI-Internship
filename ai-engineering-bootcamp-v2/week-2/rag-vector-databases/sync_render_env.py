@@ -93,11 +93,34 @@ def trigger_deploy(service_id: str, api_key: str) -> None:
         "Accept": "application/json",
         "Content-Type": "application/json",
     }
-    response = httpx.post(url, headers=headers, json={}, timeout=60.0)
+    response = httpx.post(
+        url,
+        headers=headers,
+        json={"clearCache": "do_not_clear"},
+        timeout=60.0,
+    )
     if response.status_code >= 400:
         print(f"Deploy trigger failed {response.status_code}: {response.text}", file=sys.stderr)
         sys.exit(1)
-    deploy_id = response.json().get("id", "unknown")
+
+    if not response.content.strip():
+        if response.status_code == 202:
+            print(
+                "Deploy queued (202) — another deploy may already be in progress. "
+                "Check Render Dashboard → Events."
+            )
+        else:
+            print(f"Deploy triggered (HTTP {response.status_code}). Check Render Dashboard → Events.")
+        return
+
+    try:
+        payload = response.json()
+    except ValueError:
+        print(f"Deploy triggered (HTTP {response.status_code}). Check Render Dashboard → Events.")
+        return
+
+    deploy = payload.get("deploy") if isinstance(payload.get("deploy"), dict) else payload
+    deploy_id = deploy.get("id", "unknown") if isinstance(deploy, dict) else "unknown"
     print(f"Triggered deploy: {deploy_id}")
 
 
