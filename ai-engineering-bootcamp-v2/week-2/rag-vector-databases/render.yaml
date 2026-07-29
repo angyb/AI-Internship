@@ -3,7 +3,8 @@ services:
     name: week-2-rag-api
     runtime: python
     rootDir: ai-engineering-bootcamp-v2/week-2/rag-vector-databases
-    buildCommand: pip install -r requirements.txt
+    # CPU-only PyTorch + cross-encoder exceed Render's 512MB limit — use slim deps.
+    buildCommand: pip install -r requirements-render.txt
     startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       # Secrets — set values in Render Dashboard (never commit)
@@ -60,9 +61,9 @@ services:
       - key: MAX_CONTEXT_CHUNKS
         value: "5"
 
-      # Local cross-encoder reranking
+      # Cross-encoder reranking — OFF on 512MB Render (needs PyTorch; use locally)
       - key: RERANK_ENABLED
-        value: "true"
+        value: "false"
       - key: RERANK_CANDIDATES
         value: "30"
       - key: RERANK_MODEL
@@ -80,9 +81,9 @@ services:
       - key: CITATIONS_ENABLED
         value: "false"
 
-      # Pre-generation relevance filter
+      # Pre-generation relevance filter (also needs cross-encoder — off on Render)
       - key: RELEVANCE_FILTER_ENABLED
-        value: "true"
+        value: "false"
       - key: RELEVANCE_MIN_SCORE_GAP
         value: "2.5"
       - key: RELEVANCE_MIN_CHUNKS
@@ -92,4 +93,4 @@ services:
       - key: PROMPT_CONFLICT_RESOLUTION_ENABLED
         value: "true"
       - key: CONTEXT_ORDER_BY_RERANK_SCORE
-        value: "true"
+        value: "false"

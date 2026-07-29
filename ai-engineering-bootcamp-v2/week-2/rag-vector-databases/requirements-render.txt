@@ -1,0 +1,15 @@
+# Render (512MB) — no PyTorch / sentence-transformers.
+# Cross-encoder rerank must stay disabled (RERANK_ENABLED=false, etc.).
+# Use requirements.txt locally when reranking is enabled.
+
+fastapi[standard]
+openai
+python-dotenv
+pinecone
+langchain-core
+langchain-openai
+langchain-text-splitters
+pymupdf
+pypdf
+ragas>=0.4.3
+rank-bm25

@@ -84,7 +84,8 @@ Deploy the Week 2 RAG API (`main.py`) as a Render **Web Service** from this GitH
    - **Root Directory:** `ai-engineering-bootcamp-v2/week-2/rag-vector-databases`  
      (required — there is no `main.py` at the repo root)
    - **Runtime:** Python
-   - **Build Command:** `pip install -r requirements.txt`
+   - **Build Command:** `pip install -r requirements-render.txt`  
+     (slim deps — no PyTorch; see [Render memory](#render-memory-512mb) below)
    - **Start Command:** `python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
 4. **Environment** — sync from your local `.env` (see [Sync env to Render](#sync-env-to-render) below), or add keys manually. Minimum required secrets:
    - `OPENAI_API_KEY`
@@ -94,6 +95,22 @@ Deploy the Week 2 RAG API (`main.py`) as a Render **Web Service** from this GitH
 5. Deploy, then open your service URL (for example `https://your-app.onrender.com/docs`).
 
 If you see `Could not import module "main"`, the **Root Directory** is wrong or empty.
+
+### Render memory (512MB)
+
+Free/Starter Render instances have a **512MB RAM limit**. Loading PyTorch + the local cross-encoder reranker at startup exceeds that and causes **Out of memory (used over 512Mi)** / exit 137.
+
+**On Render, keep these off** (already set in `render.yaml` and forced by `sync_render_env.py`):
+
+| Variable | Render value |
+|---|---|
+| `RERANK_ENABLED` | `false` |
+| `RELEVANCE_FILTER_ENABLED` | `false` |
+| `CONTEXT_ORDER_BY_RERANK_SCORE` | `false` |
+
+Hybrid BM25 + dense retrieval still works. Tune reranking locally with `requirements.txt`, then sync other vars to Render.
+
+To use cross-encoder reranking in production, upgrade to a Render plan with **≥1GB RAM** and switch the build command back to `requirements.txt`.
 
 ### Sync env to Render
 
@@ -170,7 +187,7 @@ After hybrid/dense retrieval, a **local cross-encoder** re-scores the top candid
 
 - **Default model:** `cross-encoder/ms-marco-MiniLM-L-6-v2` (~80MB, downloaded on first startup)
 - **Flow:** fetch `RERANK_CANDIDATES` (default 30) → cross-encoder score → per-document cap → final `k=5`
-- **Render:** model loads at startup (same lifespan as BM25 rebuild); first deploy build installs PyTorch CPU + sentence-transformers
+- **Render:** cross-encoder is **disabled** on 512MB instances (see [Render memory](#render-memory-512mb)); hybrid BM25 + dense retrieval only
 - **Disable:** `RERANK_ENABLED=false` or `"use_rerank": false` on `POST /retrieve`
 - **Override model:** `RERANK_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2`
 

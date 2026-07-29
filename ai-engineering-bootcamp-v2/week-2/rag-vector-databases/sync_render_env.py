@@ -39,14 +39,22 @@ SKIP_KEYS = frozenset(
     }
 )
 
+# 512MB Render instances cannot load PyTorch + cross-encoder — always override on sync.
+RENDER_OVERRIDES: dict[str, str] = {
+    "RERANK_ENABLED": "false",
+    "RELEVANCE_FILTER_ENABLED": "false",
+    "CONTEXT_ORDER_BY_RERANK_SCORE": "false",
+}
+
 
 def load_env_pairs(path: Path) -> list[dict[str, str]]:
     raw = dotenv_values(path)
+    merged = {**{k: str(v) for k, v in raw.items() if k and v is not None}, **RENDER_OVERRIDES}
     pairs: list[dict[str, str]] = []
-    for key, value in raw.items():
-        if not key or value is None or key in SKIP_KEYS:
+    for key, value in merged.items():
+        if key in SKIP_KEYS:
             continue
-        pairs.append({"key": key, "value": str(value)})
+        pairs.append({"key": key, "value": value})
     pairs.sort(key=lambda item: item["key"])
     return pairs
 
