@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
-from ingest import debug_retrieve, debug_retrieve_hybrid
+from ingest import debug_retrieve, debug_retrieve_hybrid, excluded_document_ids_from_env
 
 DEFAULT_QUESTION = "How do I add students to my class?"
 PREVIEW_CHARS = 300
@@ -51,18 +51,21 @@ def main() -> None:
         args = args[1:]
 
     question = " ".join(args).strip() or DEFAULT_QUESTION
+    exclude_ids = excluded_document_ids_from_env() or None
+    if exclude_ids:
+        print(f"Excluding document_ids: {', '.join(exclude_ids)}")
     print(f"Question: {question}\n")
 
     try:
         if dense_only:
-            chunks = debug_retrieve(question, k=5)
+            chunks = debug_retrieve(question, k=5, exclude_document_ids=exclude_ids)
             if not chunks:
                 print("No chunks returned. Run POST /ingest first to populate Pinecone.")
                 sys.exit(0)
             print_debug_chunks("Dense (Pinecone only)", chunks)
             return
 
-        result = debug_retrieve_hybrid(question, k=5)
+        result = debug_retrieve_hybrid(question, k=5, exclude_document_ids=exclude_ids)
     except KeyError as exc:
         print(f"Missing environment variable: {exc.args[0]}")
         sys.exit(1)

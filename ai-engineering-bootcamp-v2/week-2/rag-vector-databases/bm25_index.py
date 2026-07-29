@@ -93,6 +93,7 @@ class BM25Index:
         query: str,
         k: int,
         document_ids: list[str] | None = None,
+        exclude_document_ids: list[str] | None = None,
     ) -> list[tuple[str, float]]:
         if self._bm25 is None or not self._chunk_ids:
             return []
@@ -106,6 +107,11 @@ class BM25Index:
             if document_ids
             else None
         )
+        excluded = (
+            {doc_id.strip().lower() for doc_id in exclude_document_ids if doc_id.strip()}
+            if exclude_document_ids
+            else None
+        )
 
         scores = self._bm25.get_scores(tokens)
         ranked = sorted(
@@ -117,7 +123,10 @@ class BM25Index:
         for chunk_id, score in ranked:
             if score <= 0:
                 continue
-            if allowed and self._records[chunk_id].document_id.lower() not in allowed:
+            doc_id = self._records[chunk_id].document_id.lower()
+            if allowed and doc_id not in allowed:
+                continue
+            if excluded and doc_id in excluded:
                 continue
             results.append((chunk_id, float(score)))
             if len(results) >= k:

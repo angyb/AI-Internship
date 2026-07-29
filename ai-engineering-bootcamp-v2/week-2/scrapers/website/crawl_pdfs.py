@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Crawl about.zearn.org sitemap pages and sync zearn.org PDFs to a local folder."""
+"""Crawl about.zearn.org sitemap pages and sync zearn.org + drive.google.com PDFs."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import unquote, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qs, unquote, urljoin, urlparse, urlunparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -25,10 +25,22 @@ PDF_URL_PATTERN = re.compile(
     r'https?://[^\s"\'<>]+\.pdf(?:\?[^\s"\'<>]*)?',
     re.IGNORECASE,
 )
+GOOGLE_DRIVE_FILE_PATTERN = re.compile(
+    r'https?://drive\.google\.com/file/d/([a-zA-Z0-9_-]+)(?:/[^\s"\'<>]*)?',
+    re.IGNORECASE,
+)
+GOOGLE_DRIVE_OPEN_PATTERN = re.compile(
+    r'https?://drive\.google\.com/open\?[^\s"\'<>]+',
+    re.IGNORECASE,
+)
 LINK_ATTRS = ("href", "src", "data-src", "data-href", "data-url", "data-file")
 
 
 def normalize_pdf_url(url: str) -> str:
+    file_id = extract_google_drive_file_id(url)
+    if file_id:
+        return f"https://drive.google.com/file/d/{file_id}/view"
+
     parsed = urlparse(url.strip())
     return urlunparse(("https", parsed.netloc.lower(), parsed.path or "/", "", "", ""))
 
@@ -38,13 +50,50 @@ def pdf_basename(url_or_name: str) -> str:
     return unquote(Path(path).name)
 
 
+def pdf_storage_basename(url: str) -> str:
+    file_id = extract_google_drive_file_id(url)
+    if file_id:
+        return f"{file_id}.pdf"
+    return pdf_basename(url)
+
+
 def local_path_for_pdf(url: str, output_dir: Path) -> Path:
-    return output_dir / pdf_basename(url)
+    return output_dir / pdf_storage_basename(url)
 
 
 def is_zearn_domain(url: str) -> bool:
     host = urlparse(url).netloc.lower()
     return host == "zearn.org" or host.endswith(".zearn.org")
+
+
+def is_google_drive_domain(url: str) -> bool:
+    return urlparse(url).netloc.lower() == "drive.google.com"
+
+
+def extract_google_drive_file_id(url: str) -> str | None:
+    parsed = urlparse(url.strip())
+    if not is_google_drive_domain(url):
+        return None
+
+    path_match = re.search(r"/file/d/([a-zA-Z0-9_-]+)", parsed.path)
+    if path_match:
+        return path_match.group(1)
+
+    query_ids = parse_qs(parsed.query).get("id")
+    if query_ids:
+        return query_ids[0]
+
+    return None
+
+
+def is_google_drive_file_url(url: str) -> bool:
+    return extract_google_drive_file_id(url) is not None
+
+
+def is_discoverable_pdf_link(url: str) -> bool:
+    if is_zearn_domain(url) and is_pdf_url(url):
+        return True
+    return is_google_drive_file_url(url)
 
 
 def is_pdf_url(url: str) -> bool:
@@ -61,11 +110,18 @@ def discover_pdf_links(html: str, page_url: str) -> set[str]:
             if not value:
                 continue
             full = urljoin(page_url, value)
-            if is_pdf_url(full) and is_zearn_domain(full):
+            if is_discoverable_pdf_link(full):
                 found.add(normalize_pdf_url(full))
 
     for match in PDF_URL_PATTERN.findall(html):
         if is_zearn_domain(match) and is_pdf_url(match):
+            found.add(normalize_pdf_url(match))
+
+    for match in GOOGLE_DRIVE_FILE_PATTERN.findall(html):
+        found.add(normalize_pdf_url(f"https://drive.google.com/file/d/{match}/view"))
+
+    for match in GOOGLE_DRIVE_OPEN_PATTERN.findall(html):
+        if is_google_drive_file_url(match):
             found.add(normalize_pdf_url(match))
 
     return found
@@ -81,7 +137,57 @@ def fetch_url(session: requests.Session, url: str) -> str:
     return response.text
 
 
+def download_google_drive_pdf(session: requests.Session, file_id: str, dest: Path) -> tuple[int, str]:
+    """Download a Google Drive file by ID (handles large-file confirm tokens)."""
+
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    response = session.get(url, timeout=60, stream=True)
+    response.raise_for_status()
+
+    content_type = response.headers.get("Content-Type", "").lower()
+    if "text/html" in content_type:
+        html = response.text
+        confirm_match = re.search(r"confirm=([0-9A-Za-z_-]+)", html)
+        if confirm_match:
+            confirm = confirm_match.group(1)
+        else:
+            confirm = None
+            for key, value in response.cookies.items():
+                if key.startswith("download_warning"):
+                    confirm = value
+                    break
+        if not confirm:
+            raise ValueError("Google Drive returned HTML instead of a PDF (file may be restricted)")
+        url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm={confirm}"
+        response = session.get(url, timeout=60, stream=True)
+        response.raise_for_status()
+        content_type = response.headers.get("Content-Type", "").lower()
+
+    if content_type and "pdf" not in content_type and "octet-stream" not in content_type:
+        raise ValueError(f"unexpected content type from Google Drive: {content_type}")
+
+    hasher = hashlib.sha256()
+    size = 0
+    with dest.open("wb") as handle:
+        for chunk in response.iter_content(chunk_size=65536):
+            if not chunk:
+                continue
+            handle.write(chunk)
+            hasher.update(chunk)
+            size += len(chunk)
+
+    if size == 0:
+        raise ValueError("empty file")
+
+    return size, hasher.hexdigest()
+
+
 def download_pdf(session: requests.Session, url: str, dest: Path) -> tuple[int, str]:
+    file_id = extract_google_drive_file_id(url)
+    if file_id:
+        return download_google_drive_pdf(session, file_id, dest)
+
     dest.parent.mkdir(parents=True, exist_ok=True)
     response = session.get(url, timeout=60, stream=True)
     response.raise_for_status()
@@ -135,16 +241,18 @@ def scan_site_pdfs(session: requests.Session, sitemap_url: str, delay: float) ->
 
 
 def site_basenames(pdf_sources: dict[str, set[str]]) -> dict[str, str]:
-    """Map lowercase basename -> canonical site URL."""
+    """Map lowercase storage basename -> canonical source URL."""
     by_base: dict[str, str] = {}
     for url in pdf_sources:
-        base = pdf_basename(url).lower()
+        base = pdf_storage_basename(url).lower()
         by_base[base] = url
     return by_base
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Sync zearn.org PDFs linked from sitemap pages")
+    parser = argparse.ArgumentParser(
+        description="Sync zearn.org and drive.google.com PDFs linked from sitemap pages"
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--sitemap", default=SITEMAP_URL)
     parser.add_argument("--delay", type=float, default=0.3, help="Seconds between page requests")
@@ -169,7 +277,7 @@ def main() -> int:
 
     site_by_base = site_basenames(pdf_sources)
     unique_pdfs = sorted(pdf_sources)
-    print(f"Unique zearn.org PDFs discovered: {len(unique_pdfs)}")
+    print(f"Unique PDFs discovered (zearn.org + drive.google.com): {len(unique_pdfs)}")
 
     removed = 0
     if args.sync:

@@ -1,11 +1,11 @@
 {
-  "crawled_at": "2026-07-24T20:21:23Z",
+  "crawled_at": "2026-07-28T17:24:19Z",
   "source": "https://help.zearn.org/api/v2/help_center/en-us",
-  "articles_scanned": 30,
-  "unique_pdfs": 44,
+  "articles_scanned": 138,
+  "unique_pdfs": 58,
   "removed_stale": 0,
-  "downloaded": 44,
-  "skipped_existing": 0,
+  "downloaded": 14,
+  "skipped_existing": 44,
   "failed": 0,
   "article_scans": [
     {
@@ -23,6 +23,55 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/40141912700055-How-to-Give-Students-Open-Access-to-All-Lessons-Within-a-Grade-Level",
+      "title": "How to Give Students Open Access to All Lessons Within a Grade Level",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38959900110231-Is-Zearn-OneRoster-certified",
+      "title": "Is Zearn OneRoster\u00ae certified?",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38753783704215-Preparing-Your-ClassLink-Roster-Sync-with-Zearn",
+      "title": "Preparing Your ClassLink Roster Sync with Zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38741926747671-Preparing-Your-Clever-Roster-Sync-with-Zearn",
+      "title": "Preparing Your Clever Roster Sync with Zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664568523159-Preparing-a-Spreadsheet-Rostering-Template-or-OneRoster-File-for-Zearn",
+      "title": "Preparing a Spreadsheet Rostering Template or OneRoster File for Zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38664423529623-User-roles",
+      "title": "User roles",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38663714178071-Rostering-options",
+      "title": "Rostering options",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/33459243548183-Class-Snapshot-Report",
       "title": "Class Snapshot Report",
       "status": "ok",
@@ -37,10 +86,66 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/29008224450967-Zearn-reporting-suite",
+      "title": "Zearn reporting suite",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137871123095-Orient-to-implementing-Zearn-across-a-school-or-district",
+      "title": "Orient to implementing Zearn across a school or district",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137873310231-Materials-to-share-with-families",
+      "title": "Materials to share with families",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137731115159-Anchor-charts-and-posters",
+      "title": "Anchor charts and posters",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137595108247-Orient-to-teacher-materials-and-student-supports",
+      "title": "Orient to teacher materials and student supports",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22136715215383-Roster-teacher-and-students-to-School-Accounts",
+      "title": "Roster teacher and students to School Accounts",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/17998062213271-Print-Change-Log",
       "title": "Print Change Log",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/14818672374295-Promoting-Teachers-Clever-or-Classlink-Rostered-Roles",
+      "title": "Promoting Teachers' Clever or Classlink Rostered Roles",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/6017910243735-Admin-and-Teacher-Account-Permission-Levels",
+      "title": "Admin and Teacher Account Permission Levels",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -51,10 +156,52 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052476333-Technology-requirements",
+      "title": "Technology requirements",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360046427633-Orient-students-to-Zearn-Math",
+      "title": "Orient students to Zearn Math",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360044954914-Add-a-co-teacher",
+      "title": "Add a co-teacher",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360044495614-Zearn-Math-family-resources-English",
+      "title": "Zearn Math family resources (English)",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360021586433-Share-progress-with-families",
+      "title": "Share progress with families",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/360007509973-Accessibility",
       "title": "Accessibility",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015542268-Help-students-log-in-to-Zearn-org",
+      "title": "Help students log in to Zearn.org",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -72,10 +219,59 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/236218587-Create-an-Individual-Account",
+      "title": "Create an Individual Account",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38742676410647-Managing-Your-Ongoing-Roster",
+      "title": "Managing Your Ongoing Roster",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38742464048023-Managing-your-ongoing-Zearn-roster-through-Clever",
+      "title": "Managing your ongoing Zearn roster through Clever",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38663853654423-Managing-your-ongoing-Zearn-roster-through-ClassLink",
+      "title": "Managing your ongoing Zearn roster through ClassLink",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/33459201131543-Admin-Snapshot-Report",
       "title": "Admin Snapshot Report",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137597596567-Orient-to-printed-materials",
+      "title": "Orient to printed materials",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5719764898327-School-Account-resources",
+      "title": "School Account resources",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360045481033-Create-multiple-classes",
+      "title": "Create multiple classes",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -86,10 +282,73 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/360008267313-Closed-captioning",
+      "title": "Closed captioning",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360007593214-School-Account-Confirm-you-re-logged-in",
+      "title": "School Account: Confirm you're logged in ",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015504688-Update-your-email-address",
+      "title": "Update your email address",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007927987-Compare-Zearn-Math-Accounts",
+      "title": "Compare Zearn Math Accounts",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments",
       "title": "Mission-level assessments",
       "status": "ok",
-      "pdf_links_found": 1,
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001475288-Join-a-class-with-class-codes",
+      "title": "Join a class with class codes",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001218087-Orient-kindergarten-students-to-Zearn-Math",
+      "title": "Orient kindergarten students to Zearn Math",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236279187-Pace-Report",
+      "title": "Pace Report",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236238988-Independent-Digital-Lesson-components",
+      "title": "Independent Digital Lesson components",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38667663144343-Transferring-existing-student-accounts-using-class-codes",
+      "title": "Transferring existing student accounts using class codes",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -114,10 +373,122 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/7322272123671-Remove-the-timer-in-fluency-activities",
+      "title": "Remove the timer in fluency activities",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5700246424343-Download-student-logins",
+      "title": "Download student logins ",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5255954252311-Zearn-Student-Notes",
+      "title": "Zearn Student Notes",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/360052430653-School-Account-Student-Report",
       "title": "School Account: Student Report",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426073-Troubleshooting-checklist",
+      "title": "Troubleshooting checklist",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012971928-Celebrate-student-progress",
+      "title": "Celebrate student progress",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012198727-School-Goals-Report",
+      "title": "School Goals Report",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007738847-Adaptive-fluency-Number-Gym",
+      "title": "Adaptive fluency: Number Gym",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006258507-Audio-supports-in-Independent-Digital-Lessons",
+      "title": "Audio supports in Independent Digital Lessons",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115005912007-Change-your-student-s-assignment",
+      "title": "Change your student\u2019s assignment",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001429467-Remove-students-from-your-class",
+      "title": "Remove students from your class ",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001326127-View-my-child-s-progress",
+      "title": "View my child's progress",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001218127-Transition-from-Zearn-Math-K-to-G1",
+      "title": "Transition from Zearn Math K to G1",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239748-Tower-Alerts-Report",
+      "title": "Tower Alerts Report",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38851765768215-Using-your-District-s-ClassLink-Launchpad",
+      "title": "Using your District\u2019s ClassLink Launchpad",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/38742202657943-Using-your-district-s-Clever-Portal",
+      "title": "Using your district's Clever Portal",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137367982615-Bookmark-foundational-lessons-to-the-Math-Library",
+      "title": "Bookmark foundational lessons to the Math Library",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -128,10 +499,73 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/360058908394-Explore-the-Student-Feed",
+      "title": "Explore the Student Feed",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052471633-Use-Zearn-Math-digital-lessons-at-home",
+      "title": "Use Zearn Math digital lessons at home",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426493-Lesson-aligned-fluency",
+      "title": "Lesson-aligned fluency",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426173-Use-Zearn-on-an-Android-device",
+      "title": "Use Zearn on an Android device",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/360036622693-Support-Independent-Digital-Lesson-completion",
       "title": "Support Independent Digital Lesson completion",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360002279413-Brainy-weekly-lesson-tracker",
+      "title": "Brainy weekly lesson tracker",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015504888-Save-progress-in-digital-lessons",
+      "title": "Save progress in digital lessons",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115014926328-Grading-with-Zearn-Math",
+      "title": "Grading with Zearn Math",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012352688-Completion-Tracking-Report",
+      "title": "Completion Tracking Report",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006261027-Print-login-cards",
+      "title": "Print login cards",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -142,6 +576,20 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001474968-Add-students-to-your-class",
+      "title": "Add students to your class",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236279147-Progress-Report",
+      "title": "Progress Report",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/22137636472727-Orient-to-implementing-Zearn-in-the-classroom",
       "title": "Orient to implementing Zearn in the classroom",
       "status": "ok",
@@ -149,10 +597,38 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/22136839101975-Reset-your-password",
+      "title": "Reset your password",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/7887577094423-Getting-Started-Checklist-for-school-leads",
       "title": "Getting Started Checklist for school leads",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5900542678423-Manage-assignments-for-students-in-multiple-classrooms",
+      "title": "Manage assignments for students in multiple classrooms",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360016475674-Using-a-Zearn-org-Backup-Login",
+      "title": "Using a Zearn.org Backup Login",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates",
+      "title": "Mission completion certificates",
+      "status": "ok",
+      "pdf_links_found": 9,
       "error": null
     },
     {
@@ -167,6 +643,48 @@
       "title": "Create student exports",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006581808-Placing-students-on-Zearn",
+      "title": "Placing students on Zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001476988-Delete-a-class",
+      "title": "Delete a class",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001428367-Add-your-class",
+      "title": "Add your class",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001373828-Log-in-away-from-school",
+      "title": "Log in away from school",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236279227-Sprint-Alerts-Report",
+      "title": "Sprint Alerts Report",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239128-Guided-practice",
+      "title": "Guided practice",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -187,7 +705,70 @@
       "url": "https://help.zearn.org/hc/en-us/articles/5896758965271-Printed-goal-tracker",
       "title": "Printed goal tracker",
       "status": "ok",
-      "pdf_links_found": 1,
+      "pdf_links_found": 2,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360051705154-Zearn-Math-for-homeschooling",
+      "title": "Zearn Math for homeschooling",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360051659794-Contact-Zearn-support",
+      "title": "Contact Zearn support",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360005364333-Add-a-student-s-SIS-ID",
+      "title": "Add a student\u2019s SIS ID",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015520848-Log-in-with-Google-single-sign-on",
+      "title": "Log in with Google single sign-on",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115008117448-Celebrate-school-goals",
+      "title": "Celebrate school goals",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001431007-Some-students-in-my-class-are-highlighted",
+      "title": "Some students in my class are highlighted",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001428747-Move-students-to-a-new-class",
+      "title": "Move students to a new class",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239828-Class-Reports",
+      "title": "Class Reports",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236239188-Independent-practice-Tower-of-Power",
+      "title": "Independent practice: Tower of Power",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -198,10 +779,164 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/4421026258327-Student-Lesson-Calendar",
+      "title": "Student Lesson Calendar",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360058905054-Enter-your-child-s-class-code",
+      "title": "Enter your child\u2019s class code",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360005750694-Clear-students-lesson-badges",
+      "title": "Clear students\u2019 lesson badges",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115010771028-School-Account-Two-step-authentication",
+      "title": "School Account: Two-step authentication",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115008330968-Zearn-Math-for-Kindergarten",
+      "title": "Zearn Math for Kindergarten",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007739967-Digital-Bonuses",
+      "title": "Digital Bonuses",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/115006125687-Classroom-walk-through-guide",
       "title": "Classroom walk-through guide",
       "status": "ok",
       "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115006034908-Add-staff-members",
+      "title": "Add staff members",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001477028-Edit-classroom-information",
+      "title": "Edit classroom information",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/22137920595479-Professional-development",
+      "title": "Professional development",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360054981694-Single-sign-on-SSO-options",
+      "title": "Single sign-on (SSO) options",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360010655213-Zearn-tags-for-students",
+      "title": "Zearn tags for students",
+      "status": "ok",
+      "pdf_links_found": 1,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115015362567-Edit-staff-accounts",
+      "title": "Edit staff accounts",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001477928-Delete-your-Individual-Account",
+      "title": "Delete your Individual Account",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001428707-Edit-student-information",
+      "title": "Edit student information",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/236174908-Omitted-digital-lessons",
+      "title": "Omitted digital lessons",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/5373691318679-Privacy-and-third-party-sub-processors",
+      "title": "Privacy and third-party sub-processors",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360000311288-Wild-Cards",
+      "title": "Wild Cards",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115012648107-Clear-digital-lesson-checkpoints",
+      "title": "Clear digital lesson checkpoints",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115001477168-Share-classrooms-on-Zearn",
+      "title": "Share classrooms on Zearn",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/1500003390061-Boosts",
+      "title": "Boosts",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115013011587-School-Account-Classrooms-not-displayed-in-Admin-Reports",
+      "title": "School Account: \"Classrooms not displayed\" in Admin Reports",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115008107568-Locked-student-lessons",
+      "title": "Locked student lessons",
+      "status": "ok",
+      "pdf_links_found": 0,
       "error": null
     },
     {
@@ -212,64 +947,106 @@
       "error": null
     },
     {
+      "url": "https://help.zearn.org/hc/en-us/articles/5256177704855-Enrichment-opportunities",
+      "title": "Enrichment opportunities",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/360052426293-Report-is-blank-or-not-printing-in-color",
+      "title": "Report is blank or not printing in color",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
+    },
+    {
       "url": "https://help.zearn.org/hc/en-us/articles/4409549618967-Access-printed-materials-in-Spanish",
       "title": "Access printed materials in Spanish",
       "status": "ok",
       "pdf_links_found": 1,
       "error": null
+    },
+    {
+      "url": "https://help.zearn.org/hc/en-us/articles/115007901328-Use-Zearn-as-homework",
+      "title": "Use Zearn as homework",
+      "status": "ok",
+      "pdf_links_found": 0,
+      "error": null
     }
   ],
   "pdfs": [
     {
+      "url": "https://drive.google.com/file/d/1V6MgCbf5e1drxk_goA2eIJRWjajda4Hi/view",
+      "filename": "1V6MgCbf5e1drxk_goA2eIJRWjajda4Hi.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115007927987-Compare-Zearn-Math-Accounts"
+      ],
+      "bytes": 136433,
+      "sha256": "a37ffbfeaf4a98c162cbd555e8bfd4d2b03ac8a721edd59ac7adaf3039a1baff",
+      "error": null,
+      "status": "ok"
+    },
+    {
       "url": "https://webassets.zearn.org/Implementation/AdminSnapshotReportNavigationGuide.pdf",
       "filename": "AdminSnapshotReportNavigationGuide.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/115012712848-Overview-of-Admin-Reports",
         "https://help.zearn.org/hc/en-us/articles/33459201131543-Admin-Snapshot-Report"
       ],
       "bytes": 1700157,
       "sha256": "18bcebc9a4477ab356d28eaf437616bedac433b981ec16d95717e8e65ed3aeea",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/AnchorCharts/DownloadableWeeklyGoals.pdf",
+      "filename": "DownloadableWeeklyGoals.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360002279413-Brainy-weekly-lesson-tracker"
+      ],
+      "bytes": 873004,
+      "sha256": "adb61bb459cc0815340aca6002dfe95d1a612e52eca48deeb4fd6fc659b0ecb1",
+      "error": null,
+      "status": "ok"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ClassSnapshotReportNavigationGuide.pdf",
       "filename": "ClassSnapshotReportNavigationGuide.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/33459243548183-Class-Snapshot-Report"
       ],
       "bytes": 1458420,
       "sha256": "097d3bd9258166cf6477fdcf3327c74425e8383becfe0c313a25ec457b977f47",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ClasslinkGuide.pdf",
       "filename": "ClasslinkGuide.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/38664687543575-Merging-existing-accounts"
       ],
       "bytes": 223162,
       "sha256": "e02b820ebd9562aecd30088890cbd7233288f9cf4bc06cf5876927a725a625b1",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ExportsCenterNavigationGuide.pdf",
       "filename": "ExportsCenterNavigationGuide.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/115007941367-Create-student-exports",
         "https://help.zearn.org/hc/en-us/articles/115012712848-Overview-of-Admin-Reports"
       ],
       "bytes": 1043381,
       "sha256": "cb0fbd2f312a1a1531faaccfdd515cc5962a0df64ef40bfbf87217d43d041760",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/GettingStartedChecklist.pdf",
       "filename": "GettingStartedChecklist.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/115006124967-Getting-Started-Checklist-for-teachers",
         "https://help.zearn.org/hc/en-us/articles/22137636472727-Orient-to-implementing-Zearn-in-the-classroom",
@@ -278,345 +1055,356 @@
       ],
       "bytes": 243595,
       "sha256": "1cee36cce762293b369c5bf6ae842377a491376b71e5125564a46d62271215ff",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/GettingStartedChecklistForSchoolLeads.pdf",
       "filename": "GettingStartedChecklistForSchoolLeads.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/7887577094423-Getting-Started-Checklist-for-school-leads"
       ],
       "bytes": 339779,
       "sha256": "db46ebd1ed0e8b48eff95a69bd790c4700924c40580852f2f36c146886bddc7c",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/GoalTracker.pdf",
+      "filename": "GoalTracker.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/5896758965271-Printed-goal-tracker"
+      ],
+      "bytes": 857270,
+      "sha256": "bc86efb85dafce912987d36d787b78e0ca831885ca53d2475723df13ffa42f79",
+      "error": null,
+      "status": "ok"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/Guide_to_Assistive_Tech.pdf",
       "filename": "Guide_to_Assistive_Tech.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/1500002846382-On-screen-keypad",
         "https://help.zearn.org/hc/en-us/articles/360007509973-Accessibility"
       ],
       "bytes": 685257,
       "sha256": "62530e72ba0def4ac4f42bd8468c0ed2d3ca9de7c86582f86837dcd1ece6851d",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/IDLLookForsGuide18.pdf",
       "filename": "IDLLookForsGuide18.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/115006125687-Classroom-walk-through-guide"
       ],
       "bytes": 224033,
       "sha256": "71900d7fc14f0d49a9493296d3787475b5ada02c987c5bb1cad0cfcc8c2f4116",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/LaunchingChecklistForDistrictLeads.pdf",
       "filename": "LaunchingChecklistForDistrictLeads.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/7727015341975-Launch-checklist-for-district-leads"
       ],
       "bytes": 265364,
       "sha256": "dce1a0c4d4d319e2b3d4619d6b4801afeb1332462493eef0047922e4479acbf7",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/LoginExperiencethroughClever.pdf",
       "filename": "LoginExperiencethroughClever.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/115015460167-School-Account-Help-students-log-in-with-Clever",
         "https://help.zearn.org/hc/en-us/articles/38664432460951-Merging-existing-accounts"
       ],
       "bytes": 280621,
       "sha256": "c541074654ddb42d11e327f4413529eb5354dfa76074c51b0887d5d2847cc6ed",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/NavigatingSpanishTranslatedContent.pdf",
       "filename": "NavigatingSpanishTranslatedContent.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/30464877966231-School-Account-Spanish-translated-digital-content"
       ],
       "bytes": 3367799,
       "sha256": "31d5c4bdc4e3418c755e8c48cf7f2a1397a8bef9a825137da92c01c0a7b04ddc",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/NavigatingYourClassroomLiveView.pdf",
       "filename": "NavigatingYourClassroomLiveView.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/41582158077975-LiveView-Report"
       ],
       "bytes": 2429446,
       "sha256": "3822ee4afe06116d0d4178d309468e9a72886c844f3ff5b76feb9c34d20e5f52",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/Print%20Change%20Log%20-%20Default%20Curriculum.pdf",
       "filename": "Print Change Log - Default Curriculum.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/17998062213271-Print-Change-Log"
       ],
       "bytes": 307715,
       "sha256": "d4baffdf1525acaaefafb1ceb6e846ef35edf0c039f7c13792a06d9ce80428c5",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SchedulingZearnInYourDay.pdf",
       "filename": "SchedulingZearnInYourDay.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/22137636472727-Orient-to-implementing-Zearn-in-the-classroom"
       ],
       "bytes": 81048,
       "sha256": "d89e01d327efb7d3f2da68470ca2568d5bed56ba8d8c9aa1c596d3def10f4dc7",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingBluebonnetLearning6_8withZearnMath.pdf",
       "filename": "SupportingBluebonnetLearning6_8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1775870,
       "sha256": "429e1437b47371a6cca6ab442b0f213da41bb654fdb758743a0e46e5fb2da3c5",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingBluebonnetLearningK5withZearnMath.pdf",
       "filename": "SupportingBluebonnetLearningK5withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1796542,
       "sha256": "5ec70d7fe6fa95ca3641d37b0b5f60a09a6f1429c186d778ee8308ff10d96031",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingEnglishLearnersComplement.pdf",
       "filename": "SupportingEnglishLearnersComplement.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/236240288-Supporting-English-Learners",
         "https://help.zearn.org/hc/en-us/articles/30464877966231-School-Account-Spanish-translated-digital-content"
       ],
       "bytes": 1706149,
       "sha256": "e5c3803a4760fa313f4847d5d34ed810323fed4cda48ac05ac9a4fa674845022",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingEurekaMath2K5withZearnMath.pdf",
       "filename": "SupportingEurekaMath2K5withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1798094,
       "sha256": "8bf128197d2f55c4476500c66109bb14738a29159a29d7f1398e4de0acc6d3b2",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingEurekaMath2_K8withZearnMath.pdf",
       "filename": "SupportingEurekaMath2_K8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1861909,
       "sha256": "abb0872053816f1e6588e4adb60d3e6de6431540757b04fac9d7746cdeeac52d",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingExperienceMathSouthCarolinawithZearnMath.pdf",
       "filename": "SupportingExperienceMathSouthCarolinawithZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1877049,
       "sha256": "b795de82db904e00b6e01edd04e136c7664459dd2d45358a6ae5e512e330f107",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingIM_K5withZearnMath.pdf",
       "filename": "SupportingIM_K5withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1981482,
       "sha256": "a2235753cb9602f97ba9d9a539bea0cc627cdf3ec0c977124e6c3ab7b6432442",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingK8MathwithZearnMath.pdf",
       "filename": "SupportingK8MathwithZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1684167,
       "sha256": "c857f5457cd606871e5d6c22d2a1d78d3c4f698af4d533df41907f2d5126621d",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingKiddomSouthCarolinaMathK5withZearnMath.pdf",
       "filename": "SupportingKiddomSouthCarolinaMathK5withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1848364,
       "sha256": "3e73e5c697d26659d42bab1a6efc0c9b821651e101d6e83ae403d2a7707faeea",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingMathNationSouthCarolina6_8withZearnMath.pdf",
       "filename": "SupportingMathNationSouthCarolina6_8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1773815,
       "sha256": "1afc5d681488f4555493707c4bf32ff6ff5a56a58945148492de334cf4498c4c",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingMultilingualLearnersCore.pdf",
       "filename": "SupportingMultilingualLearnersCore.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/4409549618967-Access-printed-materials-in-Spanish"
       ],
       "bytes": 1706149,
       "sha256": "e5c3803a4760fa313f4847d5d34ed810323fed4cda48ac05ac9a4fa674845022",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingReadyClassroomK8withZearnMath.pdf",
       "filename": "SupportingReadyClassroomK8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1897488,
       "sha256": "50e635b76c236348d4dc2282b47f3db531810f085d48a4f2b84bc58905f5bcf0",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingSouthCarolinaRevealMathK8withZearnMath.pdf",
       "filename": "SupportingSouthCarolinaRevealMathK8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1953786,
       "sha256": "2f612a83cd084f29c86e7c11ce5fb3dc1b1385da70ceecf3a5643bf663cf82ea",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
       "filename": "SupportingenVisionMathSouthCarolinaK8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1974532,
       "sha256": "0d6fb063d651ddfda042b640bd828b8d0751daff1efe3ccb4dabf0d1017a474b",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
       "filename": "Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1891412,
       "sha256": "887dced1bed70c3255be284da3be74b6bcc8be2660dea87340c59d92bd694a95",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
       "filename": "SupportingiReadyClassroomMathematicsK8withZearnMath.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1894122,
       "sha256": "2f11a917368da7413842a8d86b57106471e1a414a5018e03fc159527546d7f94",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnAmplifyK8Alignment.pdf",
       "filename": "ZearnAmplifyK8Alignment.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1858577,
       "sha256": "44e2b70cd84d5f224c6a60914c8bf6fd0a3db69ff8d0ed8743754d3596902cf6",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnCarnegieLearning68Alignment.pdf",
       "filename": "ZearnCarnegieLearning68Alignment.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1726469,
       "sha256": "ff14be97672e66556b0750cce32fa919ba5c74cf8903970e588ba9553b347853",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnEurekaK8Alignment.pdf",
       "filename": "ZearnEurekaK8Alignment.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1848930,
       "sha256": "c70c5e560c7d554ca1a0fe2b7ada19a4bcd9bc064c15d962b82480bd0ac2e089",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnEverydayMathematicsK6Alignment.pdf",
       "filename": "ZearnEverydayMathematicsK6Alignment.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1853948,
       "sha256": "72aa827c8c53025bede9ab0a1776615d91338ba7b75b32575dfbef393e904b5f",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnGoMathK6Alignment.pdf",
       "filename": "ZearnGoMathK6Alignment.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1919682,
       "sha256": "a3e022b1015205406be243d8dd7b1d2b8b9d4abe514a48509fcecb65d2ecbebd",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnMathDigitalPlatformNavigationGuide.pdf",
       "filename": "ZearnMathDigitalPlatformNavigationGuide.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/115007900828-Lesson-level-assessments",
         "https://help.zearn.org/hc/en-us/articles/22137962873367-Orient-to-the-Zearn-Math-digital-platform",
@@ -625,97 +1413,217 @@
       ],
       "bytes": 517637,
       "sha256": "bc9ca0d63d6b38f9b3794b8f2e56b7d7075651b61093463fb52e5608868a94cf",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG1.pdf",
+      "filename": "ZearnMathMissionCertificatesG1.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 580337,
+      "sha256": "6dc7908110de10f2ca8ef6bbe1c6c6c03831d082d2278722cc1ab71d8351004d",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG2.pdf",
+      "filename": "ZearnMathMissionCertificatesG2.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 795851,
+      "sha256": "5d2da89b66694a9ea89f0383f84c45fedfad5b8e66d9de32efa00b020e08c0ca",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG3.pdf",
+      "filename": "ZearnMathMissionCertificatesG3.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 705034,
+      "sha256": "34d71a96dfa1f8ed008acdc597fa487bd47d1f00effc1cfe3a3d46e4b11e9ede",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG4.pdf",
+      "filename": "ZearnMathMissionCertificatesG4.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 677871,
+      "sha256": "bde556a49ed581a441608f298074a80a57147d6086d379d4876ab2e8cf90c716",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG5.pdf",
+      "filename": "ZearnMathMissionCertificatesG5.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 591185,
+      "sha256": "a75cdc1bb08d2a9508a7ea85cf600d3d5bc782e4d575f2d9eca6293c6e8d2a13",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG6.pdf",
+      "filename": "ZearnMathMissionCertificatesG6.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 529675,
+      "sha256": "2775e94bf3e967b2e4d0bdb45cf516320a763b39c4fd1c2e93d3a01a70d7d069",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG7.pdf",
+      "filename": "ZearnMathMissionCertificatesG7.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 559445,
+      "sha256": "8598e0fc342d128558bdcd8ee5de604429a90e3446d457df460dddf493ee274e",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesG8.pdf",
+      "filename": "ZearnMathMissionCertificatesG8.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 568448,
+      "sha256": "f59623c7144b147dc2c357d3b689b6b0173e3413f448f96c8f03e75b9b9a9ed0",
+      "error": null,
+      "status": "ok"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnMathMissionCertificatesK.pdf",
+      "filename": "ZearnMathMissionCertificatesK.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360007508514-Mission-completion-certificates"
+      ],
+      "bytes": 577317,
+      "sha256": "534ef5bac5a51dd7570df79996b830a5085f302be4ff6296956cf46dbf5ad924",
+      "error": null,
+      "status": "ok"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnMathOverview%5BCoreComplement%5D.pdf",
       "filename": "ZearnMathOverview[CoreComplement].pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/360037057814-Support-Independent-Digital-Lesson-completion-in-your-classroom"
       ],
       "bytes": 1244387,
       "sha256": "71fa3e1ae87a1e2d119a1966cfa18184a0652c3a30fd01cdff6eab8475ffb30b",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnMath_StudentReportOverview.pdf",
       "filename": "ZearnMath_StudentReportOverview.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/360052430653-School-Account-Student-Report"
       ],
       "bytes": 363636,
       "sha256": "cfb1bbb8887b7dcec27e25010396e843ef22c8b1b52540ed803a8518458d0bce",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnOpenUpResourcesK8.pdf",
       "filename": "ZearnOpenUpResourcesK8.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1921383,
       "sha256": "cea2256236bc2cefc9b347709503b0f53f34bfa4c3c939e0c8a1b42c84269e35",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnRevealMathK8Alignment.pdf",
       "filename": "ZearnRevealMathK8Alignment.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1956008,
       "sha256": "bea8001e341fef41f47a7d3490c92c93b784751a22fdc6056b57796af097d4c9",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnSchoolLeads.pdf",
       "filename": "ZearnSchoolLeads.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/7726940472727-Zearn-school-leads"
       ],
       "bytes": 83449,
       "sha256": "a9159de17a5c996b13a9827ab37c1d02af052698961540dcd02b30ba698c06d3",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/Implementation/ZearnTags2018.pdf",
+      "filename": "ZearnTags2018.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/360010655213-Zearn-tags-for-students"
+      ],
+      "bytes": 800445,
+      "sha256": "22722100d1f32db5cfc1556eaf04bb9d37ba5e59937ee249abd3f6078d799f7a",
+      "error": null,
+      "status": "ok"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/Zearn_FlexibleMathPlatform.pdf",
       "filename": "Zearn_FlexibleMathPlatform.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/22137674192151-Use-Zearn-across-instructional-times"
       ],
       "bytes": 65737,
       "sha256": "13f1095aa250adc198b207961c0a763c51ad906d10a56ab09303a5989934197d",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     },
     {
       "url": "https://webassets.zearn.org/Implementation/ZearnenVisionK8Alignment.pdf",
       "filename": "ZearnenVisionK8Alignment.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/40164314823447-Find-Your-Curriculum-Companion-Guide"
       ],
       "bytes": 1950492,
       "sha256": "81ac81c91d092ce89607010aa6af03ad66bca01e863bb5dcfec68129017a1162",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
+    },
+    {
+      "url": "https://webassets.zearn.org/resources/G05M01_Assessment.pdf",
+      "filename": "G05M01_Assessment.pdf",
+      "found_on_articles": [
+        "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments"
+      ],
+      "bytes": 240568,
+      "sha256": "ca3e00f95635a37edd48b9de5b0d4fbf21e6596e5846ddf7a1f5fe75141fde5b",
+      "error": null,
+      "status": "ok"
     },
     {
       "url": "https://webassets.zearn.org/resources/G05M01_AssessmentRubric_CC.pdf",
       "filename": "G05M01_AssessmentRubric_CC.pdf",
-      "status": "ok",
       "found_on_articles": [
         "https://help.zearn.org/hc/en-us/articles/115007900988-Mission-level-assessments"
       ],
       "bytes": 649712,
       "sha256": "aa89754f9f2a58b6e6932b778d7d3f3840c1a7c1cdf15738194bdcbfe8c3b44b",
-      "error": null
+      "error": null,
+      "status": "skipped_existing"
     }
-  ],
-  "updated_at": "2026-07-24T20:31:43Z",
-  "local_pdf_count": 44
+  ]
 }

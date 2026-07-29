@@ -274,15 +274,49 @@ def _chunk_id(document_id: str, chunk_index: int) -> str:
     return f"{safe_id}__chunk_{chunk_index}"
 
 
-def _pinecone_document_filter(document_ids: list[str] | None) -> dict | None:
-    if not document_ids:
+def _pinecone_document_filter(
+    document_ids: list[str] | None = None,
+    exclude_document_ids: list[str] | None = None,
+) -> dict | None:
+    """Build a Pinecone metadata filter. Include whitelist wins over exclude."""
+    if document_ids:
+        cleaned = [doc_id.strip() for doc_id in document_ids if doc_id.strip()]
+        if not cleaned:
+            return None
+        if len(cleaned) == 1:
+            return {"document_id": cleaned[0]}
+        return {"document_id": {"$in": cleaned}}
+
+    excluded = [doc_id.strip() for doc_id in (exclude_document_ids or []) if doc_id.strip()]
+    if not excluded:
         return None
-    cleaned = [doc_id.strip() for doc_id in document_ids if doc_id.strip()]
-    if not cleaned:
-        return None
-    if len(cleaned) == 1:
-        return {"document_id": cleaned[0]}
-    return {"document_id": {"$in": cleaned}}
+    if len(excluded) == 1:
+        return {"document_id": {"$ne": excluded[0]}}
+    return {"document_id": {"$nin": excluded}}
+
+
+def excluded_document_ids_from_env() -> list[str]:
+    """Default document_ids to omit from general retrieval (comma-separated env var)."""
+    raw = os.getenv("EXCLUDE_DOCUMENT_IDS", "employee_handbook").strip()
+    if not raw or raw.lower() in ("false", "none", "0"):
+        return []
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+def resolve_retrieval_filters(
+    document_ids: list[str] | None,
+    exclude_document_ids: list[str] | None = None,
+) -> tuple[list[str] | None, list[str] | None]:
+    """Apply include whitelist when set; otherwise apply exclude list (request or env default)."""
+    include = document_ids or None
+    if include:
+        return include, None
+
+    if exclude_document_ids is not None:
+        exclude = exclude_document_ids or None
+    else:
+        exclude = excluded_document_ids_from_env() or None
+    return None, exclude
 
 
 def _pinecone_index():
@@ -468,6 +502,7 @@ def retrieve_chunks(
     question: str,
     k: int = 3,
     document_ids: list[str] | None = None,
+    exclude_document_ids: list[str] | None = None,
 ) -> list[RetrievedChunk]:
     embeddings = _embeddings_client()
     index = _pinecone_index()
@@ -478,7 +513,7 @@ def retrieve_chunks(
         "top_k": k,
         "include_metadata": True,
     }
-    metadata_filter = _pinecone_document_filter(document_ids)
+    metadata_filter = _pinecone_document_filter(document_ids, exclude_document_ids)
     if metadata_filter:
         query_kwargs["filter"] = metadata_filter
 
@@ -507,11 +542,17 @@ def retrieve_chunks_bm25(
     question: str,
     k: int = 3,
     document_ids: list[str] | None = None,
+    exclude_document_ids: list[str] | None = None,
 ) -> list[RetrievedChunk]:
     bm25_index = ensure_bm25_ready()
     chunks: list[RetrievedChunk] = []
 
-    for chunk_id, _score in bm25_index.search(question, k=k, document_ids=document_ids):
+    for chunk_id, _score in bm25_index.search(
+        question,
+        k=k,
+        document_ids=document_ids,
+        exclude_document_ids=exclude_document_ids,
+    ):
         record = bm25_index.get_record(chunk_id)
         if record is None:
             continue
@@ -548,7 +589,7 @@ def reciprocal_rank_fusion(
     return [chunk_map[chunk_id] for chunk_id in ranked_ids]
 
 
-def _apply_diverse_filter(
+def apply_diverse_filter(
     candidates: list[RetrievedChunk],
     k: int,
     max_per_document: int,
@@ -572,14 +613,19 @@ def retrieve_chunks_hybrid(
     fetch_k: int = 12,
     max_per_document: int = 2,
     document_ids: list[str] | None = None,
+    exclude_document_ids: list[str] | None = None,
 ) -> list[RetrievedChunk]:
     """Combine dense Pinecone search with BM25 via reciprocal rank fusion."""
 
     fetch_k = max(fetch_k, k)
-    dense_candidates = retrieve_chunks(question, k=fetch_k, document_ids=document_ids)
-    bm25_candidates = retrieve_chunks_bm25(question, k=fetch_k, document_ids=document_ids)
+    dense_candidates = retrieve_chunks(
+        question, k=fetch_k, document_ids=document_ids, exclude_document_ids=exclude_document_ids
+    )
+    bm25_candidates = retrieve_chunks_bm25(
+        question, k=fetch_k, document_ids=document_ids, exclude_document_ids=exclude_document_ids
+    )
     fused_candidates = reciprocal_rank_fusion(dense_candidates, bm25_candidates)
-    return _apply_diverse_filter(fused_candidates, k=k, max_per_document=max_per_document)
+    return apply_diverse_filter(fused_candidates, k=k, max_per_document=max_per_document)
 
 
 def retrieve_chunks_diverse(
@@ -588,6 +634,7 @@ def retrieve_chunks_diverse(
     fetch_k: int = 12,
     max_per_document: int = 2,
     document_ids: list[str] | None = None,
+    exclude_document_ids: list[str] | None = None,
 ) -> list[RetrievedChunk]:
     """Retrieve top chunks while limiting how many come from the same document.
 
@@ -595,18 +642,33 @@ def retrieve_chunks_diverse(
     to a per-document cap so one long PDF does not dominate the context window.
     """
     fetch_k = max(fetch_k, k)
-    candidates = retrieve_chunks(question, k=fetch_k, document_ids=document_ids)
-    return _apply_diverse_filter(candidates, k=k, max_per_document=max_per_document)
+    candidates = retrieve_chunks(
+        question, k=fetch_k, document_ids=document_ids, exclude_document_ids=exclude_document_ids
+    )
+    return apply_diverse_filter(candidates, k=k, max_per_document=max_per_document)
 
 
-def debug_retrieve(question: str, k: int = 5) -> list[DebugRetrievedChunk]:
+def debug_retrieve(
+    question: str,
+    k: int = 5,
+    exclude_document_ids: list[str] | None = None,
+) -> list[DebugRetrievedChunk]:
     """Embed a question and return top-k Pinecone matches with scores — no LLM."""
 
     embeddings = _embeddings_client()
     index = _pinecone_index()
 
     query_vector = embeddings.embed_query(question)
-    results = index.query(vector=query_vector, top_k=k, include_metadata=True)
+    query_kwargs: dict = {
+        "vector": query_vector,
+        "top_k": k,
+        "include_metadata": True,
+    }
+    metadata_filter = _pinecone_document_filter(None, exclude_document_ids)
+    if metadata_filter:
+        query_kwargs["filter"] = metadata_filter
+
+    results = index.query(**query_kwargs)
 
     chunks: list[DebugRetrievedChunk] = []
     for rank, match in enumerate(results.get("matches", []), start=1):
@@ -649,16 +711,26 @@ def _retrieved_to_debug(
     return debug_chunks
 
 
-def debug_retrieve_hybrid(question: str, k: int = 5) -> HybridDebugResult:
+def debug_retrieve_hybrid(
+    question: str,
+    k: int = 5,
+    exclude_document_ids: list[str] | None = None,
+) -> HybridDebugResult:
     """Return dense, BM25, and fused rankings side-by-side for debugging."""
 
-    dense_chunks = retrieve_chunks(question, k=k)
-    bm25_raw = get_bm25_index().search(question, k=k)
-    bm25_chunks = retrieve_chunks_bm25(question, k=k)
+    dense_chunks = retrieve_chunks(question, k=k, exclude_document_ids=exclude_document_ids)
+    bm25_raw = get_bm25_index().search(
+        question, k=k, exclude_document_ids=exclude_document_ids
+    )
+    bm25_chunks = retrieve_chunks_bm25(
+        question, k=k, exclude_document_ids=exclude_document_ids
+    )
     bm25_scores = [score for _chunk_id, score in bm25_raw]
     fused_chunks = reciprocal_rank_fusion(
-        retrieve_chunks(question, k=max(k, 10)),
-        retrieve_chunks_bm25(question, k=max(k, 10)),
+        retrieve_chunks(question, k=max(k, 10), exclude_document_ids=exclude_document_ids),
+        retrieve_chunks_bm25(
+            question, k=max(k, 10), exclude_document_ids=exclude_document_ids
+        ),
     )[:k]
 
     return HybridDebugResult(

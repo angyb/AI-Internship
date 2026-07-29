@@ -1,15 +1,15 @@
 """Golden-set evaluation — retrieval hit, faithfulness, and correctness.
 
 Mirrors the RAGAS workflow from rag_vector_databases_live_session.ipynb.
+Evaluates against the ingested Zearn corpus in Pinecone (run POST /ingest first).
 
 Usage (local pipeline — same Pinecone index as Render when .env matches):
   python eval_golden.py
-  python eval_golden.py --skip-northwind-upsert
 
 Usage (live Render API — retrieval + /ask on the deployed service):
-  python eval_golden.py --api-url https://ai-internship-i3lw.onrender.com --skip-northwind-upsert
+  python eval_golden.py --api-url https://ai-internship-i3lw.onrender.com
   export RAG_API_URL=https://ai-internship-i3lw.onrender.com
-  python eval_golden.py --skip-northwind-upsert
+  python eval_golden.py
 
 The FastAPI service also exposes POST /eval (same logic, runs on the server).
 """
@@ -47,16 +47,11 @@ THIS_DIR = Path(__file__).resolve().parent
 DEFAULT_GOLDEN_SET = THIS_DIR / "golden_set.json"
 DEFAULT_API_URL = os.getenv("RAG_API_URL", "").strip()
 
-NORTHWIND_SAMPLE = (
-    "Northwind Robotics Employee Handbook\n"
-    "Author: People Operations Team\n"
-    "Document ID: POL-101\n\n"
-    "Working hours are 09:00 to 17:30, Monday to Friday.\n\n"
-    "Remote work. Employees may work remotely up to three days per week.\n"
-    "Fully remote arrangements require director approval and are reviewed\n"
-    "every six months. Employees working remotely must be reachable on\n"
-    "Slack during core hours, which are 10:00 to 15:00.\n\n"
-    "Annual leave is 28 days plus public holidays."
+from eval_format import (
+    averages_rows,
+    per_question_score_rows,
+    questions_and_answers_rows,
+    retrieval_config_rows,
 )
 
 
@@ -71,24 +66,6 @@ def retrieval_hit(retrieved_document_ids: list[str], expected_document_ids: list
     retrieved = {doc_id.strip().lower() for doc_id in retrieved_document_ids}
     expected = {doc_id.strip().lower() for doc_id in expected_document_ids}
     return bool(retrieved & expected)
-
-
-def ensure_northwind_indexed_local() -> None:
-    from ingest import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, ingest_text
-
-    ingest_text(
-        document_id="employee_handbook",
-        text=NORTHWIND_SAMPLE,
-        source="northwind/employee_handbook.txt",
-        chunk_size=DEFAULT_CHUNK_SIZE,
-        chunk_overlap=DEFAULT_CHUNK_OVERLAP,
-    )
-
-
-def ensure_northwind_indexed_api(api_url: str) -> None:
-    payload = {"document_id": "employee_handbook", "text": NORTHWIND_SAMPLE}
-    response = httpx.post(f"{api_url.rstrip('/')}/ingest", json=payload, timeout=120.0)
-    response.raise_for_status()
 
 
 def collect_eval_rows_local(golden_set: list[dict], *, verbose: bool = False) -> list[dict]:
@@ -285,7 +262,7 @@ def _safe_float(value: Any) -> float | None:
 def get_eval_config() -> dict[str, Any]:
     """Retrieval/chunking settings used during golden-set eval."""
 
-    from ingest import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE
+    from ingest import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, excluded_document_ids_from_env
 
     try:
         from main import (
@@ -294,6 +271,7 @@ def get_eval_config() -> dict[str, Any]:
             MAX_CHUNKS_PER_DOCUMENT,
             hybrid_search_enabled,
         )
+        from rerank import rerank_candidates_count, rerank_enabled, rerank_model_name
 
         return {
             "chunk_size": DEFAULT_CHUNK_SIZE,
@@ -302,6 +280,10 @@ def get_eval_config() -> dict[str, Any]:
             "fetch_k": RETRIEVAL_FETCH_K,
             "max_per_document": MAX_CHUNKS_PER_DOCUMENT,
             "hybrid_search": hybrid_search_enabled(),
+            "rerank_enabled": rerank_enabled(),
+            "rerank_candidates": rerank_candidates_count(),
+            "rerank_model": rerank_model_name(),
+            "exclude_document_ids": excluded_document_ids_from_env(),
         }
     except ImportError:
         return {
@@ -311,6 +293,10 @@ def get_eval_config() -> dict[str, Any]:
             "fetch_k": None,
             "max_per_document": None,
             "hybrid_search": None,
+            "rerank_enabled": None,
+            "rerank_candidates": None,
+            "rerank_model": None,
+            "exclude_document_ids": excluded_document_ids_from_env(),
         }
 
 
@@ -380,19 +366,12 @@ def run_eval(
     golden_set_path: Path = DEFAULT_GOLDEN_SET,
     *,
     api_url: str | None = None,
-    skip_northwind_upsert: bool = False,
     verbose: bool = False,
 ) -> dict[str, Any]:
     """Run golden-set eval and return structured results for CLI, API, or Streamlit."""
 
     golden_set = load_golden_set(golden_set_path)
     normalized_api_url = api_url.rstrip("/") if api_url else None
-
-    if not skip_northwind_upsert:
-        if normalized_api_url:
-            ensure_northwind_indexed_api(normalized_api_url)
-        else:
-            ensure_northwind_indexed_local()
 
     if normalized_api_url:
         eval_rows = collect_eval_rows_api(normalized_api_url, golden_set, verbose=verbose)
@@ -409,54 +388,23 @@ def run_eval(
 
 
 def print_eval_config(config: dict[str, Any]) -> None:
-    print("=" * 72)
     print("Retrieval config")
-    print("=" * 72)
-    print(f"  chunk_size:         {config.get('chunk_size')}")
-    print(f"  chunk_overlap:      {config.get('chunk_overlap')}")
-    print(f"  k:                  {config.get('k')}")
-    print(f"  fetch_k:            {config.get('fetch_k')}")
-    print(f"  max_per_document:   {config.get('max_per_document')}")
-    hybrid = config.get("hybrid_search")
-    print(f"  hybrid_search:      {hybrid if hybrid is not None else '—'}")
+    print(pd.DataFrame(retrieval_config_rows(config)).to_string(index=False))
     print()
 
 
-def _print_retrieved_chunks(item: dict[str, Any]) -> None:
-    chunk_ids = item.get("chunk_ids") or []
-    contexts = item.get("retrieved_contexts") or []
-
-    if not chunk_ids and not contexts:
-        print("     chunks:            (none)")
-        return
-
-    print("     chunks:")
-    for index, chunk_id in enumerate(chunk_ids):
-        text = contexts[index] if index < len(contexts) else ""
-        print(f"       - chunk_id: {chunk_id}")
-        if text:
-            for line in text.splitlines():
-                print(f"         {line}")
-        print()
-
-
-def _format_score(value: float | None, *, decimals: int = 2) -> str:
-    if value is None:
-        return "—"
-    return f"{value:.{decimals}f}"
-
-
 def _print_per_question_scores_table(questions: list[dict[str, Any]]) -> None:
-    rows = [
-        {
-            "Question": item["question"],
-            "Hit": "✅" if item["retrieval_hit"] else "❌",
-            "Faithfulness": _format_score(item["faithfulness"]),
-            "Correctness": _format_score(item["answer_correctness"]),
-        }
-        for item in questions
-    ]
-    print(pd.DataFrame(rows).to_string(index=False))
+    print(pd.DataFrame(per_question_score_rows(questions)).to_string(index=False))
+
+
+def _print_averages_table(averages: dict[str, Any]) -> None:
+    print(pd.DataFrame(averages_rows(averages)).to_string(index=False))
+
+
+def _print_questions_and_answers_table(questions: list[dict[str, Any]]) -> None:
+    df = pd.DataFrame(questions_and_answers_rows(questions))
+    with pd.option_context("display.max_colwidth", None, "display.width", None):
+        print(df.to_string(index=False))
 
 
 def print_summary_from_result(result: dict[str, Any], api_url: str | None = None) -> None:
@@ -465,40 +413,18 @@ def print_summary_from_result(result: dict[str, Any], api_url: str | None = None
 
     print_eval_config(result.get("config", get_eval_config()))
 
-    print("=" * 72)
-    print("Questions and answers")
-    print("=" * 72)
-    for index, item in enumerate(result["questions"], start=1):
-        print(f"Q{index}: {item['question']}")
-        _print_retrieved_chunks(item)
-        print(f"     reference: {item['reference']}")
-        print(f"     answer:    {item['answer']}")
-        print()
+    averages = result["averages"]
+    print("Averages")
+    _print_averages_table(averages)
+    print()
 
-    print("=" * 72)
     print("Per-question scores")
-    print("=" * 72)
     _print_per_question_scores_table(result["questions"])
     print()
 
-    averages = result["averages"]
-    print("=" * 72)
-    print("Averages across golden set")
-    print("=" * 72)
-    print(
-        f"  retrieval_hit:      {averages['retrieval_hit']:.2%} "
-        f"({averages['retrieval_hits']}/{averages['question_count']})"
-    )
-    faith_avg = averages["faithfulness"]
-    corr_avg = averages["answer_correctness"]
-    if faith_avg is not None:
-        print(f"  faithfulness:       {faith_avg:.4f}")
-    else:
-        print("  faithfulness:       —")
-    if corr_avg is not None:
-        print(f"  answer_correctness: {corr_avg:.4f}")
-    else:
-        print("  answer_correctness: —")
+    print("Questions and answers")
+    _print_questions_and_answers_table(result["questions"])
+    print()
 
 
 def main() -> None:
@@ -514,11 +440,6 @@ def main() -> None:
         default=DEFAULT_API_URL or None,
         help="Live FastAPI base URL (e.g. https://your-app.onrender.com). Uses RAG_API_URL if unset.",
     )
-    parser.add_argument(
-        "--skip-northwind-upsert",
-        action="store_true",
-        help="Do not upsert the Northwind handbook before eval",
-    )
     args = parser.parse_args()
 
     api_url = args.api_url.rstrip("/") if args.api_url else None
@@ -526,15 +447,11 @@ def main() -> None:
     print(f"Golden set: {len(load_golden_set(args.golden_set))} questions from {args.golden_set.name}")
     print(f"Mode: {mode}\n")
 
-    if not args.skip_northwind_upsert:
-        print("Ensuring employee_handbook is indexed for Northwind questions...\n")
-
     try:
         print("Scoring with RAGAS (faithfulness + answer_correctness)...")
         result = run_eval(
             args.golden_set,
             api_url=api_url,
-            skip_northwind_upsert=args.skip_northwind_upsert,
             verbose=True,
         )
         print_summary_from_result(result, api_url=api_url)

@@ -14,3 +14,9 @@ services:
         sync: false
       - key: PINECONE_HOST
         sync: false
+      - key: EXCLUDE_DOCUMENT_IDS
+        value: employee_handbook
+      - key: RERANK_ENABLED
+        value: "true"
+      - key: RERANK_CANDIDATES
+        value: "20"

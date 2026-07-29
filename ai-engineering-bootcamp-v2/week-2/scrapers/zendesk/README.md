@@ -49,7 +49,8 @@ Each markdown file has YAML frontmatter:
 
 ## PDF downloads
 
-Discover and download zearn.org PDFs linked from help center articles (via the Zendesk API article bodies):
+Discover and download PDFs linked from help center articles (via the Zendesk API article bodies).
+Includes PDFs hosted on **zearn.org** and files linked from **drive.google.com**:
 
 ```bash
 python crawl_pdfs.py --sync

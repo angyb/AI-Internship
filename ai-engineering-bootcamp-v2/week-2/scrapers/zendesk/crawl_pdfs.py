@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Discover and download zearn.org PDFs linked from help.zearn.org articles."""
+"""Discover and download zearn.org and drive.google.com PDFs linked from help.zearn.org articles."""
 
 from __future__ import annotations
 
@@ -93,7 +93,9 @@ def scan_help_center_pdfs(session: requests.Session) -> tuple[list[dict], dict[s
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Sync zearn.org PDFs linked from help.zearn.org")
+    parser = argparse.ArgumentParser(
+        description="Sync zearn.org and drive.google.com PDFs linked from help.zearn.org"
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--download-delay", type=float, default=0.2, help="Seconds between PDF downloads")
     parser.add_argument("--skip-download", action="store_true", help="Discover PDFs only")
@@ -117,7 +119,7 @@ def main() -> int:
 
     site_by_base = site_basenames(pdf_sources)
     unique_pdfs = sorted(pdf_sources)
-    print(f"Unique zearn.org PDFs discovered: {len(unique_pdfs)}")
+    print(f"Unique PDFs discovered (zearn.org + drive.google.com): {len(unique_pdfs)}")
 
     removed = 0
     if args.sync:

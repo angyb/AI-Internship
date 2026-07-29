@@ -18,8 +18,10 @@ from ingest import (
     DEFAULT_CHUNK_OVERLAP,
     DEFAULT_CHUNK_SIZE,
     RetrievedChunk,
+    apply_diverse_filter,
     ingest_documents,
     ingest_text,
+    resolve_retrieval_filters,
     retrieve_chunks_diverse,
     retrieve_chunks_hybrid,
 )
@@ -46,6 +48,18 @@ async def lifespan(_app: FastAPI):
             logger.info("BM25 index rebuilt: %d chunks in %.1fs", chunk_count, elapsed)
         except Exception as exc:
             logger.warning("BM25 rebuild from Pinecone failed: %s", exc)
+
+    try:
+        from rerank import warmup_reranker
+
+        start = time.perf_counter()
+        warmup_reranker()
+        elapsed = time.perf_counter() - start
+        if elapsed > 0.01:
+            logger.info("Cross-encoder reranker ready in %.1fs", elapsed)
+    except Exception as exc:
+        logger.warning("Cross-encoder reranker warmup failed: %s", exc)
+
     yield
 
 
@@ -93,6 +107,14 @@ class AskRequest(BaseModel):
         default_factory=list,
         description="Optional metadata filter — restrict retrieval to these document_id values.",
     )
+    exclude_document_ids: list[str] | None = Field(
+        default=None,
+        description=(
+            "Omit these document_id values from retrieval. "
+            "Omit this field to use EXCLUDE_DOCUMENT_IDS env (default: employee_handbook). "
+            "Pass [] to search the full index."
+        ),
+    )
     model: str = Field(
         default=DEFAULT_MODEL,
         description="OpenAI model to use.",
@@ -128,9 +150,21 @@ class RetrieveRequest(BaseModel):
         default=True,
         description="Combine dense vector search with BM25 keyword search (RRF fusion).",
     )
+    use_rerank: bool | None = Field(
+        default=None,
+        description="Rerank candidates with a local cross-encoder. Omit to use RERANK_ENABLED env.",
+    )
     document_ids: list[str] = Field(
         default_factory=list,
         description="Optional metadata filter — restrict retrieval to these document_id values.",
+    )
+    exclude_document_ids: list[str] | None = Field(
+        default=None,
+        description=(
+            "Omit these document_id values from retrieval. "
+            "Omit this field to use EXCLUDE_DOCUMENT_IDS env (default: employee_handbook). "
+            "Pass [] to search the full index."
+        ),
     )
 
 
@@ -146,10 +180,7 @@ class RetrieveResponse(BaseModel):
 
 
 class EvalRequest(BaseModel):
-    skip_northwind_upsert: bool = Field(
-        default=True,
-        description="Skip re-ingesting the Northwind handbook before eval (use when already indexed).",
-    )
+    pass
 
 
 class EvalQuestionResult(BaseModel):
@@ -172,9 +203,20 @@ class EvalAverages(BaseModel):
     question_count: int
 
 
+class EvalConfig(BaseModel):
+    chunk_size: int | None = None
+    chunk_overlap: int | None = None
+    k: int | None = None
+    fetch_k: int | None = None
+    max_per_document: int | None = None
+    hybrid_search: bool | None = None
+    exclude_document_ids: list[str] = Field(default_factory=list)
+
+
 class EvalResponse(BaseModel):
     golden_set: str
     mode: str
+    config: EvalConfig
     averages: EvalAverages
     questions: list[EvalQuestionResult]
 
@@ -276,26 +318,50 @@ def retrieve_context(
     question: str,
     *,
     use_hybrid: bool = True,
+    use_rerank: bool | None = None,
     document_ids: list[str] | None = None,
+    exclude_document_ids: list[str] | None = None,
 ) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
     """Embed the question, retrieve top-k chunks, and format context."""
-    filter_ids = document_ids or None
+    from rerank import rerank_candidates_count, rerank_candidate_max_per_document, rerank_chunks, rerank_enabled
+
+    filter_ids, exclude_ids = resolve_retrieval_filters(document_ids, exclude_document_ids)
+    do_rerank = rerank_enabled() if use_rerank is None else use_rerank
+
+    if do_rerank:
+        candidate_k = rerank_candidates_count()
+        candidate_max_per_doc = rerank_candidate_max_per_document()
+    else:
+        candidate_k = RETRIEVAL_FETCH_K
+        candidate_max_per_doc = MAX_CHUNKS_PER_DOCUMENT
+
     if use_hybrid and hybrid_search_enabled():
-        chunks = retrieve_chunks_hybrid(
+        candidates = retrieve_chunks_hybrid(
             question,
-            k=RETRIEVAL_K,
-            fetch_k=RETRIEVAL_FETCH_K,
-            max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+            k=candidate_k,
+            fetch_k=candidate_k,
+            max_per_document=candidate_max_per_doc,
             document_ids=filter_ids,
+            exclude_document_ids=exclude_ids,
         )
     else:
-        chunks = retrieve_chunks_diverse(
+        candidates = retrieve_chunks_diverse(
             question,
-            k=RETRIEVAL_K,
-            fetch_k=RETRIEVAL_FETCH_K,
-            max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+            k=candidate_k,
+            fetch_k=candidate_k,
+            max_per_document=candidate_max_per_doc,
             document_ids=filter_ids,
+            exclude_document_ids=exclude_ids,
         )
+
+    if do_rerank and candidates:
+        candidates = rerank_chunks(question, candidates)
+
+    chunks = apply_diverse_filter(
+        candidates,
+        k=RETRIEVAL_K,
+        max_per_document=MAX_CHUNKS_PER_DOCUMENT,
+    )
 
     if not chunks:
         return [], "", [], []
@@ -322,7 +388,9 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
         chunks, _context, _chunk_ids, _sources = retrieve_context(
             body.question,
             use_hybrid=body.use_hybrid,
+            use_rerank=body.use_rerank,
             document_ids=body.document_ids or None,
+            exclude_document_ids=body.exclude_document_ids,
         )
     except KeyError as exc:
         raise HTTPException(
@@ -411,6 +479,7 @@ def ask(body: AskRequest) -> AskResponse:
         _chunks, context, chunk_ids, sources = retrieve_context(
             body.question,
             document_ids=body.document_ids or None,
+            exclude_document_ids=body.exclude_document_ids,
         )
     except KeyError as exc:
         raise HTTPException(
@@ -469,11 +538,9 @@ def run_golden_eval(body: EvalRequest | None = None) -> EvalResponse:
 
     from eval_golden import DEFAULT_GOLDEN_SET, run_eval
 
-    request = body or EvalRequest()
     try:
         result = run_eval(
             DEFAULT_GOLDEN_SET,
-            skip_northwind_upsert=request.skip_northwind_upsert,
             verbose=False,
         )
     except KeyError as exc:
@@ -487,9 +554,19 @@ def run_golden_eval(body: EvalRequest | None = None) -> EvalResponse:
         raise HTTPException(status_code=500, detail=f"Evaluation failed: {exc}") from exc
 
     averages = result["averages"]
+    config = result.get("config", {})
     return EvalResponse(
         golden_set=result["golden_set"],
         mode=result["mode"],
+        config=EvalConfig(
+            chunk_size=config.get("chunk_size"),
+            chunk_overlap=config.get("chunk_overlap"),
+            k=config.get("k"),
+            fetch_k=config.get("fetch_k"),
+            max_per_document=config.get("max_per_document"),
+            hybrid_search=config.get("hybrid_search"),
+            exclude_document_ids=config.get("exclude_document_ids") or [],
+        ),
         averages=EvalAverages(
             retrieval_hit=averages["retrieval_hit"],
             faithfulness=averages["faithfulness"],

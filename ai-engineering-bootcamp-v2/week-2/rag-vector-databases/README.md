@@ -119,6 +119,24 @@ Retrieval combines **Pinecone dense search** with an in-process **BM25 keyword i
 - **Disable:** set `HYBRID_SEARCH=false` in the environment to fall back to dense-only
 - **Compare in Swagger:** `POST /retrieve` accepts `"use_hybrid": false` for dense-only debugging
 
+## Cross-encoder reranking (local, free)
+
+After hybrid/dense retrieval, a **local cross-encoder** re-scores the top candidates and keeps the best `k` for the LLM context. No Cohere or other paid rerank API — runs on CPU via [sentence-transformers](https://www.sbert.net/docs/pretrained_cross-encoder.html).
+
+- **Default model:** `cross-encoder/ms-marco-MiniLM-L-6-v2` (~80MB, downloaded on first startup)
+- **Flow:** fetch `RERANK_CANDIDATES` (default 20) → cross-encoder score → per-document cap → final `k=5`
+- **Render:** model loads at startup (same lifespan as BM25 rebuild); first deploy build installs PyTorch CPU + sentence-transformers
+- **Disable:** `RERANK_ENABLED=false` or `"use_rerank": false` on `POST /retrieve`
+- **Override model:** `RERANK_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2`
+
+## Document scope for general queries
+
+By default, `/ask` and `/retrieve` search the **full ingested corpus except `employee_handbook`**. Golden-set eval uses `expected_document_ids` from `golden_set.json` when set; otherwise it follows the same default exclude.
+
+- **Default exclude:** `EXCLUDE_DOCUMENT_IDS=employee_handbook` (comma-separated for multiple IDs)
+- **Search everything:** pass `"exclude_document_ids": []` in the request body, or set `EXCLUDE_DOCUMENT_IDS=false`
+- **Restrict to specific docs:** pass `"document_ids": ["accessibility"]` (include wins over exclude)
+
 Debug side-by-side rankings locally:
 
 ```bash
@@ -144,10 +162,12 @@ Use the **Eval** tab (see Golden-set evaluation below) for eval screenshots in t
 
 ## Golden-set evaluation
 
-Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinecone pipeline.
+Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinecone pipeline and the **Zearn corpus** (404 documents after `POST /ingest`).
+
+**Prerequisite:** run `POST /ingest` locally or on Render so Pinecone contains the full document set.
 
 **Files:**
-- `golden_set.json` — 5 questions with human-written reference answers and expected `document_id`s
+- `golden_set.json` — questions with human-written reference answers and expected `document_id`s
 - `eval_golden.py` — CLI runner (same logic as `POST /eval`)
 
 **Metrics tracked:**
@@ -171,17 +191,13 @@ export RAG_API_URL=https://ai-internship-i3lw.onrender.com
 streamlit run demo_page.py
 ```
 
-3. Open the **Eval** tab, leave **Skip Northwind handbook upsert** checked (if already ingested), click **Run golden-set eval**.
+3. Open the **Eval** tab and click **Run golden-set eval**.
 
 The full pipeline runs on Render; Streamlit only displays the results.
 
 ### Option B — Render Swagger
 
-After deploy, open `https://your-app.onrender.com/docs` → **POST /eval** → Execute with:
-
-```json
-{"skip_northwind_upsert": true}
-```
+After deploy, open `https://your-app.onrender.com/docs` → **POST /eval** → Execute (empty body is fine).
 
 ### Option C — Local terminal
 
@@ -189,15 +205,13 @@ After deploy, open `https://your-app.onrender.com/docs` → **POST /eval** → E
 cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
 source .venv/bin/activate
 pip install -r requirements-dev.txt
-python eval_golden.py --skip-northwind-upsert
+python eval_golden.py
 ```
 
-To eval a remote API from the CLI (legacy — prefer Option A or B):
+To eval a remote API from the CLI:
 
 ```bash
-python eval_golden.py \
-  --api-url https://ai-internship-i3lw.onrender.com \
-  --skip-northwind-upsert
+python eval_golden.py --api-url https://ai-internship-i3lw.onrender.com
 ```
 
 **Assignment screenshot:** Eval tab or terminal output showing per-question scores and averages for all three metrics.

@@ -19,6 +19,13 @@ import httpx
 import streamlit as st
 from dotenv import load_dotenv
 
+from eval_format import (
+    averages_rows,
+    per_question_score_rows,
+    questions_and_answers_rows,
+    retrieval_config_rows,
+)
+
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
 DEFAULT_API_URL = os.getenv("RAG_API_URL", "http://127.0.0.1:8000")
@@ -148,6 +155,10 @@ with ingest_tab:
 
 with ask_tab:
     st.subheader("POST /ask — question with citations")
+    st.caption(
+        "General queries search the full corpus except `employee_handbook` "
+        "(set `EXCLUDE_DOCUMENT_IDS` on the API to change). Golden-set eval still targets the handbook."
+    )
     question = st.text_area("Question", value=SAMPLE_QUESTION, height=100)
 
     if st.button("Ask", type="primary"):
@@ -207,46 +218,29 @@ with ask_tab:
 with eval_tab:
     st.subheader("POST /eval — golden-set evaluation")
     st.markdown(
-        "Runs all questions in `golden_set.json` against the API: retrieval, answer generation, "
-        "and RAGAS scoring (faithfulness + answer_correctness). "
-        "When pointed at Render, the full eval runs on the server — no local terminal needed."
-    )
-
-    skip_northwind = st.checkbox(
-        "Skip Northwind handbook upsert",
-        value=True,
-        help="Leave checked if `employee_handbook` is already indexed on this API.",
+        "Runs all questions in `golden_set.json` against the ingested Zearn corpus: "
+        "retrieval, answer generation, and RAGAS scoring (faithfulness + answer_correctness). "
+        "Ensure the full corpus is indexed (`POST /ingest`) before running eval. "
+        "When pointed at Render, the eval runs on the server — no local terminal needed."
     )
 
     if st.button("Run golden-set eval", type="primary"):
-        payload = {"skip_northwind_upsert": skip_northwind}
         with st.spinner("Running eval (retrieval + generation + RAGAS — may take 2–3 minutes)..."):
-            status, data = call_json("POST", "/eval", payload, timeout=600.0)
+            status, data = call_json("POST", "/eval", {}, timeout=600.0)
 
         if status != 200 or not isinstance(data, dict):
             render_api_error(status, data)
         else:
             averages = data.get("averages", {})
-            hits = averages.get("retrieval_hits", 0)
-            count = averages.get("question_count", 0)
             faith = averages.get("faithfulness")
             correctness = averages.get("answer_correctness")
 
             st.success(f"Eval complete — {data.get('golden_set', 'golden_set.json')}")
 
-            c1, c2, c3 = st.columns(3)
-            with c1:
-                st.metric("Retrieval hit", f"{hits}/{count}")
-            with c2:
-                st.metric(
-                    "Faithfulness (avg)",
-                    f"{faith:.4f}" if faith is not None else "unavailable",
-                )
-            with c3:
-                st.metric(
-                    "Correctness (avg)",
-                    f"{correctness:.4f}" if correctness is not None else "unavailable",
-                )
+            config = data.get("config")
+            if config:
+                st.markdown("**Retrieval config**")
+                st.dataframe(retrieval_config_rows(config), use_container_width=True, hide_index=True)
 
             if faith is None or correctness is None:
                 st.warning(
@@ -254,26 +248,26 @@ with eval_tab:
                     "Re-run eval once — scores usually fill in on retry."
                 )
 
-            rows = []
-            for item in data.get("questions", []):
-                faith = item.get("faithfulness")
-                correctness = item.get("answer_correctness")
-                rows.append({
-                    "Question": item.get("question", ""),
-                    "Hit": "✅" if item.get("retrieval_hit") else "❌",
-                    "Faithfulness": f"{faith:.2f}" if faith is not None else "—",
-                    "Correctness": f"{correctness:.2f}" if correctness is not None else "—",
-                })
+            if averages:
+                st.markdown("**Averages**")
+                st.dataframe(averages_rows(averages), use_container_width=True, hide_index=True)
 
-            if rows:
-                st.markdown("### Per-question scores")
-                st.dataframe(rows, use_container_width=True, hide_index=True)
+            questions = data.get("questions", [])
+            if questions:
+                st.markdown("**Per-question scores**")
+                st.dataframe(
+                    per_question_score_rows(questions),
+                    use_container_width=True,
+                    hide_index=True,
+                )
 
-            with st.expander("Answers"):
-                for item in data.get("questions", []):
-                    st.markdown(f"**{item.get('question', '')}**")
-                    st.markdown(item.get("answer", ""))
-                    st.divider()
+            if questions:
+                st.markdown("**Questions and answers**")
+                st.dataframe(
+                    questions_and_answers_rows(questions),
+                    use_container_width=True,
+                    hide_index=True,
+                )
 
             with st.expander("Full JSON response"):
                 st.json(data)
