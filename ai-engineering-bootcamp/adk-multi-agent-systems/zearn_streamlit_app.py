@@ -18,6 +18,8 @@ load_dotenv()
 
 AGENT_API_URL = os.getenv("AGENT_API_URL", "").rstrip("/")
 REMOTE_MODE = bool(AGENT_API_URL)
+HEALTH_TIMEOUT = float(os.getenv("API_HEALTH_TIMEOUT", "60"))
+AGENT_TIMEOUT = float(os.getenv("API_AGENT_TIMEOUT", "120"))
 
 if not REMOTE_MODE:
     from zearn_support_agent import RAG_API_URL, run_zearn_agent
@@ -28,9 +30,9 @@ st.set_page_config(page_title="Zearn Support Agent", layout="wide")
 st.markdown("<style>.block-container{padding-top:1.5rem;}</style>", unsafe_allow_html=True)
 
 
-def check_api_health(base_url: str) -> tuple[bool, str]:
+def check_api_health(base_url: str, timeout: float = HEALTH_TIMEOUT) -> tuple[bool, str]:
     try:
-        with httpx.Client(timeout=15.0) as client:
+        with httpx.Client(timeout=timeout) as client:
             response = client.get(f"{base_url.rstrip('/')}/health")
             if response.status_code == 200:
                 return True, response.text
@@ -40,7 +42,7 @@ def check_api_health(base_url: str) -> tuple[bool, str]:
 
 
 def run_agent_remote(question: str) -> tuple[str, list[dict]]:
-    with httpx.Client(timeout=120.0) as client:
+    with httpx.Client(timeout=AGENT_TIMEOUT) as client:
         response = client.post(
             f"{AGENT_API_URL}/agent",
             json={"question": question},
@@ -87,15 +89,27 @@ with st.sidebar:
             st.error("GOOGLE_API_KEY missing — add to .env")
 
     st.markdown(f"**API:** `{RAG_API_URL}`")
-    healthy, detail = check_api_health(RAG_API_URL)
+    if REMOTE_MODE:
+        with st.spinner(
+            "Checking API… first visit may take up to a minute while the service wakes up."
+        ):
+            healthy, detail = check_api_health(RAG_API_URL)
+    else:
+        healthy, detail = check_api_health(RAG_API_URL)
     if healthy:
         st.success("API reachable")
     else:
         st.error(f"API unreachable: {detail}")
         if REMOTE_MODE:
-            st.caption("Check AGENT_API_URL and that the RAG API service is running.")
+            st.info(
+                "The API may still be starting on Render. Wait a moment and **refresh** "
+                "this page, or open the `/health` URL in a new tab to wake it up."
+            )
         else:
-            st.caption("Start: `uvicorn main:app --host 127.0.0.1 --port 8000` in week-2/rag-vector-databases")
+            st.caption(
+                "Start: `uvicorn main:app --host 127.0.0.1 --port 8000` "
+                "in week-2/rag-vector-databases"
+            )
 
 # --- Main ---
 
@@ -121,7 +135,12 @@ with st.form("question_form", clear_on_submit=False):
         run_clicked = st.form_submit_button("Run agent", type="primary", use_container_width=True)
 
 if run_clicked and question.strip():
-    with st.spinner("Agent running..."):
+    spinner_msg = (
+        "Running agent… first request may take up to a minute while the API wakes up."
+        if REMOTE_MODE
+        else "Agent running..."
+    )
+    with st.spinner(spinner_msg):
         try:
             if REMOTE_MODE:
                 answer, steps = run_agent_remote(question.strip())
