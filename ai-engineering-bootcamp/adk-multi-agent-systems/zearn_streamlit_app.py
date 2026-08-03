@@ -22,9 +22,13 @@ HEALTH_TIMEOUT = float(os.getenv("API_HEALTH_TIMEOUT", "60"))
 AGENT_TIMEOUT = float(os.getenv("API_AGENT_TIMEOUT", "120"))
 
 if not REMOTE_MODE:
-    from zearn_support_agent import RAG_API_URL, run_zearn_agent
+    from zearn_support_agent import RAG_API_URL, REFUSAL_MESSAGE, run_zearn_agent
 else:
     RAG_API_URL = AGENT_API_URL
+    REFUSAL_MESSAGE = (
+        "I couldn't find that in the Zearn documentation corpus. "
+        "Try rephrasing your question, or contact Zearn support for help."
+    )
 
 st.set_page_config(page_title="Zearn Support Agent", layout="wide")
 st.markdown("<style>.block-container{padding-top:1.5rem;}</style>", unsafe_allow_html=True)
@@ -159,7 +163,14 @@ if run_clicked and question.strip():
 
     st.markdown("---")
     st.subheader("Final answer")
-    st.markdown(answer)
+    is_refusal = (
+        not answer.strip()
+        or answer.strip() == REFUSAL_MESSAGE
+        or "couldn't find that in the zearn documentation corpus" in answer.lower()
+    )
+    if is_refusal:
+        st.warning("Not found in corpus")
+    st.markdown(answer.strip() if answer.strip() else REFUSAL_MESSAGE)
 
     with st.expander("Raw step data"):
         st.json(steps)

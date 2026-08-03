@@ -28,6 +28,21 @@ MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 MAX_LLM_CALLS = 10
 CHUNK_TEXT_LIMIT = 500
 
+REFUSAL_MESSAGE = (
+    "I couldn't find that in the Zearn documentation corpus. "
+    "Try rephrasing your question, or contact Zearn support for help."
+)
+
+AGENT_INSTRUCTION = (
+    "You are a Zearn teacher support agent. "
+    "For factual Zearn questions, call search_docs before answering. "
+    "Use only retrieved content. If the first search is insufficient, "
+    "refine your query and search again. Cite document titles when possible. "
+    "If search_docs returns no chunks, or the retrieved chunks do not answer the question, "
+    f"respond with exactly: \"{REFUSAL_MESSAGE}\" "
+    "Never use outside knowledge. Always end with a clear, complete user-facing answer."
+)
+
 
 def _format_chunks_from_retrieved(chunks: list[Any]) -> dict:
     """Turn RetrievedChunk objects into the search_docs tool response shape."""
@@ -85,15 +100,19 @@ def search_docs(question: str) -> dict:
 zearn_agent = Agent(
     name="zearn_support_agent",
     model=MODEL,
-    instruction=(
-        "You are a Zearn teacher support agent. "
-        "For factual Zearn questions, call search_docs before answering. "
-        "Use only retrieved content. If the first search is insufficient, "
-        "refine your query and search again. Cite document titles when possible. "
-        "If the docs do not contain the answer, say so clearly."
-    ),
+    instruction=AGENT_INSTRUCTION,
     tools=[search_docs],
 )
+
+
+def _fallback_answer(_steps: list[dict[str, Any]]) -> str:
+    """Use when the ADK loop ends without a captured final text response."""
+    return REFUSAL_MESSAGE
+
+
+def _extract_text_from_part(part: Any) -> str:
+    text = getattr(part, "text", None)
+    return text.strip() if text and text.strip() else ""
 
 
 def _classify_step(part: Any, author: str) -> dict[str, Any] | None:
@@ -140,7 +159,8 @@ async def run_zearn_agent_async(question: str) -> tuple[str, list[dict[str, Any]
     run_config = RunConfig(max_llm_calls=MAX_LLM_CALLS)
 
     steps: list[dict[str, Any]] = []
-    final = "(no response)"
+    final = ""
+    last_think_text = ""
 
     async for event in runner.run_async(
         user_id="user1",
@@ -154,8 +174,16 @@ async def run_zearn_agent_async(question: str) -> tuple[str, list[dict[str, Any]
                 step = _classify_step(part, author)
                 if step:
                     steps.append(step)
-                    if step["phase"] == "Think" and event.is_final_response():
-                        final = step["text"]
+                    if step["phase"] == "Think":
+                        last_think_text = step["text"]
+                text = _extract_text_from_part(part)
+                if text and event.is_final_response():
+                    final = text
+
+    if not final:
+        final = last_think_text
+    if not final:
+        final = _fallback_answer(steps)
 
     return final, steps
 
