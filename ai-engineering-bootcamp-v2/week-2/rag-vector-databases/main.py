@@ -7,6 +7,7 @@ import os
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -191,6 +192,24 @@ class RetrievedChunkOut(BaseModel):
 
 class RetrieveResponse(BaseModel):
     chunks: list[RetrievedChunkOut]
+
+
+class AgentStep(BaseModel):
+    phase: str
+    author: str | None = None
+    tool: str | None = None
+    args: dict[str, Any] | None = None
+    result: str | None = None
+    text: str | None = None
+
+
+class AgentRequest(BaseModel):
+    question: str
+
+
+class AgentResponse(BaseModel):
+    answer: str
+    steps: list[AgentStep]
 
 
 class EvalRequest(BaseModel):
@@ -473,6 +492,31 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
             )
             for chunk in chunks
         ]
+    )
+
+
+@app.post("/agent")
+def agent_run(body: AgentRequest) -> AgentResponse:
+    """Run the Zearn ADK support agent (search_docs + Gemini orchestration)."""
+
+    if not os.getenv("GOOGLE_API_KEY"):
+        raise HTTPException(
+            status_code=500,
+            detail="GOOGLE_API_KEY is not set — required for POST /agent",
+        )
+
+    try:
+        from zearn_support_agent import run_zearn_agent
+
+        answer, steps = run_zearn_agent(body.question)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Agent run failed: {exc}") from exc
+
+    return AgentResponse(
+        answer=answer,
+        steps=[AgentStep(**step) for step in steps],
     )
 
 

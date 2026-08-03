@@ -1,5 +1,7 @@
 """
-Zearn support agent — Google ADK agent with real search_docs tool (Week 2 retrieval).
+Zearn support agent — Google ADK with search_docs backed by local retrieve_context().
+
+Used by POST /agent on the Week 2 RAG API (same process — no HTTP loopback on Render).
 
 Run:
     python zearn_support_agent.py "What causes a Tower Alert and what is its purpose?"
@@ -13,7 +15,6 @@ import os
 import sys
 from typing import Any
 
-import httpx
 from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.agents.run_config import RunConfig
@@ -23,10 +24,27 @@ from google.genai import types
 
 load_dotenv()
 
-MODEL = os.getenv("GEMINI_MODEL", "gemini-3-flash-preview")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 MAX_LLM_CALLS = 10
-RAG_API_URL = os.getenv("RAG_API_URL", "http://127.0.0.1:8000").rstrip("/")
 CHUNK_TEXT_LIMIT = 500
+
+
+def _format_chunks_from_retrieved(chunks: list[Any]) -> dict:
+    """Turn RetrievedChunk objects into the search_docs tool response shape."""
+    out = []
+    for chunk in chunks:
+        text = chunk.text
+        if len(text) > CHUNK_TEXT_LIMIT:
+            text = text[:CHUNK_TEXT_LIMIT] + "..."
+        out.append(
+            {
+                "chunk_id": chunk.chunk_id,
+                "document_id": chunk.document_id,
+                "text": text,
+                "source": chunk.source,
+            }
+        )
+    return {"chunk_count": len(out), "chunks": out}
 
 
 def search_docs(question: str) -> dict:
@@ -42,41 +60,26 @@ def search_docs(question: str) -> dict:
         Dict with chunk_count and chunks (chunk_id, document_id, text, source).
     """
     try:
-        with httpx.Client(timeout=60.0) as client:
-            response = client.post(
-                f"{RAG_API_URL}/retrieve",
-                json={"question": question},
-            )
-            response.raise_for_status()
-            data = response.json()
-    except httpx.HTTPStatusError as exc:
+        from main import retrieve_context
+
+        chunks, _context, _chunk_ids, _sources = retrieve_context(question)
+    except KeyError as exc:
         return {
-            "error": f"Retrieval API returned {exc.response.status_code}",
+            "error": f"Missing required environment variable: {exc.args[0]}",
             "chunks": [],
             "chunk_count": 0,
         }
-    except httpx.RequestError as exc:
+    except Exception as exc:
         return {
-            "error": f"Could not reach retrieval API at {RAG_API_URL}: {exc}",
+            "error": f"Retrieval failed: {exc}",
             "chunks": [],
             "chunk_count": 0,
         }
 
-    chunks = []
-    for chunk in data.get("chunks", []):
-        text = chunk.get("text", "")
-        if len(text) > CHUNK_TEXT_LIMIT:
-            text = text[:CHUNK_TEXT_LIMIT] + "..."
-        chunks.append(
-            {
-                "chunk_id": chunk.get("chunk_id", ""),
-                "document_id": chunk.get("document_id", ""),
-                "text": text,
-                "source": chunk.get("source", ""),
-            }
-        )
+    if not chunks:
+        return {"chunk_count": 0, "chunks": []}
 
-    return {"chunk_count": len(chunks), "chunks": chunks}
+    return _format_chunks_from_retrieved(chunks)
 
 
 zearn_agent = Agent(
@@ -94,7 +97,6 @@ zearn_agent = Agent(
 
 
 def _classify_step(part: Any, author: str) -> dict[str, Any] | None:
-    """Map an ADK content part to a Think / Act / Observe step."""
     fc = getattr(part, "function_call", None)
     fr = getattr(part, "function_response", None)
     text = getattr(part, "text", None)
@@ -131,7 +133,6 @@ def _classify_step(part: Any, author: str) -> dict[str, Any] | None:
 
 
 async def run_zearn_agent_async(question: str) -> tuple[str, list[dict[str, Any]]]:
-    """Run the Zearn agent and return (final_answer, steps)."""
     service = InMemorySessionService()
     runner = Runner(agent=zearn_agent, app_name="zearn_support", session_service=service)
     session = await service.create_session(app_name="zearn_support", user_id="user1")
@@ -160,22 +161,7 @@ async def run_zearn_agent_async(question: str) -> tuple[str, list[dict[str, Any]
 
 
 def run_zearn_agent(question: str) -> tuple[str, list[dict[str, Any]]]:
-    """Synchronous wrapper for Streamlit and CLI."""
     return asyncio.run(run_zearn_agent_async(question))
-
-
-def print_steps(steps: list[dict[str, Any]]) -> None:
-    for i, step in enumerate(steps, start=1):
-        phase = step["phase"]
-        if phase == "Think":
-            print(f"\n[{i}] THINK — {step['author']}")
-            print(step["text"])
-        elif phase == "Act":
-            args = ", ".join(f"{k}={v!r}" for k, v in step.get("args", {}).items())
-            print(f"\n[{i}] ACT — {step['author']} called {step['tool']}({args})")
-        elif phase == "Observe":
-            print(f"\n[{i}] OBSERVE — result from {step['tool']}")
-            print(step.get("result", ""))
 
 
 def main() -> None:
@@ -188,17 +174,11 @@ def main() -> None:
         print("ERROR: Set GOOGLE_API_KEY in .env")
         sys.exit(1)
 
-    print(f"RAG API: {RAG_API_URL}")
     print(f"Question: {question}\n")
-    print("=" * 60)
-
     answer, steps = run_zearn_agent(question)
-    print_steps(steps)
-
-    print("\n" + "=" * 60)
-    print("FINAL ANSWER")
-    print("=" * 60)
-    print(answer)
+    for i, step in enumerate(steps, start=1):
+        print(f"[{i}] {step.get('phase')} — {step}")
+    print("\nFINAL ANSWER\n", answer)
 
 
 if __name__ == "__main__":

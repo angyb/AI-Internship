@@ -1,8 +1,11 @@
 """
 Zearn Support Agent — Streamlit demo with Think → Act → Observe step logs.
 
-Run:
+Run locally (in-process agent):
     streamlit run zearn_streamlit_app.py
+
+Run against remote API (Render UI service):
+    AGENT_API_URL=https://your-rag-api.onrender.com streamlit run zearn_streamlit_app.py
 """
 
 import os
@@ -13,21 +16,38 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from zearn_support_agent import RAG_API_URL, run_zearn_agent
+AGENT_API_URL = os.getenv("AGENT_API_URL", "").rstrip("/")
+REMOTE_MODE = bool(AGENT_API_URL)
+
+if not REMOTE_MODE:
+    from zearn_support_agent import RAG_API_URL, run_zearn_agent
+else:
+    RAG_API_URL = AGENT_API_URL
 
 st.set_page_config(page_title="Zearn Support Agent", layout="wide")
 st.markdown("<style>.block-container{padding-top:1.5rem;}</style>", unsafe_allow_html=True)
 
 
-def check_rag_health(base_url: str) -> tuple[bool, str]:
+def check_api_health(base_url: str) -> tuple[bool, str]:
     try:
-        with httpx.Client(timeout=5.0) as client:
+        with httpx.Client(timeout=15.0) as client:
             response = client.get(f"{base_url.rstrip('/')}/health")
             if response.status_code == 200:
                 return True, response.text
             return False, f"HTTP {response.status_code}"
     except httpx.RequestError as exc:
         return False, str(exc)
+
+
+def run_agent_remote(question: str) -> tuple[str, list[dict]]:
+    with httpx.Client(timeout=120.0) as client:
+        response = client.post(
+            f"{AGENT_API_URL}/agent",
+            json={"question": question},
+        )
+        response.raise_for_status()
+        data = response.json()
+    return data["answer"], data.get("steps", [])
 
 
 def render_steps(steps: list[dict]) -> None:
@@ -42,7 +62,7 @@ def render_steps(steps: list[dict]) -> None:
                 st.markdown(f"**Step {i} — Think** (`{step.get('author', '')}`)")
                 st.markdown(step.get("text", ""))
         elif phase == "Act":
-            args = step.get("args", {})
+            args = step.get("args") or {}
             args_str = ", ".join(f"{k}={v!r}" for k, v in args.items())
             st.warning(f"**Step {i} — Act:** `{step.get('tool')}`({args_str})")
         elif phase == "Observe":
@@ -57,19 +77,25 @@ with st.sidebar:
     st.title("Zearn Support Agent")
     st.caption("Week 3 ADK agent with search_docs tool")
 
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if api_key:
-        st.success("GOOGLE_API_KEY set")
+    if REMOTE_MODE:
+        st.info(f"Remote mode — `{AGENT_API_URL}`")
     else:
-        st.error("GOOGLE_API_KEY missing — add to .env")
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if api_key:
+            st.success("GOOGLE_API_KEY set")
+        else:
+            st.error("GOOGLE_API_KEY missing — add to .env")
 
-    st.markdown(f"**RAG API:** `{RAG_API_URL}`")
-    healthy, detail = check_rag_health(RAG_API_URL)
+    st.markdown(f"**API:** `{RAG_API_URL}`")
+    healthy, detail = check_api_health(RAG_API_URL)
     if healthy:
-        st.success("RAG API reachable")
+        st.success("API reachable")
     else:
-        st.error(f"RAG API unreachable: {detail}")
-        st.caption("Start: `uvicorn main:app --host 127.0.0.1 --port 8000` in week-2/rag-vector-databases")
+        st.error(f"API unreachable: {detail}")
+        if REMOTE_MODE:
+            st.caption("Check AGENT_API_URL and that the RAG API service is running.")
+        else:
+            st.caption("Start: `uvicorn main:app --host 127.0.0.1 --port 8000` in week-2/rag-vector-databases")
 
 # --- Main ---
 
@@ -79,7 +105,7 @@ st.markdown(
     "**search_docs** (Week 2 hybrid retrieval) and answers from retrieved chunks."
 )
 
-if not api_key:
+if not REMOTE_MODE and not os.getenv("GOOGLE_API_KEY"):
     st.stop()
 
 with st.form("question_form", clear_on_submit=False):
@@ -97,7 +123,13 @@ with st.form("question_form", clear_on_submit=False):
 if run_clicked and question.strip():
     with st.spinner("Agent running..."):
         try:
-            answer, steps = run_zearn_agent(question.strip())
+            if REMOTE_MODE:
+                answer, steps = run_agent_remote(question.strip())
+            else:
+                answer, steps = run_zearn_agent(question.strip())
+        except httpx.HTTPStatusError as exc:
+            st.error(f"API error {exc.response.status_code}: {exc.response.text[:500]}")
+            st.stop()
         except Exception as exc:
             st.error(f"Agent error: {exc}")
             st.stop()

@@ -16,6 +16,8 @@ services:
         sync: false
       - key: PINECONE_HOST
         sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
 
       # OpenAI models
       - key: ANSWER_MODEL
@@ -94,3 +96,13 @@ services:
         value: "true"
       - key: CONTEXT_ORDER_BY_RERANK_SCORE
         value: "false"
+
+  - type: web
+    name: zearn-agent-ui
+    runtime: python
+    rootDir: ai-engineering-bootcamp/adk-multi-agent-systems
+    buildCommand: pip install -r requirements-streamlit.txt
+    startCommand: streamlit run zearn_streamlit_app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: AGENT_API_URL
+        value: https://ai-internship-i3lw.onrender.com
