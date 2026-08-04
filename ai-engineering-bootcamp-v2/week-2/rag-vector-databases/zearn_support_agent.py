@@ -45,7 +45,7 @@ GOOGLE_SEARCH_INSTRUCTION = (
 )
 
 AGENT_INSTRUCTION = (
-    "You are a Zearn teacher support agent. "
+    "You are a Zearn support agent. "
     "For factual Zearn questions, call search_zearn_doc before answering. "
     "Use only retrieved content from search_zearn_doc when it answers the question. "
     "If the first search is insufficient, refine your query and search again. "
@@ -81,7 +81,7 @@ def search_zearn_doc(question: str) -> dict:
     """Search the Zearn knowledge base for relevant documentation chunks.
 
     Use this tool before answering factual questions about Zearn Math,
-    teacher workflows, Tower Alerts, rosters, accounts, or product features.
+    teacher and admin workflows, Tower Alerts, rosters, accounts, or product features.
 
     Args:
         question: A search query describing what you need from the docs.

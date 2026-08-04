@@ -130,7 +130,7 @@ with st.sidebar:
 
 # --- Main ---
 
-st.header("Zearn Teacher Support Agent")
+st.header("Zearn Support Agent")
 st.markdown(
     "Ask a Zearn support question. The agent searches the knowledge base via "
     "**search_zearn_doc** (hybrid retrieval) and falls back to **google_search_agent** "
