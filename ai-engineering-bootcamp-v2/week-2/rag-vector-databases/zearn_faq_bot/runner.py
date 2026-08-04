@@ -40,11 +40,31 @@ def _classify_step(part: Any, author: str) -> dict[str, Any] | None:
     if fr:
         result = fr.response
         if isinstance(result, dict):
+            sources: list[dict[str, str]] = []
+            seen: set[str] = set()
+            for chunk in result.get("chunks") or []:
+                if not isinstance(chunk, dict):
+                    continue
+                title = str(chunk.get("title") or chunk.get("document_id") or "").strip()
+                source_url = str(chunk.get("source_url") or "").strip()
+                document_id = str(chunk.get("document_id") or "").strip()
+                key = source_url or document_id or title
+                if not key or key in seen:
+                    continue
+                seen.add(key)
+                sources.append(
+                    {
+                        "title": title,
+                        "source_url": source_url,
+                        "document_id": document_id,
+                    }
+                )
             summary = {
                 "chunk_count": result.get("chunk_count", 0),
                 "document_ids": [
                     c.get("document_id", "") for c in result.get("chunks", [])
                 ],
+                "sources": sources,
                 "error": result.get("error"),
             }
             display = json.dumps(summary, indent=2)

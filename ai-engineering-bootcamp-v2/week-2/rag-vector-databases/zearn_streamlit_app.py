@@ -8,6 +8,7 @@ Run against remote API (Render UI service):
     AGENT_API_URL=https://your-rag-api.onrender.com streamlit run zearn_streamlit_app.py
 """
 
+import json
 import os
 
 import httpx
@@ -68,6 +69,47 @@ def used_web_fallback(steps: list[dict]) -> bool:
         if tool in ("google_search_agent", "google_search"):
             return True
     return False
+
+
+def sources_from_steps(steps: list[dict]) -> list[dict[str, str]]:
+    """Collect unique title/source_url pairs from search_zearn_doc Observe steps."""
+    sources: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for step in steps:
+        if step.get("phase") != "Observe" or step.get("tool") != "search_zearn_doc":
+            continue
+        raw = step.get("result") or ""
+        try:
+            payload = json.loads(raw) if isinstance(raw, str) else raw
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        for item in payload.get("sources") or []:
+            if not isinstance(item, dict):
+                continue
+            title = str(item.get("title") or item.get("document_id") or "Source").strip()
+            source_url = str(item.get("source_url") or "").strip()
+            key = source_url or title
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            sources.append({"title": title, "source_url": source_url})
+    return sources
+
+
+def render_sources(sources: list[dict[str, str]]) -> None:
+    if not sources:
+        return
+    parts = []
+    for item in sources:
+        title = item["title"]
+        url = item["source_url"]
+        if url:
+            parts.append(f"[{title}]({url})")
+        else:
+            parts.append(title)
+    st.markdown("**Source:** " + " · ".join(parts))
 
 
 def render_steps(steps: list[dict]) -> None:
@@ -190,6 +232,8 @@ if run_clicked and question.strip():
     elif is_refusal:
         st.warning("Not found in corpus")
     st.markdown(answer.strip() if answer.strip() else REFUSAL_MESSAGE)
+    if not is_web_fallback and not is_refusal:
+        render_sources(sources_from_steps(steps))
 
     with st.expander("Raw step data"):
         st.json(steps)
