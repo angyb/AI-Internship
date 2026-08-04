@@ -145,7 +145,6 @@ with st.form("question_form", clear_on_submit=False):
     with col1:
         question = st.text_input(
             "Your question",
-            value="What causes a Tower Alert and what is its purpose?",
             label_visibility="collapsed",
             placeholder="Ask a Zearn support question...",
         )
