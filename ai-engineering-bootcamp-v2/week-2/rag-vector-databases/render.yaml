@@ -100,7 +100,7 @@ services:
   - type: web
     name: zearn-agent-ui
     runtime: python
-    rootDir: ai-engineering-bootcamp/adk-multi-agent-systems
+    rootDir: ai-engineering-bootcamp-v2/week-2/rag-vector-databases
     buildCommand: pip install -r requirements-streamlit.txt
     startCommand: streamlit run zearn_streamlit_app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:

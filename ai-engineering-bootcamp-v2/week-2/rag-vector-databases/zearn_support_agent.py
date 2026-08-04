@@ -1,5 +1,5 @@
 """
-Zearn support agent — Google ADK with search_docs backed by local retrieve_context().
+Zearn support agent — Google ADK with search_zearn_doc backed by local retrieve_context().
 
 Used by POST /agent on the Week 2 RAG API (same process — no HTTP loopback on Render).
 
@@ -20,12 +20,13 @@ from google.adk.agents import Agent
 from google.adk.agents.run_config import RunConfig
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+from google.adk.tools import AgentTool, google_search
 from google.genai import types
 
 load_dotenv()
 
 MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
-MAX_LLM_CALLS = 10
+MAX_LLM_CALLS = 15
 CHUNK_TEXT_LIMIT = 500
 
 REFUSAL_MESSAGE = (
@@ -33,19 +34,33 @@ REFUSAL_MESSAGE = (
     "Try rephrasing your question, or contact Zearn support for help."
 )
 
+FALLBACK_PREFIX = (
+    "This wasn't found in Zearn documentation; sourced from the web."
+)
+
+GOOGLE_SEARCH_INSTRUCTION = (
+    "You are a Google search sub-agent. "
+    "Search the web for current information relevant to the user's question. "
+    "Always cite source URLs in your answer."
+)
+
 AGENT_INSTRUCTION = (
     "You are a Zearn teacher support agent. "
-    "For factual Zearn questions, call search_docs before answering. "
-    "Use only retrieved content. If the first search is insufficient, "
-    "refine your query and search again. Cite document titles when possible. "
-    "If search_docs returns no chunks, or the retrieved chunks do not answer the question, "
-    f"respond with exactly: \"{REFUSAL_MESSAGE}\" "
-    "Never use outside knowledge. Always end with a clear, complete user-facing answer."
+    "For factual Zearn questions, call search_zearn_doc before answering. "
+    "Use only retrieved content from search_zearn_doc when it answers the question. "
+    "If the first search is insufficient, refine your query and search again. "
+    "Cite document titles when possible. "
+    "If search_zearn_doc returns no chunks, returns an error, or the retrieved chunks "
+    "clearly do not answer the question, call google_search_agent for a web fallback. "
+    f"When you use google_search_agent, start your final answer with exactly: \"{FALLBACK_PREFIX}\" "
+    "Use only search_zearn_doc or google_search_agent; do not answer from memory. "
+    f"If both fail, respond with exactly: \"{REFUSAL_MESSAGE}\" "
+    "Always end with a clear, complete user-facing answer."
 )
 
 
 def _format_chunks_from_retrieved(chunks: list[Any]) -> dict:
-    """Turn RetrievedChunk objects into the search_docs tool response shape."""
+    """Turn RetrievedChunk objects into the search_zearn_doc tool response shape."""
     out = []
     for chunk in chunks:
         text = chunk.text
@@ -62,7 +77,7 @@ def _format_chunks_from_retrieved(chunks: list[Any]) -> dict:
     return {"chunk_count": len(out), "chunks": out}
 
 
-def search_docs(question: str) -> dict:
+def search_zearn_doc(question: str) -> dict:
     """Search the Zearn knowledge base for relevant documentation chunks.
 
     Use this tool before answering factual questions about Zearn Math,
@@ -97,11 +112,18 @@ def search_docs(question: str) -> dict:
     return _format_chunks_from_retrieved(chunks)
 
 
+google_search_agent = Agent(
+    name="google_search_agent",
+    model=MODEL,
+    instruction=GOOGLE_SEARCH_INSTRUCTION,
+    tools=[google_search],
+)
+
 zearn_agent = Agent(
     name="zearn_support_agent",
     model=MODEL,
     instruction=AGENT_INSTRUCTION,
-    tools=[search_docs],
+    tools=[search_zearn_doc, AgentTool(agent=google_search_agent)],
 )
 
 

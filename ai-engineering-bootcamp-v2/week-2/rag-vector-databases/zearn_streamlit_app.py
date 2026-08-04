@@ -1,7 +1,7 @@
 """
 Zearn Support Agent — Streamlit demo with Think → Act → Observe step logs.
 
-Run locally (in-process agent):
+Run locally (in-process agent; start uvicorn in this folder first for /health):
     streamlit run zearn_streamlit_app.py
 
 Run against remote API (Render UI service):
@@ -20,14 +20,20 @@ AGENT_API_URL = os.getenv("AGENT_API_URL", "").rstrip("/")
 REMOTE_MODE = bool(AGENT_API_URL)
 HEALTH_TIMEOUT = float(os.getenv("API_HEALTH_TIMEOUT", "60"))
 AGENT_TIMEOUT = float(os.getenv("API_AGENT_TIMEOUT", "120"))
+LOCAL_API_URL = os.getenv("RAG_API_URL", "http://127.0.0.1:8000").rstrip("/")
 
 if not REMOTE_MODE:
-    from zearn_support_agent import RAG_API_URL, REFUSAL_MESSAGE, run_zearn_agent
+    from zearn_support_agent import FALLBACK_PREFIX, REFUSAL_MESSAGE, run_zearn_agent
+
+    RAG_API_URL = LOCAL_API_URL
 else:
     RAG_API_URL = AGENT_API_URL
     REFUSAL_MESSAGE = (
         "I couldn't find that in the Zearn documentation corpus. "
         "Try rephrasing your question, or contact Zearn support for help."
+    )
+    FALLBACK_PREFIX = (
+        "This wasn't found in Zearn documentation; sourced from the web."
     )
 
 st.set_page_config(page_title="Zearn Support Agent", layout="wide")
@@ -56,6 +62,14 @@ def run_agent_remote(question: str) -> tuple[str, list[dict]]:
     return data["answer"], data.get("steps", [])
 
 
+def used_web_fallback(steps: list[dict]) -> bool:
+    for step in steps:
+        tool = step.get("tool") or ""
+        if tool in ("google_search_agent", "google_search"):
+            return True
+    return False
+
+
 def render_steps(steps: list[dict]) -> None:
     if not steps:
         st.info("No steps recorded.")
@@ -81,7 +95,7 @@ def render_steps(steps: list[dict]) -> None:
 
 with st.sidebar:
     st.title("Zearn Support Agent")
-    st.caption("Week 3 ADK agent with search_docs tool")
+    st.caption("ADK agent with search_zearn_doc + google_search_agent fallback")
 
     if REMOTE_MODE:
         st.info(f"Remote mode — `{AGENT_API_URL}`")
@@ -111,8 +125,7 @@ with st.sidebar:
             )
         else:
             st.caption(
-                "Start: `uvicorn main:app --host 127.0.0.1 --port 8000` "
-                "in week-2/rag-vector-databases"
+                "Start: `uvicorn main:app --host 127.0.0.1 --port 8000` in this folder"
             )
 
 # --- Main ---
@@ -120,7 +133,8 @@ with st.sidebar:
 st.header("Zearn Teacher Support Agent")
 st.markdown(
     "Ask a Zearn support question. The agent searches the knowledge base via "
-    "**search_docs** (Week 2 hybrid retrieval) and answers from retrieved chunks."
+    "**search_zearn_doc** (hybrid retrieval) and falls back to **google_search_agent** "
+    "when Zearn docs do not answer."
 )
 
 if not REMOTE_MODE and not os.getenv("GOOGLE_API_KEY"):
@@ -163,12 +177,18 @@ if run_clicked and question.strip():
 
     st.markdown("---")
     st.subheader("Final answer")
+    is_web_fallback = FALLBACK_PREFIX in answer or used_web_fallback(steps)
     is_refusal = (
-        not answer.strip()
-        or answer.strip() == REFUSAL_MESSAGE
-        or "couldn't find that in the zearn documentation corpus" in answer.lower()
+        not is_web_fallback
+        and (
+            not answer.strip()
+            or answer.strip() == REFUSAL_MESSAGE
+            or "couldn't find that in the zearn documentation corpus" in answer.lower()
+        )
     )
-    if is_refusal:
+    if is_web_fallback:
+        st.info("Not found in Zearn docs — sourced from the web")
+    elif is_refusal:
         st.warning("Not found in corpus")
     st.markdown(answer.strip() if answer.strip() else REFUSAL_MESSAGE)
 

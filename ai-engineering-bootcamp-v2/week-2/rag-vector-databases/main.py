@@ -497,7 +497,7 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
 
 @app.post("/agent")
 def agent_run(body: AgentRequest) -> AgentResponse:
-    """Run the Zearn ADK support agent (search_docs + Gemini orchestration)."""
+    """Run the Zearn ADK support agent (search_zearn_doc + google_search_agent fallback)."""
 
     if not os.getenv("GOOGLE_API_KEY"):
         raise HTTPException(
