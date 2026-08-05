@@ -1,5 +1,10 @@
 [
   {
+    "question": "How many students can I add to my class?",
+    "reference": "Teachers with a free Individual Account can add up to 35 students. Teachers whose school has purchased a Zearn Math School Account have no limit on classroom size.",
+    "expected_document_ids": ["add-students-to-your-class", "Zearn_Account_Comparison", "getting-started", "add-your-class", "create-an-individual-account"]
+  },
+  {
     "question": "How do I add students to my class?",
     "reference": "Students who already have an existing Zearn account can join your class with your class code. To add students without a Zearn account to your class, follow the steps below:\n\n1. Navigate to Roster at the top of your Zearn account.\n2. Choose the desired class from the Switch Class dropdown menu.\n3. Click Add Students.\n4. Type or paste your student's name into the box under \u201cNew Students\u201d and click Next.\n5. Edit student passwords and usernames as needed and click Next.\n6. Choose a grade, Mission, and Topic for your students and click Finish.\n7. Follow the steps on the \u201cCongratulations\u201d page to get your students started.",
     "expected_document_ids": ["add-students-to-your-class"]

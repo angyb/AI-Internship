@@ -1,80 +1,34 @@
-# RAG + Vector Databases - Live Session Notebook
+# RAG + Vector Databases — Week 2 Zearn Project
 
-This notebook contains a complete, self-contained guide to building Retrieval Augmented Generation (RAG) systems with LangChain and Vector Databases.
+Hybrid RAG over scraped Zearn docs (Pinecone + BM25), golden-set eval, and the **Zearn Support Agent** (ADK + Google Search fallback).
 
-## 📚 Contents
+**Summaries:** [`rag-summary.md`](rag-summary.md) (full project) · [`zearn-support-agent-summary.md`](zearn-support-agent-summary.md) (agent) · [`chrome-extension-plan.md`](chrome-extension-plan.md) (next build)
 
-- **Why RAG Exists** - Understanding LLM limitations and RAG solutions
-- **RAG Architecture** - Complete flow from indexing to query
-- **Embeddings Deep Dive** - How text becomes vectors
-- **Vector Databases** - Storing and searching semantic data
-- **Chunking Strategies** - Critical techniques for good retrieval
-- **Live Build** - Step-by-step Document Q&A system
-- **Evaluation** - How to test and improve your RAG system
+The original bootcamp material lives in [`rag_vector_databases_live_session.ipynb`](rag_vector_databases_live_session.ipynb).
 
-## 🚀 Quick Start
+## Zearn Support Agent
 
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+ADK agent (`zearn_support_agent`) with tools **`search_zearn_doc`** (hybrid RAG) and **`google_search_agent`** (web fallback). Returns Think → Act → Observe steps and markdown **Sources** links in the answer.
 
-2. **Set up environment:**
-   Create a `.env` file with your OpenAI API key:
-   ```
-   OPENAI_API_KEY=your_api_key_here
-   ```
+| Surface | Command / URL |
+|---------|----------------|
+| **API** | `POST /agent` — `{ "question": "..." }` → `{ "answer", "steps" }` |
+| **CLI** | `python zearn_support_agent.py "Your question"` |
+| **Streamlit (local)** | `streamlit run zearn_streamlit_app.py` |
+| **Streamlit (Render UI)** | `https://zearn-faq-bot.onrender.com` |
+| **API (Render)** | `https://ai-internship-i3lw.onrender.com` |
 
-3. **Open the notebook:**
-   ```bash
-   jupyter notebook rag_vector_databases_live_session.ipynb
-   ```
+**Requires:** `GOOGLE_API_KEY` for `/agent` and Streamlit local mode. Retrieval still uses `OPENAI_API_KEY` + Pinecone inside `search_zearn_doc`.
 
-4. **Run cells in order** - Each cell builds on the previous one
+```bash
+curl -s -X POST http://127.0.0.1:8000/agent \
+  -H "Content-Type: application/json" \
+  -d '{"question":"What causes a Tower Alert?"}'
+```
 
-## 📋 Prerequisites
+Package: [`zearn_faq_bot/`](zearn_faq_bot/). See [`zearn-support-agent-summary.md`](zearn-support-agent-summary.md) for architecture, test matrix, and env vars.
 
-- Python 3.8 or higher
-- Jupyter Notebook
-- OpenAI API key (for embeddings and LLM calls)
-
-## 🎯 Learning Objectives
-
-By the end of this notebook, you will:
-- Understand the complete RAG architecture
-- Master embeddings and vector similarity search
-- Build a production-ready Document Q&A system
-- Know how to evaluate and debug RAG systems
-- Be ready to build RAG applications on your own data
-
-## 📖 Usage
-
-This notebook is designed to be:
-- **Self-contained** - All code and explanations included
-- **Hands-on** - Run code as you learn
-- **Production-ready** - Patterns you can use in real projects
-
-## 🔧 Customization
-
-To use with your own documents:
-1. Replace the sample document with your PDF/text files
-2. Adjust chunk sizes based on your document structure
-3. Experiment with different embedding models
-4. Add metadata filtering for your use case
-
-## 📚 Additional Resources
-
-- [LangChain Documentation](https://python.langchain.com/)
-- [ChromaDB Documentation](https://docs.trychroma.com/)
-- [OpenAI Embeddings Guide](https://platform.openai.com/docs/guides/embeddings)
-
-## ⚠️ Notes
-
-- This notebook requires an OpenAI API key
-- API calls will incur costs (embeddings and LLM calls)
-- For production, consider using local embedding models or managed services
-
-## Deploy to Render
+---
 
 Deploy the Week 2 RAG API (`main.py`) as a Render **Web Service** from this GitHub repo.
 
@@ -92,7 +46,10 @@ Deploy the Week 2 RAG API (`main.py`) as a Render **Web Service** from this GitH
    - `PINECONE_API_KEY`
    - `PINECONE_INDEX_NAME`
    - `PINECONE_HOST` (hostname only, no `https://`)
+   - `GOOGLE_API_KEY` (required for **`POST /agent`**)
 5. Deploy, then open your service URL (for example `https://your-app.onrender.com/docs`).
+
+`render.yaml` defines two services: **`week-2-rag-api`** (FastAPI) and **`zearn-agent-ui`** (Streamlit agent demo). Both use this folder as `rootDir`.
 
 If you see `Could not import module "main"`, the **Root Directory** is wrong or empty.
 
@@ -140,7 +97,9 @@ python sync_render_env.py --deploy
 
 Preview without sending: `python sync_render_env.py --dry-run`
 
-**When to re-run sync:** after any change to local `.env` that should match Render (retrieval, rerank, models, chunk size, etc.). If you change `CHUNK_SIZE`, `CHUNK_OVERLAP`, or `EMBEDDING_MODEL`, also run `POST /ingest` on Render after deploy finishes.
+**When to re-run sync:** after any change to local `.env` that should match Render (retrieval, rerank, models, chunk size, etc.).
+
+**When to re-ingest:** after changing `CHUNK_SIZE`, `CHUNK_OVERLAP`, `EMBEDDING_MODEL`, or ingest/title logic in `ingest.py`. Full ingest clears the Pinecone index by default and takes several minutes. Confirm before running against a shared production index.
 
 After deploy, ingest documents once (from your machine or a one-off shell):
 
@@ -168,14 +127,16 @@ Retrieval combines **Pinecone dense search** with an in-process **BM25 keyword i
 
 ## Retrieval tuning (env)
 
-| Variable | Default | Purpose |
+Values below match **`render.yaml`** (production). Local `.env` may differ — check yours before debugging.
+
+| Variable | Render default | Purpose |
 |---|---|---|
 | `RETRIEVAL_K` | `5` | Final chunks passed to the LLM |
 | `RETRIEVAL_FETCH_K` | `10` | Candidate pool when reranking is off |
-| `MAX_CHUNKS_PER_DOCUMENT` | `2` | Per-document cap in final context |
-| `NEIGHBOR_CHUNKS_ENABLED` | `true` | Append adjacent chunks for each hit |
+| `MAX_CHUNKS_PER_DOCUMENT` | `1` | Per-document cap in final context |
+| `NEIGHBOR_CHUNKS_ENABLED` | `false` | Append adjacent chunks for each hit |
 | `NEIGHBOR_CHUNK_RADIUS` | `1` | How many neighbors on each side (`chunk_index ± N`) |
-| `NEIGHBOR_MERGE_ENABLED` | `true` | Merge each hit + neighbors into one block per `(document_id, hit)` |
+| `NEIGHBOR_MERGE_ENABLED` | `false` | Merge each hit + neighbors into one block |
 | `MAX_CONTEXT_CHUNKS_ENABLED` | `true` | Cap blocks sent to the LLM after expand/merge |
 | `MAX_CONTEXT_CHUNKS` | `5` | Maximum context blocks when cap is enabled |
 
@@ -221,12 +182,12 @@ Tune `RELEVANCE_MIN_SCORE_GAP` if too many good chunks are dropped (increase) or
 
 ## Ingest chunking
 
-| Toggle | Default | Effect |
+| Toggle | Render default | Effect |
 |--------|---------|--------|
-| `CHUNK_SIZE` | `800` | Character chunk size for `POST /ingest` (when query params omitted) |
-| `CHUNK_OVERLAP` | `100` | Overlap between consecutive chunks |
+| `CHUNK_SIZE` | `500` | Character chunk size for `POST /ingest` (when query params omitted) |
+| `CHUNK_OVERLAP` | `80` | Overlap between consecutive chunks |
 
-Changing these requires re-ingesting the corpus for vectors to match.
+Changing these requires re-ingesting the corpus. PDF titles are derived from filenames (with overrides in `ingest.py`) and stored as metadata `title` + `source_url` on each chunk.
 
 ## OpenAI models
 
@@ -255,31 +216,43 @@ python debug_retrieve.py "director approval fully remote"
 python debug_retrieve.py --dense-only "director approval fully remote"
 ```
 
-## Streamlit demo UI
+## Streamlit demo UIs
 
-Minimal UI that calls `/ingest` and `/ask` on your live API (no RAG logic in Streamlit).
+### RAG pipeline (`demo_page.py`)
+
+Calls `/ingest`, `/ask`, and `/eval` on your live API (no RAG logic in Streamlit).
 
 ```bash
 cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
 source .venv/bin/activate
 pip install -r requirements-dev.txt
-export RAG_API_URL=https://your-app.onrender.com   # or set in .env
+export RAG_API_URL=https://ai-internship-i3lw.onrender.com   # or set in .env
 streamlit run demo_page.py
 ```
 
-**Assignment screenshot:** capture the **Ask** tab after a successful question — show the sidebar with your Render URL, the answer, chunk_ids/sources under Citations, and (optionally) the **Ingest** tab with a pasted document + success message.
+Use the **Eval** tab for golden-set eval screenshots.
 
-Use the **Eval** tab (see Golden-set evaluation below) for eval screenshots in the browser.
+### Zearn Support Agent (`zearn_streamlit_app.py`)
+
+Calls **`POST /agent`** (local in-process or remote via `AGENT_API_URL`).
+
+```bash
+pip install -r requirements-streamlit.txt
+streamlit run zearn_streamlit_app.py                                    # local agent
+AGENT_API_URL=https://ai-internship-i3lw.onrender.com streamlit run zearn_streamlit_app.py  # Render API
+```
+
+Hosted UI: `https://zearn-faq-bot.onrender.com`
 
 ## Golden-set evaluation
 
-Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinecone pipeline and the **Zearn corpus** (404 documents after `POST /ingest`).
+Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinecone pipeline and the **Zearn corpus** (~16k chunks after full ingest).
 
-**Prerequisite:** run `POST /ingest` locally or on Render so Pinecone contains the full document set.
+**Prerequisite:** run `POST /ingest` when you intend to refresh the index (see [Ingest chunking](#ingest-chunking)).
 
 **Files:**
-- `golden_set.json` — questions with human-written reference answers and expected `document_id`s
-- `eval_golden.py` — CLI runner (same logic as `POST /eval`)
+- `golden_set.json` — **6** questions with human-written reference answers and expected `document_id`s
+- `eval_golden.py` — CLI runner (same logic as `POST /eval`; evaluates **`/ask`**, not the ADK agent)
 
 **Metrics tracked:**
 
@@ -316,10 +289,10 @@ After deploy, open `https://your-app.onrender.com/docs` → **POST /eval** → E
 cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
 source .venv/bin/activate
 pip install -r requirements-dev.txt
-python eval_golden.py
+RAG_API_URL= python eval_golden.py
 ```
 
-To eval a remote API from the CLI:
+Unset `RAG_API_URL` if your `.env` points at localhost and the API is not running. To eval a remote API:
 
 ```bash
 python eval_golden.py --api-url https://ai-internship-i3lw.onrender.com

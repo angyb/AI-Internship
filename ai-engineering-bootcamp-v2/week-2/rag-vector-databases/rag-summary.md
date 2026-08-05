@@ -1,41 +1,40 @@
-# Week 2 RAG — Summary for Week 3
+# Week 2 RAG + Zearn Support Agent — Project Summary
 
-**Capstone:** A Zearn teacher/support FAQ bot backed by hybrid retrieval (Pinecone + BM25) over scraped public docs, exposed as a FastAPI service with eval and Streamlit demo.
+**Capstone:** Hybrid RAG (Pinecone + BM25) over scraped Zearn public docs, plus an ADK **Zearn Support Agent** with Google Search fallback, eval, and Streamlit UIs.
 
-Week 3 turns this from a **fixed pipeline** into an **agent** that *chooses* when to search docs. The retrieval layer below stays; wrap it as an ADK tool.
-
----
-
-## One-sentence job (Week 2)
-
-> When a teacher asks a Zearn question, **retrieve relevant doc chunks from Pinecone** and **generate a grounded answer** with OpenAI.
-
-## One-sentence upgrade (Week 3)
-
-> When a teacher asks a Zearn question, **the agent decides** whether and how to call `search_docs` (Week 2 retrieval), observes the chunks, then synthesizes an answer — possibly across multiple tool calls.
+For agent-specific details see [`zearn-support-agent-summary.md`](zearn-support-agent-summary.md).  
+For Chrome extension plans see [`chrome-extension-plan.md`](chrome-extension-plan.md).
 
 ---
 
-## Architecture (Week 2 pipeline)
+## One-sentence jobs
+
+**Week 2 pipeline (`POST /ask`):**  
+> Retrieve relevant doc chunks from Pinecone and generate a grounded answer with OpenAI.
+
+**Zearn Support Agent (`POST /agent`):**  
+> The agent decides when to call `search_zearn_doc`, observes chunks, may search again, falls back to Google Search when docs fail, and returns a cited answer with step logs.
+
+---
+
+## Architecture
+
+### RAG pipeline (workflow)
 
 ```
-User question
-    ↓
-POST /ask
-    ↓
-retrieve_context()          ← always runs
-    ├─ hybrid search (Pinecone dense + in-process BM25, RRF fusion)
-    ├─ optional cross-encoder rerank (local, CPU — off on Render 512MB)
-    ├─ diverse filter (max 1 chunk per document by default)
-    ├─ optional neighbor-chunk expansion
-    ├─ relevance filter + context ordering (cross-encoder — off on Render)
-    ↓
-generate_grounded_answer()    ← type-specific prompts (how_to, comparison, …)
-    ↓
-JSON answer + chunk_ids + sources
+User question → POST /ask → retrieve_context() → generate_grounded_answer() → answer + chunk_ids
 ```
 
-This is a **workflow**, not an agent: every `/ask` follows the same path.
+Hybrid search (dense + BM25, RRF), optional local cross-encoder rerank (off on Render 512MB), type-specific prompts via `question_classifier.py`.
+
+### Support agent
+
+```
+User question → POST /agent → zearn_support_agent (Gemini)
+    → search_zearn_doc → retrieve_context()
+    → google_search_agent (fallback)
+    → { answer, steps }
+```
 
 ---
 
@@ -43,9 +42,11 @@ This is a **workflow**, not an agent: every `/ask` follows the same path.
 
 Built from Week 2 scrapers → `../documents/`:
 
-- **~115** website markdown pages + PDFs (`about.zearn.org`)
-- **~138** Zendesk help articles + PDFs (`help.zearn.org`)
-- **~16,000+** chunks in Pinecone index `zearn-rag` after full ingest
+- **~115** website markdown pages + PDFs
+- **~138** Zendesk help articles + PDFs
+- **~16,364** chunks in Pinecone after full ingest
+
+PDF chunk metadata includes human-readable **titles** (filename heuristics + overrides, suffixed with `(PDF)`) and **source_url** from crawl manifests or frontmatter.
 
 See `../scrapers/scrapers-summary.md` for scraper details.
 
@@ -55,124 +56,74 @@ See `../scrapers/scrapers-summary.md` for scraper details.
 
 | File | Role |
 |------|------|
-| `main.py` | FastAPI app: `/health`, `/ingest`, `/retrieve`, `/ask`, `/eval` |
-| `ingest.py` | Load docs, chunk, embed (`text-embedding-3-small`), upsert Pinecone; hybrid retrieval helpers |
-| `bm25_index.py` | In-process BM25 index; rebuilt from Pinecone on startup |
-| `rerank.py` | Local cross-encoder reranking + relevance filter (disabled on Render) |
-| `question_classifier.py` | Regex routing to question types (how_to, comparison, research, …) |
-| `question_prompts.py` | Type-specific generation templates |
-| `generation_config.py` | Shared prompt rules (verbosity, citations, conflict resolution) |
-| `retrieval_config.py` | Env-backed chunk/retrieval settings |
-| `model_config.py` | OpenAI model names from env |
-| `eval_golden.py` | Golden-set eval (retrieval hit, RAGAS faithfulness + answer_correctness) |
-| `eval_format.py` | Markdown report formatting |
-| `golden_set.json` | 5 Zearn eval questions with reference answers and expected `document_id`s |
-| `demo_page.py` | Streamlit UI for `/ingest`, `/ask`, `/eval` |
-| `sync_render_env.py` | Push local `.env` to Render (forces rerank off on 512MB) |
-| `render.yaml` | Render deploy config (slim `requirements-render.txt`) |
+| `main.py` | FastAPI: `/health`, `/ingest`, `/retrieve`, `/ask`, `/eval`, **`/agent`** |
+| `ingest.py` | Load docs, chunk, embed, upsert Pinecone; PDF title rules; hybrid retrieval |
+| `bm25_index.py` | In-process BM25; rebuilt from Pinecone on startup |
+| `rerank.py` | Cross-encoder rerank + relevance filter (local; off on Render) |
+| `question_classifier.py` / `question_prompts.py` | `/ask` routing and templates |
+| `eval_golden.py` / `golden_set.json` | Golden-set eval (6 questions) |
+| `demo_page.py` | Streamlit for `/ingest`, `/ask`, `/eval` |
+| **`zearn_faq_bot/`** | ADK agent package |
+| **`zearn_support_agent.py`** | Shim + CLI |
+| **`zearn_streamlit_app.py`** | Agent Streamlit UI |
+| `render.yaml` | Render: API + agent UI services |
+| `sync_render_env.py` | Push `.env` to Render |
 
 ---
 
-## API endpoints (reuse in Week 3)
+## API endpoints
 
-| Endpoint | Use for Week 3 |
-|----------|-----------------|
-| `GET /health` | Smoke test |
-| `POST /ingest` | Re-index corpus after doc changes |
-| `POST /retrieve` | **Best tool target** — returns raw chunks without generation |
-| `POST /ask` | Full RAG pipeline (retrieve + generate) as a single HTTP call |
-| `POST /eval` | Run golden-set eval on the server |
-
-### `POST /retrieve` (recommended ADK tool backend)
-
-```bash
-curl -s -X POST http://127.0.0.1:8000/retrieve \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What causes a Tower Alert?"}'
-```
-
-Returns `{ "chunks": [{ "chunk_id", "document_id", "text", "source" }, ...] }`.
-
-### `POST /ask`
-
-```bash
-curl -s -X POST http://127.0.0.1:8000/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question": "How do I add students to my class?"}'
-```
-
-Returns answer, `chunk_ids`, `sources`, latency, token usage.
+| Endpoint | Use |
+|----------|-----|
+| `GET /health` | Smoke test / wake Render |
+| `POST /ingest` | Full corpus or single pasted doc → Pinecone + BM25 |
+| `POST /retrieve` | Raw chunks (debug / tool backend) |
+| `POST /ask` | Fixed RAG workflow (eval baseline) |
+| `POST /eval` | Golden-set RAGAS eval |
+| **`POST /agent`** | Zearn Support Agent |
 
 ---
 
-## Three ways Week 3 can call retrieval
+## Deployed URLs
 
-### Option A — HTTP tool (simplest if Render is live)
+| Service | URL |
+|---------|-----|
+| API | `https://ai-internship-i3lw.onrender.com` |
+| Agent UI | `https://zearn-faq-bot.onrender.com` |
 
-ADK tool calls `POST /retrieve` or `POST /ask` on local uvicorn or Render URL.
-
-- Pros: no import path issues, same behavior as production
-- Cons: network hop; agent and API must both be running
-
-### Option B — Python import (best for local agent)
-
-ADK tool wraps `retrieve_context()` from `main.py`:
-
-```python
-from main import retrieve_context
-
-def search_docs(question: str) -> dict:
-    chunks, context, chunk_ids, sources = retrieve_context(question)
-    return {"chunks": [...], "context": context, "chunk_ids": chunk_ids}
-```
-
-- Pros: direct, fast, full control over logging
-- Cons: needs Week 2 venv + env vars (`OPENAI_API_KEY`, Pinecone, etc.)
-
-### Option C — Hybrid
-
-Agent uses `search_docs` (retrieve only); a separate generation step or second tool calls OpenAI with the returned context. Closer to true Think → Act → Observe separation.
+Local: `uvicorn main:app --host 127.0.0.1 --port 8000`
 
 ---
 
-## Current config highlights (local `.env`)
+## Config highlights (Render — see `render.yaml`)
 
-Typical tuned values (see `.env.example` for full list):
+| Setting | Render value |
+|---------|----------------|
+| `CHUNK_SIZE` / `CHUNK_OVERLAP` | 500 / 80 |
+| `RETRIEVAL_K` / `RETRIEVAL_FETCH_K` | 5 / 10 |
+| `MAX_CHUNKS_PER_DOCUMENT` | 1 |
+| `NEIGHBOR_CHUNKS_ENABLED` | false |
+| `HYBRID_SEARCH` | true |
+| `RERANK_ENABLED` / `RELEVANCE_FILTER_ENABLED` | false |
 
-| Setting | Value | Notes |
-|---------|-------|-------|
-| `CHUNK_SIZE` / `CHUNK_OVERLAP` | 500 / 80 | Re-ingest if changed |
-| `RETRIEVAL_K` | 5 | Final chunks to LLM |
-| `MAX_CHUNKS_PER_DOCUMENT` | 1 | Diversity cap |
-| `HYBRID_SEARCH` | true | BM25 + dense |
-| `RERANK_ENABLED` | false (local) | true locally if enough RAM |
-| `ANSWER_VERBOSITY` | concise | Misses alternate paths (e.g. class code) |
-| `TWO_STEP_GENERATION` | false | Single-step answer from chunks |
-
-**Render (512MB):** `RERANK_ENABLED`, `RELEVANCE_FILTER_ENABLED`, `CONTEXT_ORDER_BY_RERANK_SCORE` forced off via `sync_render_env.py` and `render.yaml`. Build uses `requirements-render.txt` (no PyTorch).
-
-**Deploy URL:** `https://ai-internship-i3lw.onrender.com` (set `RAG_API_URL` in `.env`)
+Changing chunk size, overlap, or embedding model requires **`POST /ingest`** (clears and rebuilds the index by default). Re-ingest is slow (~3–4 min locally) and affects production if run against the shared Pinecone index — confirm before running.
 
 ---
 
-## Eval baseline (local, latest run)
-
-Golden set: 5 questions in `golden_set.json`.
+## Eval baseline (local, `/ask` pipeline, 6 questions)
 
 | Metric | Score |
 |--------|-------|
-| Retrieval hit | 100% (5/5) |
-| Faithfulness | ~0.98 |
-| Answer correctness | ~0.66 |
+| Retrieval hit | 100% (6/6) |
+| Faithfulness | ~0.87 |
+| Answer correctness | ~0.71 |
 
-**Weaker questions:** Tower Alert (0.52), free account (0.54), science of learning (0.59). Add-students misses class-code alternate path due to concise verbosity + prompt rules.
+Weaker: add-students procedural answer (paraphrase vs numbered Roster steps).
 
-**Run eval:**
 ```bash
 cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
 source .venv/bin/activate
-python eval_golden.py                    # local pipeline
-python eval_golden.py --api-url https://ai-internship-i3lw.onrender.com  # Render
+RAG_API_URL= python eval_golden.py
 ```
 
 ---
@@ -182,60 +133,31 @@ python eval_golden.py --api-url https://ai-internship-i3lw.onrender.com  # Rende
 ```bash
 cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
 source .venv/bin/activate
-pip install -r requirements.txt          # includes PyTorch for local rerank
+pip install -r requirements.txt
 
 # Terminal 1 — API
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 
-# Terminal 2 — ingest (first time or after doc/config changes)
+# Ingest (only when you intend to refresh the index)
 curl -X POST http://127.0.0.1:8000/ingest
 
-# Terminal 3 — Streamlit demo
+# Terminal 2 — RAG demo UI
 streamlit run demo_page.py
-```
 
-Startup rebuilds BM25 from Pinecone (~16k vectors); first request may load cross-encoder if rerank features are enabled.
+# Terminal 3 — Agent UI (needs GOOGLE_API_KEY)
+streamlit run zearn_streamlit_app.py
+
+# Agent CLI
+python zearn_support_agent.py "What causes a Tower Alert?"
+```
 
 ---
 
-## Week 3 assignment checklist (using this project)
+## What’s done vs next
 
-Path A requirements mapped to existing work:
-
-| Requirement | How Week 2 helps |
-|-------------|------------------|
-| Real tool | Wrap `retrieve_context` or `POST /retrieve` as `search_docs` |
-| Multi-step task | Agent searches → observes chunks → answers (or re-searches) |
-| Think → Act → Observe | Log ADK events + tool return values |
-| Streamlit UI | Adapt `demo_page.py` or ADK `streamlit_app.py` to show agent steps |
-| Keep `/ask` working | Leave `main.py` unchanged; add agent as sibling module |
-| Bounded loop | Cap ADK iterations at 8–12 |
-
-**Suggested agent instruction:**  
-*"You are a Zearn support agent. Before answering factual questions, call `search_docs`. Use only retrieved content. If the first search is insufficient, refine your query and search again. Cite document titles when possible."*
-
-**Agent vs workflow one-liner:**  
-*"This is an agent because the model decides when to search, can search multiple times with refined queries, and synthesizes only after observing retrieval results — unlike `/ask`, which always retrieves exactly once."*
-
----
-
-## What not to duplicate in Week 3
-
-- Re-scraping Zearn docs (unless expanding corpus)
-- Re-implementing chunking/embedding (use ingest + Pinecone)
-- Replacing OpenAI retrieval embeddings with Gemini (keep OpenAI for RAG; use Gemini for ADK agent orchestration)
-- Submitting unchanged ADK Demo 1 (must adapt to Zearn + your retrieval tool)
-
----
-
-## Related Week 3 sample code
-
-Clone and run first (separate folder):
-
-```
-ai-engineering-bootcamp/adk-multi-agent-systems/
-  demo1_routing.py      ← start here (router + local tools pattern)
-  streamlit_app.py      ← Streamlit UI pattern
-```
-
-Adapt Demo 1's tool/agent pattern; replace fake `search_knowledge_base` with your real `search_docs`.
+| Done | Next |
+|------|------|
+| Hybrid RAG + eval + Render deploy | Chrome extension (`chrome-extension-plan.md`) |
+| ADK agent + Google Search fallback | Optional: improve add-students answer quality |
+| Source links in agent answers | Optional: agent-specific golden-set eval |
+| Streamlit agent UI on Render | |

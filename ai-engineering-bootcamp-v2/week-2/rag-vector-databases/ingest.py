@@ -46,6 +46,51 @@ RRF_K = 60
 INVISIBLE_CHAR_RE = re.compile(r"[\u200b-\u200d\ufeff\u2060]")
 H1_RE = re.compile(r"^#\s+(.+)$", re.MULTILINE)
 
+# Word boundaries inside CamelCase / acronym runs. Digit→uppercase splits only when the
+# uppercase letter starts a word (not G05M01-style codes where M is followed by digits).
+CAMEL_BOUNDARY_RE = re.compile(
+    r"(?<=[a-z])(?=[A-Z])"
+    r"|(?<=[A-Z])(?=[A-Z][a-z])"
+    r"|(?<=[a-z])(?=[0-9])"
+    r"|(?<=[0-9])(?=[A-Z](?![0-9]))"
+)
+
+# Filenames often glue a lowercase connector onto the previous word ("K8withZearnMath").
+# "and"/"to" are excluded when they appear inside words like "Admin" or "Login".
+GLUED_CONNECTOR_RE = re.compile(
+    r"(?<=[A-Za-z0-9])(and|for|from|of|through|to|with|within)(?=[A-Z])"
+)
+
+# Grade / band ranges in filenames: 6_8 -> 6-8 before other splitting.
+GRADE_RANGE_RE = re.compile(r"(\d+)_(\d+)")
+
+PDF_TITLE_SUFFIX = "(PDF)"
+
+# Exact titles for PDFs where filename heuristics are wrong or ambiguous.
+PDF_TITLE_OVERRIDES: dict[str, str] = {
+    "G05M01_AssessmentRubric_CC": "G05M01 Assessment Rubric CC",
+    "ParentandCaregiverGuidetoZearn": "Parent and Caregiver Guide to Zearn",
+    "SupportingBluebonnetLearning6_8withZearnMath": (
+        "Supporting Bluebonnet Learning 6-8 with Zearn Math"
+    ),
+    "SupportingMathNationSouthCarolina6_8withZearnMath": (
+        "Supporting Math Nation South Carolina 6-8 with Zearn Math"
+    ),
+    "SupportingenVisionMathSouthCarolinaK8withZearnMath": (
+        "Supporting enVision Math South Carolina K8 with Zearn Math"
+    ),
+    "Supportingi-ReadyClassroomSouthCarolinaK-8withZearnMath": (
+        "Supporting i-Ready Classroom South Carolina K8 with Zearn Math"
+    ),
+    "SupportingiReadyClassroomMathematicsK8withZearnMath": (
+        "Supporting i-Ready Classroom Mathematics K8 with Zearn Math"
+    ),
+    "ZearnMathOverview[CoreComplement]": "Zearn Math Overview [Core Complement]",
+    "Zearn_factsheet": "Zearn Factsheet",
+    "ZearnenVisionK8Alignment": "Zearn enVision K8 Alignment",
+    "accelerationmethodology": "AccelerationMethodology",
+}
+
 # Any .md / .pdf / .txt under documents/ is ingested (recursive). Skip crawl metadata.
 SUPPORTED_SUFFIXES = {".md", ".pdf", ".txt"}
 SKIP_FILENAMES = {"manifest.json", ".DS_Store"}
@@ -113,7 +158,44 @@ def _strip_invisible_chars(text: str) -> str:
 
 
 def humanize_document_id(document_id: str) -> str:
-    return re.sub(r"\s+", " ", document_id.replace("_", " ").replace("-", " ")).strip()
+    spaced = GLUED_CONNECTOR_RE.sub(r" \1 ", document_id)
+    spaced = GRADE_RANGE_RE.sub(r"\1-\2", spaced)
+    spaced = spaced.replace("_", " ").replace("-", " ")
+    spaced = CAMEL_BOUNDARY_RE.sub(" ", spaced)
+    return re.sub(r"\s+", " ", spaced).strip()
+
+
+def humanize_pdf_document_id(document_id: str) -> str:
+    """Filename → display title (without PDF suffix)."""
+    override = PDF_TITLE_OVERRIDES.get(document_id)
+    if override is not None:
+        return override
+
+    text = document_id
+    # Bracketed segments: [CoreComplement] -> [Core Complement]
+    def _humanize_bracket(match: re.Match[str]) -> str:
+        inner = CAMEL_BOUNDARY_RE.sub(" ", match.group(1))
+        inner = re.sub(r"\s+", " ", inner).strip()
+        return f"[{inner}]"
+
+    text = re.sub(r"\[([^\]]+)\]", _humanize_bracket, text)
+    # Product names glued to neighbors in filenames
+    for old, new in (
+        ("SupportingenVision", "Supporting enVision"),
+        ("ZearnenVision", "Zearn enVision"),
+        ("Supportingi-Ready", "Supporting i-Ready"),
+        ("SupportingiReady", "Supporting i-Ready"),
+    ):
+        text = text.replace(old, new)
+    return humanize_document_id(text)
+
+
+def resolve_pdf_document_title(document_id: str) -> str:
+    """Title from the PDF filename, marked so readers know the source is a PDF."""
+    name = humanize_pdf_document_id(document_id)
+    if not name:
+        return ""
+    return f"{name} {PDF_TITLE_SUFFIX}"
 
 
 def resolve_document_title(
@@ -136,21 +218,6 @@ def resolve_document_title(
     if document_id:
         return humanize_document_id(document_id)
     return ""
-
-
-def resolve_pdf_document_title(page_texts: list[str], document_id: str) -> str:
-    """Best-effort title from the first PDF page (first sentence or line)."""
-    for raw_text in page_texts:
-        normalized = _normalize_pdf_text(raw_text)
-        if not normalized:
-            continue
-        first_sentence = normalized.split(". ")[0].strip()
-        if 10 <= len(first_sentence) <= 120:
-            return first_sentence
-        if len(normalized) <= 120:
-            return normalized
-        break
-    return humanize_document_id(document_id)
 
 
 def display_title_for_chunk(
@@ -247,13 +314,11 @@ def _source_url_for_pdf(path: Path) -> str:
 
 def _load_pdf(path: Path) -> list[Document]:
     """Load one Document per non-empty PDF page."""
-    page_texts = _extract_pdf_page_texts(path)
     document_id = path.stem
-    title = resolve_pdf_document_title([text for _, text in page_texts], document_id)
     base_metadata = {
         "document_id": document_id,
         "source": str(path.relative_to(DOCS_DIR)),
-        "title": title,
+        "title": resolve_pdf_document_title(document_id),
         "source_url": _source_url_for_pdf(path),
     }
 
