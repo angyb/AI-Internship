@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 from typing import Literal
 
+from env_utils import bool_env
+
 AnswerVerbosity = Literal["concise", "complete"]
 
 _FIDELITY_RULES = """\
@@ -43,11 +45,11 @@ def answer_verbosity() -> AnswerVerbosity:
 
 
 def citations_enabled() -> bool:
-    return os.getenv("CITATIONS_ENABLED", "false").lower() == "true"
+    return bool_env("CITATIONS_ENABLED", False)
 
 
 def prompt_conflict_resolution_enabled() -> bool:
-    return os.getenv("PROMPT_CONFLICT_RESOLUTION_ENABLED", "true").lower() != "false"
+    return bool_env("PROMPT_CONFLICT_RESOLUTION_ENABLED", True)
 
 
 def fidelity_rules_block() -> str:

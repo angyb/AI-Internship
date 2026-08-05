@@ -14,6 +14,8 @@ from fastapi import FastAPI, HTTPException
 from openai import APIError, OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
+from env_utils import bool_env
+
 from ingest import (
     RetrievedChunk,
     apply_diverse_filter,
@@ -53,11 +55,11 @@ logger = logging.getLogger(__name__)
 
 
 def hybrid_search_enabled() -> bool:
-    return os.getenv("HYBRID_SEARCH", "true").lower() != "false"
+    return bool_env("HYBRID_SEARCH", True)
 
 
 def two_step_generation_enabled() -> bool:
-    return os.getenv("TWO_STEP_GENERATION", "true").lower() != "false"
+    return bool_env("TWO_STEP_GENERATION", True)
 
 
 @asynccontextmanager
@@ -385,8 +387,7 @@ def retrieve_context(
 ) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
     """Embed the question, retrieve top-k chunks, and format context."""
     from rerank import (
-        filter_chunks_by_relevance,
-        order_chunks_by_rerank_score,
+        filter_and_order_chunks_by_relevance,
         rerank_candidate_max_per_document,
         rerank_candidates_count,
         rerank_chunks,
@@ -442,8 +443,7 @@ def retrieve_context(
         max_chunks=context_cap,
     )
 
-    chunks = filter_chunks_by_relevance(question, chunks)
-    chunks = order_chunks_by_rerank_score(question, chunks)
+    chunks = filter_and_order_chunks_by_relevance(question, chunks)
 
     if not chunks:
         return [], "", [], []

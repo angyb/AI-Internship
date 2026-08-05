@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import os
 
+from env_utils import float_env
+
 
 def answer_model() -> str:
     """Chat model for /ask step 2 — structured answer generation."""
@@ -32,8 +34,4 @@ def ragas_judge_model() -> str:
 
 
 def generation_temperature() -> float:
-    raw = os.getenv("GENERATION_TEMPERATURE", "0").strip()
-    try:
-        return float(raw)
-    except ValueError:
-        return 0.0
+    return float_env("GENERATION_TEMPERATURE", 0.0)

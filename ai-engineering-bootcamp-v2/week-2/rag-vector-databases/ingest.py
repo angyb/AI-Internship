@@ -6,6 +6,7 @@ import json
 import os
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 from langchain_core.documents import Document
@@ -37,10 +38,12 @@ def resolve_chunk_settings(
     chunk_size: int | None = None,
     chunk_overlap: int | None = None,
 ) -> tuple[int, int]:
-    return (
-        chunk_size if chunk_size is not None else configured_chunk_size(),
-        chunk_overlap if chunk_overlap is not None else configured_chunk_overlap(),
-    )
+    size = chunk_size if chunk_size is not None else configured_chunk_size()
+    overlap = chunk_overlap if chunk_overlap is not None else configured_chunk_overlap()
+    # Overlap must be strictly less than size or the splitter loops/raises.
+    if overlap >= size:
+        overlap = max(size - 1, 0)
+    return size, overlap
 METADATA_TEXT_KEY = "text"
 RRF_K = 60
 INVISIBLE_CHAR_RE = re.compile(r"[\u200b-\u200d\ufeff\u2060]")
@@ -495,6 +498,7 @@ def resolve_retrieval_filters(
     return None, exclude
 
 
+@lru_cache(maxsize=1)
 def _pinecone_index():
     pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
     return pc.Index(host=os.environ["PINECONE_HOST"])
@@ -511,8 +515,15 @@ def clear_index() -> int:
     return previous_count
 
 
+@lru_cache(maxsize=1)
 def _embeddings_client() -> OpenAIEmbeddings:
     return OpenAIEmbeddings(model=embedding_model())
+
+
+def reset_clients() -> None:
+    """Clear cached Pinecone/embeddings clients (e.g. after env changes in tests)."""
+    _pinecone_index.cache_clear()
+    _embeddings_client.cache_clear()
 
 
 def _chunk_to_metadata(chunk: Document, chunk_index: int) -> dict[str, str | int]:
@@ -841,24 +852,68 @@ def lookup_chunk_by_id(chunk_id: str) -> RetrievedChunk | None:
     return _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
 
 
-def _group_hit_with_neighbors(hit: RetrievedChunk, radius: int) -> list[RetrievedChunk]:
-    group = [hit]
-    seen = {hit.chunk_id}
+def lookup_chunks_by_ids(chunk_ids: list[str]) -> dict[str, RetrievedChunk]:
+    """Resolve many chunks by id: in-memory BM25 first, then one batched Pinecone fetch for misses."""
+    resolved: dict[str, RetrievedChunk] = {}
+    if not chunk_ids:
+        return resolved
 
-    if hit.chunk_index < 0 or not hit.document_id:
-        return group
+    unique_ids = list(dict.fromkeys(chunk_ids))
+    bm25 = get_bm25_index()
+    misses: list[str] = []
+    for chunk_id in unique_ids:
+        record = bm25.get_record(chunk_id)
+        if record is not None:
+            resolved[chunk_id] = _record_to_retrieved_chunk(record)
+        else:
+            misses.append(chunk_id)
 
-    document_id = hit.document_id
+    if misses:
+        index = _pinecone_index()
+        for start in range(0, len(misses), UPSERT_BATCH_SIZE):
+            batch = misses[start : start + UPSERT_BATCH_SIZE]
+            fetched = index.fetch(ids=batch)
+            for chunk_id, vector in (fetched.vectors or {}).items():
+                metadata = vector.metadata or {}
+                resolved[chunk_id] = _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
+
+    return resolved
+
+
+def _neighbor_ids_for_hit(hit: RetrievedChunk, radius: int) -> list[str]:
+    """Neighbor chunk ids for a hit, ordered by increasing distance (closest first)."""
+    if radius <= 0 or hit.chunk_index < 0 or not hit.document_id:
+        return []
+
+    ids: list[str] = []
     for offset in sorted(range(-radius, radius + 1), key=lambda value: abs(value)):
         if offset == 0:
             continue
         neighbor_index = hit.chunk_index + offset
         if neighbor_index < 0:
             continue
-        neighbor_id = _chunk_id(document_id, neighbor_index)
+        ids.append(_chunk_id(hit.document_id, neighbor_index))
+    return ids
+
+
+def _prefetch_neighbors(hits: list[RetrievedChunk], radius: int) -> dict[str, RetrievedChunk]:
+    """Resolve every neighbor chunk needed across all hits in one batched lookup."""
+    needed: list[str] = []
+    for hit in hits:
+        needed.extend(_neighbor_ids_for_hit(hit, radius))
+    return lookup_chunks_by_ids(needed)
+
+
+def _group_hit_with_neighbors(
+    hit: RetrievedChunk, radius: int, neighbor_map: dict[str, RetrievedChunk]
+) -> list[RetrievedChunk]:
+    group = [hit]
+    seen = {hit.chunk_id}
+
+    for neighbor_id in _neighbor_ids_for_hit(hit, radius):
         if neighbor_id in seen:
             continue
-        neighbor = lookup_chunk_by_id(neighbor_id)
+        neighbor = neighbor_map.get(neighbor_id)
         if neighbor is None or not neighbor.text.strip():
             continue
         group.append(neighbor)
@@ -872,9 +927,10 @@ def merge_neighbor_chunks(hits: list[RetrievedChunk], *, radius: int) -> list[Re
     if radius <= 0 or not hits:
         return hits
 
+    neighbor_map = _prefetch_neighbors(hits, radius)
     merged: list[RetrievedChunk] = []
     for hit in hits:
-        group = _group_hit_with_neighbors(hit, radius)
+        group = _group_hit_with_neighbors(hit, radius, neighbor_map)
         group.sort(key=lambda chunk: chunk.chunk_index if chunk.chunk_index >= 0 else 0)
 
         texts: list[str] = []
@@ -950,6 +1006,7 @@ def expand_neighbor_chunks(chunks: list[RetrievedChunk], *, radius: int) -> list
     if radius <= 0 or not chunks:
         return chunks
 
+    neighbor_map = _prefetch_neighbors(chunks, radius)
     expanded: list[RetrievedChunk] = []
     seen: set[str] = set()
 
@@ -958,20 +1015,10 @@ def expand_neighbor_chunks(chunks: list[RetrievedChunk], *, radius: int) -> list
             expanded.append(chunk)
             seen.add(chunk.chunk_id)
 
-        if chunk.chunk_index < 0 or not chunk.document_id:
-            continue
-
-        document_id = chunk.document_id
-        for offset in sorted(range(-radius, radius + 1), key=lambda value: abs(value)):
-            if offset == 0:
-                continue
-            neighbor_index = chunk.chunk_index + offset
-            if neighbor_index < 0:
-                continue
-            neighbor_id = _chunk_id(document_id, neighbor_index)
+        for neighbor_id in _neighbor_ids_for_hit(chunk, radius):
             if neighbor_id in seen:
                 continue
-            neighbor = lookup_chunk_by_id(neighbor_id)
+            neighbor = neighbor_map.get(neighbor_id)
             if neighbor is None or not neighbor.text.strip():
                 continue
             expanded.append(neighbor)

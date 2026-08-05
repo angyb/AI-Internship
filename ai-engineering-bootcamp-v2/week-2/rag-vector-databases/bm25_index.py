@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+import threading
 from dataclasses import dataclass
 from typing import Callable
 
@@ -34,27 +35,33 @@ class BM25Index:
         self._records: dict[str, ChunkRecord] = {}
         self._bm25: BM25Okapi | None = None
         self._chunk_ids: list[str] = []
+        # Reentrant so mutation methods can call _rebuild_bm25() while holding it.
+        self._lock = threading.RLock()
 
     def is_empty(self) -> bool:
-        return not self._records
+        with self._lock:
+            return not self._records
 
     def record_count(self) -> int:
-        return len(self._records)
+        with self._lock:
+            return len(self._records)
 
     def clear(self) -> None:
-        self._records.clear()
-        self._rebuild_bm25()
+        with self._lock:
+            self._records.clear()
+            self._rebuild_bm25()
 
     def delete_document(self, document_id: str) -> None:
-        to_remove = [
-            chunk_id
-            for chunk_id, record in self._records.items()
-            if record.document_id == document_id
-        ]
-        for chunk_id in to_remove:
-            del self._records[chunk_id]
-        if to_remove:
-            self._rebuild_bm25()
+        with self._lock:
+            to_remove = [
+                chunk_id
+                for chunk_id, record in self._records.items()
+                if record.document_id == document_id
+            ]
+            for chunk_id in to_remove:
+                del self._records[chunk_id]
+            if to_remove:
+                self._rebuild_bm25()
 
     def upsert_chunks(
         self,
@@ -64,31 +71,32 @@ class BM25Index:
         if not chunks:
             return
 
-        document_ids = {
-            str(chunk.metadata.get("document_id", "unknown")) for chunk in chunks
-        }
-        for document_id in document_ids:
-            self.delete_document(document_id)
+        with self._lock:
+            document_ids = {
+                str(chunk.metadata.get("document_id", "unknown")) for chunk in chunks
+            }
+            for document_id in document_ids:
+                self.delete_document(document_id)
 
-        by_document: dict[str, list[Document]] = {}
-        for chunk in chunks:
-            document_id = str(chunk.metadata.get("document_id", "unknown"))
-            by_document.setdefault(document_id, []).append(chunk)
+            by_document: dict[str, list[Document]] = {}
+            for chunk in chunks:
+                document_id = str(chunk.metadata.get("document_id", "unknown"))
+                by_document.setdefault(document_id, []).append(chunk)
 
-        for document_id, doc_chunks in by_document.items():
-            for chunk_index, chunk in enumerate(doc_chunks):
-                chunk_id = chunk_id_fn(document_id, chunk_index)
-                self._records[chunk_id] = ChunkRecord(
-                    chunk_id=chunk_id,
-                    document_id=document_id,
-                    source=str(chunk.metadata.get("source", "")),
-                    text=chunk.page_content,
-                    chunk_index=chunk_index,
-                    title=str(chunk.metadata.get("title", "")),
-                    source_url=str(chunk.metadata.get("source_url", "")),
-                )
+            for document_id, doc_chunks in by_document.items():
+                for chunk_index, chunk in enumerate(doc_chunks):
+                    chunk_id = chunk_id_fn(document_id, chunk_index)
+                    self._records[chunk_id] = ChunkRecord(
+                        chunk_id=chunk_id,
+                        document_id=document_id,
+                        source=str(chunk.metadata.get("source", "")),
+                        text=chunk.page_content,
+                        chunk_index=chunk_index,
+                        title=str(chunk.metadata.get("title", "")),
+                        source_url=str(chunk.metadata.get("source_url", "")),
+                    )
 
-        self._rebuild_bm25()
+            self._rebuild_bm25()
 
     def search(
         self,
@@ -97,9 +105,6 @@ class BM25Index:
         document_ids: list[str] | None = None,
         exclude_document_ids: list[str] | None = None,
     ) -> list[tuple[str, float]]:
-        if self._bm25 is None or not self._chunk_ids:
-            return []
-
         tokens = tokenize(query)
         if not tokens:
             return []
@@ -115,28 +120,33 @@ class BM25Index:
             else None
         )
 
-        scores = self._bm25.get_scores(tokens)
-        ranked = sorted(
-            zip(self._chunk_ids, scores, strict=True),
-            key=lambda item: item[1],
-            reverse=True,
-        )
-        results: list[tuple[str, float]] = []
-        for chunk_id, score in ranked:
-            if score <= 0:
-                continue
-            doc_id = self._records[chunk_id].document_id.lower()
-            if allowed and doc_id not in allowed:
-                continue
-            if excluded and doc_id in excluded:
-                continue
-            results.append((chunk_id, float(score)))
-            if len(results) >= k:
-                break
-        return results
+        with self._lock:
+            if self._bm25 is None or not self._chunk_ids:
+                return []
+
+            scores = self._bm25.get_scores(tokens)
+            ranked = sorted(
+                zip(self._chunk_ids, scores, strict=True),
+                key=lambda item: item[1],
+                reverse=True,
+            )
+            results: list[tuple[str, float]] = []
+            for chunk_id, score in ranked:
+                if score <= 0:
+                    continue
+                doc_id = self._records[chunk_id].document_id.lower()
+                if allowed and doc_id not in allowed:
+                    continue
+                if excluded and doc_id in excluded:
+                    continue
+                results.append((chunk_id, float(score)))
+                if len(results) >= k:
+                    break
+            return results
 
     def get_record(self, chunk_id: str) -> ChunkRecord | None:
-        return self._records.get(chunk_id)
+        with self._lock:
+            return self._records.get(chunk_id)
 
     def rebuild_from_pinecone(self) -> int:
         """Load all chunk metadata from Pinecone and rebuild the BM25 corpus."""
@@ -144,7 +154,6 @@ class BM25Index:
         from ingest import _pinecone_index
 
         index = _pinecone_index()
-        self.clear()
 
         pagination_token: str | None = None
         all_ids: list[str] = []
@@ -162,6 +171,7 @@ class BM25Index:
             if not pagination_token:
                 break
 
+        records: dict[str, ChunkRecord] = {}
         for start in range(0, len(all_ids), FETCH_BATCH_SIZE):
             batch_ids = all_ids[start : start + FETCH_BATCH_SIZE]
             if not batch_ids:
@@ -178,7 +188,7 @@ class BM25Index:
                 chunk_index_raw = metadata.get("chunk_index", -1)
                 chunk_index = int(chunk_index_raw) if chunk_index_raw is not None else -1
 
-                self._records[chunk_id] = ChunkRecord(
+                records[chunk_id] = ChunkRecord(
                     chunk_id=chunk_id,
                     document_id=document_id,
                     source=str(metadata.get("source", "")),
@@ -188,9 +198,13 @@ class BM25Index:
                     source_url=str(metadata.get("source_url", "")),
                 )
 
-        self._rebuild_bm25()
-        logger.info("BM25 index rebuilt from Pinecone with %d chunks", len(self._records))
-        return len(self._records)
+        # Swap in the freshly built corpus under the lock so concurrent searches
+        # never observe a half-cleared index.
+        with self._lock:
+            self._records = records
+            self._rebuild_bm25()
+            logger.info("BM25 index rebuilt from Pinecone with %d chunks", len(self._records))
+            return len(self._records)
 
     def _rebuild_bm25(self) -> None:
         self._chunk_ids = list(self._records.keys())
@@ -207,21 +221,24 @@ def tokenize(text: str) -> list[str]:
 
 
 _instance: BM25Index | None = None
+_instance_lock = threading.Lock()
 
 
 def get_bm25_index() -> BM25Index:
     global _instance
     if _instance is None:
-        _instance = BM25Index()
+        with _instance_lock:
+            if _instance is None:
+                _instance = BM25Index()
     return _instance
 
 
 def ensure_bm25_ready() -> BM25Index:
     """Rebuild from Pinecone when the in-process index is empty."""
 
-    import os
+    from env_utils import bool_env
 
     index = get_bm25_index()
-    if index.is_empty() and os.getenv("HYBRID_SEARCH", "true").lower() != "false":
+    if index.is_empty() and bool_env("HYBRID_SEARCH", True):
         index.rebuild_from_pinecone()
     return index

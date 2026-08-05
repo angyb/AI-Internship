@@ -17,13 +17,21 @@ def test_golden_set_routing() -> None:
     golden = json.loads(
         Path(__file__).resolve().parent.joinpath("golden_set.json").read_text(encoding="utf-8")
     )
+    # Expected route for each question currently in golden_set.json. Keep in sync
+    # when the golden set changes.
     expected = {
+        "How many students can I add to my class?": "general",
         "How do I add students to my class?": "how_to",
-        "What is a Tower Alert?": "report",
+        "What causes a Tower Alert and what is its purpose?": "report",
         "What is LEAP?": "research",
-        "Is Zearn based on learning science?": "affirmation",
-        "Which Zearn accounts are free?": "comparison",
+        "How has Zearn incorporated the science of learning into its product?": "general",
+        "Who can get a free Zearn account?": "general",
     }
+    golden_questions = {item["question"] for item in golden}
+    assert golden_questions == set(expected), (
+        "expected routing map is out of sync with golden_set.json: "
+        f"missing={golden_questions - set(expected)}, extra={set(expected) - golden_questions}"
+    )
     for item in golden:
         q = item["question"]
         assert classify_question(q) == expected[q], f"{q!r} -> {classify_question(q)!r}"

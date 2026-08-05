@@ -72,12 +72,11 @@ def collect_eval_rows_local(golden_set: list[dict], *, verbose: bool = False) ->
         question = item["question"]
         reference = item["reference"]
         expected_docs = item.get("expected_document_ids", [])
-        document_filter = expected_docs or None
 
-        chunks, context, chunk_ids, _sources = retrieve_context(
-            question,
-            document_ids=document_filter,
-        )
+        # Retrieve over the open corpus (production /ask behavior, respecting
+        # EXCLUDE_DOCUMENT_IDS) so retrieval_hit measures the retriever, not an
+        # oracle document filter. expected_docs is used only to score the hit.
+        chunks, context, chunk_ids, _sources = retrieve_context(question)
         retrieved_doc_ids = [chunk.document_id for chunk in chunks if chunk.document_id]
         hit = retrieval_hit(retrieved_doc_ids, expected_docs)
 
@@ -111,10 +110,9 @@ def collect_eval_rows_api(
         question = item["question"]
         reference = item["reference"]
         expected_docs = item.get("expected_document_ids", [])
-        document_filter = expected_docs or None
+        # Open-corpus retrieval (see collect_eval_rows_local); expected_docs
+        # only scores the hit, it does not filter retrieval.
         request_payload: dict = {"question": question}
-        if document_filter:
-            request_payload["document_ids"] = document_filter
 
         retrieve_resp = httpx.post(
             f"{base}/retrieve",

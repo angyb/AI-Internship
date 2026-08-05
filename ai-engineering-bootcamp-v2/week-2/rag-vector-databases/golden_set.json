@@ -22,7 +22,7 @@
   {
     "question": "How has Zearn incorporated the science of learning into its product?",
     "reference": "Zearn Math incorporates the science of learning by using the concrete-pictorial-abstract approach, which reflects how kids learn. This method involves moving from concrete experiences to visual models to abstract reasoning, helping to build lasting mastery. Additionally, Zearn Math lessons adapt to provide support and scaffolding when students struggle, ensuring they can work through challenges without sacrificing grade-level rigor. The lessons also integrate paper-and-pencil problem solving, allowing students to reflect on new concepts and demonstrate their thinking beyond the screen.",
-    "expected_document_ids": ["how-zearn-math-works","index", "press-releases-evidence-for-essa.md", "why-zearn-math.md"]
+    "expected_document_ids": ["how-zearn-math-works","index", "press-releases-evidence-for-essa", "why-zearn-math"]
   },
   {
     "question": "Who can get a free Zearn account?",

@@ -39,7 +39,7 @@ services:
       - key: RETRIEVAL_K
         value: "5"
       - key: RETRIEVAL_FETCH_K
-        value: "10"
+        value: "20"
       - key: MAX_CHUNKS_PER_DOCUMENT
         value: "1"
 

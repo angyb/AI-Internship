@@ -2,15 +2,7 @@
 
 from __future__ import annotations
 
-import os
-
-
-def _int_env(name: str, default: int, *, minimum: int = 1) -> int:
-    raw = os.getenv(name, str(default)).strip()
-    try:
-        return max(int(raw), minimum)
-    except ValueError:
-        return default
+from env_utils import bool_env, int_env as _int_env
 
 
 def retrieval_k() -> int:
@@ -29,7 +21,7 @@ def max_chunks_per_document() -> int:
 
 
 def neighbor_chunks_enabled() -> bool:
-    return os.getenv("NEIGHBOR_CHUNKS_ENABLED", "true").lower() != "false"
+    return bool_env("NEIGHBOR_CHUNKS_ENABLED", True)
 
 
 def neighbor_chunk_radius() -> int:
@@ -39,11 +31,11 @@ def neighbor_chunk_radius() -> int:
 
 def neighbor_merge_enabled() -> bool:
     """Merge each hit with its neighbors into one context block per (document_id, hit)."""
-    return os.getenv("NEIGHBOR_MERGE_ENABLED", "true").lower() != "false"
+    return bool_env("NEIGHBOR_MERGE_ENABLED", True)
 
 
 def max_context_chunks_enabled() -> bool:
-    return os.getenv("MAX_CONTEXT_CHUNKS_ENABLED", "true").lower() != "false"
+    return bool_env("MAX_CONTEXT_CHUNKS_ENABLED", True)
 
 
 def max_context_chunks() -> int:

@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 from typing import TYPE_CHECKING
+
+from env_utils import bool_env, float_env, int_env
 
 if TYPE_CHECKING:
     from ingest import RetrievedChunk
@@ -13,10 +16,11 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 _cross_encoder = None
+_cross_encoder_lock = threading.Lock()
 
 
 def rerank_enabled() -> bool:
-    return os.getenv("RERANK_ENABLED", "true").lower() != "false"
+    return bool_env("RERANK_ENABLED", True)
 
 
 def rerank_model_name() -> str:
@@ -24,58 +28,44 @@ def rerank_model_name() -> str:
 
 
 def rerank_candidates_count() -> int:
-    raw = os.getenv("RERANK_CANDIDATES", "30").strip()
-    try:
-        return max(int(raw), 1)
-    except ValueError:
-        return 30
+    return int_env("RERANK_CANDIDATES", 30, minimum=1)
 
 
 def rerank_candidate_max_per_document() -> int:
-    raw = os.getenv("RERANK_CANDIDATE_MAX_PER_DOC", "5").strip()
-    try:
-        return max(int(raw), 1)
-    except ValueError:
-        return 5
+    return int_env("RERANK_CANDIDATE_MAX_PER_DOC", 5, minimum=1)
 
 
 def relevance_filter_enabled() -> bool:
     """Drop low-scoring context blocks before generation (uses cross-encoder)."""
-    return os.getenv("RELEVANCE_FILTER_ENABLED", "true").lower() != "false"
+    return bool_env("RELEVANCE_FILTER_ENABLED", True)
 
 
 def relevance_min_score_gap() -> float:
     """Max allowed drop from the best chunk score; blocks below best - gap are removed."""
-    raw = os.getenv("RELEVANCE_MIN_SCORE_GAP", "1.0").strip()
-    try:
-        return max(float(raw), 0.0)
-    except ValueError:
-        return 1.0
+    return float_env("RELEVANCE_MIN_SCORE_GAP", 1.0, minimum=0.0)
 
 
 def relevance_min_chunks() -> int:
     """Always keep at least this many context blocks after filtering."""
-    raw = os.getenv("RELEVANCE_MIN_CHUNKS", "1").strip()
-    try:
-        return max(int(raw), 1)
-    except ValueError:
-        return 1
+    return int_env("RELEVANCE_MIN_CHUNKS", 1, minimum=1)
 
 
 def context_order_by_rerank_score_enabled() -> bool:
     """Sort final LLM context blocks by cross-encoder score (best first)."""
-    return os.getenv("CONTEXT_ORDER_BY_RERANK_SCORE", "true").lower() != "false"
+    return bool_env("CONTEXT_ORDER_BY_RERANK_SCORE", True)
 
 
 def get_cross_encoder():
     """Lazy-load the cross-encoder (downloads model weights on first use)."""
     global _cross_encoder
     if _cross_encoder is None:
-        from sentence_transformers import CrossEncoder
+        with _cross_encoder_lock:
+            if _cross_encoder is None:
+                from sentence_transformers import CrossEncoder
 
-        model_name = rerank_model_name()
-        logger.info("Loading cross-encoder reranker: %s", model_name)
-        _cross_encoder = CrossEncoder(model_name)
+                model_name = rerank_model_name()
+                logger.info("Loading cross-encoder reranker: %s", model_name)
+                _cross_encoder = CrossEncoder(model_name)
     return _cross_encoder
 
 
@@ -149,3 +139,45 @@ def filter_chunks_by_relevance(question: str, chunks: list[RetrievedChunk]) -> l
         )
 
     return kept
+
+
+def filter_and_order_chunks_by_relevance(
+    question: str, chunks: list[RetrievedChunk]
+) -> list[RetrievedChunk]:
+    """Relevance filter + score ordering in a single cross-encoder pass.
+
+    Equivalent to filter_chunks_by_relevance() followed by
+    order_chunks_by_rerank_score(), but scores the chunks only once.
+    """
+    filter_on = relevance_filter_enabled()
+    order_on = context_order_by_rerank_score_enabled()
+    if not chunks or (not filter_on and not order_on):
+        return chunks
+
+    scored = score_chunks(question, chunks)  # best-first
+    if not scored:
+        return []
+
+    if not filter_on:
+        # Only ordering requested — scored is already best-first.
+        return [chunk for chunk, _score in scored]
+
+    best = scored[0][1]
+    gap_limit = relevance_min_score_gap()
+    min_keep = min(relevance_min_chunks(), len(scored))
+
+    kept = [(chunk, score) for chunk, score in scored if (best - score) <= gap_limit]
+    if len(kept) < min_keep:
+        kept = scored[:min_keep]
+
+    if len(kept) < len(chunks):
+        logger.info(
+            "Relevance filter dropped %d/%d context block(s) (best=%.3f, gap<=%.3f)",
+            len(chunks) - len(kept),
+            len(chunks),
+            best,
+            gap_limit,
+        )
+
+    # kept is already best-first, matching order_chunks_by_rerank_score output.
+    return [chunk for chunk, _score in kept]
