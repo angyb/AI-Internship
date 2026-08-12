@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Ask Z-Bot — Zearn Support Agent",
+  "version": "1.0.0",
+  "description": "Floating Ask Z-Bot overlay on zearn.org that answers Zearn support questions via the Zearn Support Agent (POST /agent).",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://ai-internship-i3lw.onrender.com/*",
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "toggle-zbot": {
+      "suggested_key": {
+        "default": "Alt+Z",
+        "mac": "Alt+Z"
+      },
+      "description": "Toggle Ask Z-Bot"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.zearn.org/*", "*://zearn.org/*"],
+      "js": ["config.js", "vendor/marked.min.js", "overlay.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["overlay.css", "icons/icon48.png", "privacy-policy.html"],
+      "matches": ["*://*.zearn.org/*", "*://zearn.org/*"]
+    }
+  ]
+}

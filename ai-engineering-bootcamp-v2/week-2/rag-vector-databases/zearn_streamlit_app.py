@@ -52,10 +52,15 @@ def check_api_health(base_url: str, timeout: float = HEALTH_TIMEOUT) -> tuple[bo
 
 
 def run_agent_remote(question: str) -> tuple[str, list[dict]]:
+    headers = {"Content-Type": "application/json"}
+    api_key = os.getenv("AGENT_API_KEY", "").strip()
+    if api_key:
+        headers["X-API-Key"] = api_key
     with httpx.Client(timeout=AGENT_TIMEOUT) as client:
         response = client.post(
             f"{AGENT_API_URL}/agent",
             json={"question": question},
+            headers=headers,
         )
         response.raise_for_status()
         data = response.json()

@@ -18,6 +18,16 @@ services:
         sync: false
       - key: GOOGLE_API_KEY
         sync: false
+      - key: AGENT_API_KEY
+        sync: false
+
+      # Agent hardening (Phase 3)
+      - key: AGENT_RATE_LIMIT_ENABLED
+        value: "true"
+      - key: AGENT_RATE_LIMIT_PER_MINUTE
+        value: "20"
+      - key: TELEMETRY_ENABLED
+        value: "false"
 
       # OpenAI models
       - key: ANSWER_MODEL

@@ -1,0 +1,529 @@
+/* Styles are injected into the overlay's shadow root, so selectors here are
+   isolated from the host zearn.org page (and vice-versa).
+
+   Palette is Zearn-adjacent (coral CTA + navy text + warm surface), inspired by
+   help.zearn.org / zearn.org marketing — not an official brand kit. */
+
+:host {
+  all: initial;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.zbot-root {
+  --zbot-coral: #ff5a36;
+  --zbot-coral-deep: #e64522;
+  --zbot-navy: #1b2b4b;
+  --zbot-ink: #243047;
+  --zbot-muted: #6b738a;
+  --zbot-line: #eadfd8;
+  --zbot-surface: #ffffff;
+  --zbot-warm: #fff8f4;
+  --zbot-teal: #1aa88a;
+  --zbot-teal-soft: #e6f7f2;
+  --zbot-amber: #b86a00;
+  --zbot-amber-soft: #fff5e4;
+  --zbot-amber-line: #f0d4a0;
+  --zbot-danger: #b42318;
+  --zbot-danger-soft: #fdeceb;
+  --zbot-danger-line: #f5c2c0;
+  --zbot-shadow: 0 14px 40px rgba(27, 43, 75, 0.22);
+
+  font-family: "Nunito Sans", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--zbot-ink);
+}
+
+/* --- Collapsed pill --- */
+
+.zbot-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px 10px 12px;
+  background: var(--zbot-coral);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(255, 90, 54, 0.38);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.zbot-pill:hover {
+  background: var(--zbot-coral-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(255, 90, 54, 0.48);
+}
+
+.zbot-pill__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* --- Expanded panel --- */
+
+.zbot-panel {
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--zbot-surface);
+  border-radius: 16px;
+  box-shadow: var(--zbot-shadow);
+  overflow: hidden;
+  border: 1px solid var(--zbot-line);
+}
+
+.zbot-hidden {
+  display: none !important;
+}
+
+.zbot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, var(--zbot-coral) 0%, #ff7a4d 100%);
+  color: #ffffff;
+}
+
+.zbot-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zbot-header__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.zbot-header__title {
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+
+.zbot-header__actions {
+  display: flex;
+  gap: 4px;
+}
+
+.zbot-iconbtn {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zbot-iconbtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.zbot-body {
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  background: var(--zbot-warm);
+}
+
+/* --- Form --- */
+
+.zbot-form {
+  display: flex;
+  gap: 8px;
+}
+
+.zbot-input {
+  flex: 1 1 auto;
+  padding: 10px 12px;
+  border: 1px solid var(--zbot-line);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--zbot-ink);
+  background: #fff;
+}
+
+.zbot-input:focus {
+  outline: none;
+  border-color: var(--zbot-coral);
+  box-shadow: 0 0 0 3px rgba(255, 90, 54, 0.18);
+}
+
+.zbot-btn {
+  padding: 10px 16px;
+  background: var(--zbot-coral);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.zbot-btn:hover {
+  background: var(--zbot-coral-deep);
+}
+
+.zbot-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.zbot-btn--ghost {
+  background: transparent;
+  color: var(--zbot-navy);
+  border: 1px solid var(--zbot-line);
+}
+
+.zbot-btn--ghost:hover {
+  background: #fff;
+  border-color: #d9cfc8;
+}
+
+/* --- Status / banners --- */
+
+.zbot-status {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--zbot-muted);
+  min-height: 16px;
+}
+
+.zbot-banner {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  border: 1px solid transparent;
+}
+
+.zbot-banner--web {
+  background: var(--zbot-amber-soft);
+  border-color: var(--zbot-amber-line);
+  color: var(--zbot-amber);
+}
+
+.zbot-banner--refusal {
+  background: var(--zbot-danger-soft);
+  border-color: var(--zbot-danger-line);
+  color: var(--zbot-danger);
+}
+
+.zbot-banner--error {
+  background: var(--zbot-danger-soft);
+  border-color: var(--zbot-danger-line);
+  color: var(--zbot-danger);
+  white-space: pre-wrap;
+}
+
+/* --- Steps (Think / Act / Observe) --- */
+
+.zbot-section-title {
+  margin: 16px 0 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--zbot-muted);
+}
+
+.zbot-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.zbot-step {
+  border: 1px solid var(--zbot-line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 13px;
+  background: #fff;
+}
+
+.zbot-step__label {
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.zbot-step--think .zbot-step__label {
+  color: var(--zbot-coral);
+}
+.zbot-step--act {
+  background: var(--zbot-amber-soft);
+  border-color: var(--zbot-amber-line);
+}
+.zbot-step--act .zbot-step__label {
+  color: var(--zbot-amber);
+}
+.zbot-step--observe {
+  background: var(--zbot-teal-soft);
+  border-color: #b6e6d8;
+}
+.zbot-step--observe .zbot-step__label {
+  color: var(--zbot-teal);
+}
+
+.zbot-step code {
+  background: rgba(27, 43, 75, 0.06);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.zbot-step details {
+  margin-top: 6px;
+}
+
+.zbot-step summary {
+  cursor: pointer;
+  color: var(--zbot-muted);
+  font-size: 12px;
+}
+
+.zbot-step pre {
+  margin: 6px 0 0;
+  padding: 8px;
+  background: var(--zbot-navy);
+  color: #f5efe9;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* --- Answer --- */
+
+.zbot-answer {
+  margin-top: 6px;
+  color: var(--zbot-ink);
+  word-break: break-word;
+  background: #fff;
+  border: 1px solid var(--zbot-line);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.zbot-answer p:first-child {
+  margin-top: 0;
+}
+
+.zbot-answer a {
+  color: var(--zbot-coral-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.zbot-answer ul,
+.zbot-answer ol {
+  padding-left: 20px;
+}
+
+.zbot-answer pre {
+  background: var(--zbot-navy);
+  color: #f5efe9;
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.zbot-answer code {
+  background: rgba(27, 43, 75, 0.06);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+/* --- Spinner --- */
+
+.zbot-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 90, 54, 0.25);
+  border-top-color: var(--zbot-coral);
+  border-radius: 50%;
+  animation: zbot-spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes zbot-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Settings --- */
+
+.zbot-settings {
+  margin-top: 14px;
+  border-top: 1px solid var(--zbot-line);
+  padding-top: 12px;
+  background: transparent;
+}
+
+.zbot-settings > summary {
+  cursor: pointer;
+  color: var(--zbot-navy);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  list-style: none;
+}
+
+.zbot-settings > summary::-webkit-details-marker {
+  display: none;
+}
+
+.zbot-settings > summary::before {
+  content: "▸ ";
+  color: var(--zbot-coral);
+}
+
+.zbot-settings[open] > summary::before {
+  content: "▾ ";
+}
+
+.zbot-settings__section {
+  margin-top: 12px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid var(--zbot-line);
+  border-radius: 10px;
+}
+
+.zbot-settings__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--zbot-navy);
+  margin-bottom: 6px;
+}
+
+.zbot-settings__row {
+  display: flex;
+  gap: 8px;
+}
+
+.zbot-settings__row--actions {
+  margin-top: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.zbot-settings__row .zbot-input {
+  font-size: 12px;
+  padding: 8px 10px;
+}
+
+.zbot-settings__hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--zbot-muted);
+  word-break: break-word;
+}
+
+.zbot-settings__hint code {
+  background: rgba(27, 43, 75, 0.06);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+.zbot-settings__meta {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--zbot-ink);
+}
+
+.zbot-settings__meta li + li {
+  margin-top: 4px;
+}
+
+.zbot-settings__meta kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid var(--zbot-line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--zbot-warm);
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.zbot-settings__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--zbot-ink);
+  cursor: pointer;
+}
+
+.zbot-settings__check input {
+  margin-top: 2px;
+}
+
+.zbot-settings__hint a {
+  color: var(--zbot-coral-deep);
+}
+
+.zbot-health {
+  flex: 1 1 auto;
+  font-size: 12px;
+  color: var(--zbot-muted);
+  word-break: break-word;
+}
+
+.zbot-health--pending {
+  color: var(--zbot-amber);
+}
+
+.zbot-health--ok {
+  color: var(--zbot-teal);
+  font-weight: 600;
+}
+
+.zbot-health--bad {
+  color: var(--zbot-danger);
+  font-weight: 600;
+}

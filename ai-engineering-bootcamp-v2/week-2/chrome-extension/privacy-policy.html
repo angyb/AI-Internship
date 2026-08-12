@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ask Z-Bot Privacy Policy</title>
+    <style>
+      body {
+        font-family: "Nunito Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+        max-width: 720px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #1b2b4b;
+        line-height: 1.55;
+      }
+      h1 { color: #ff5a36; font-size: 1.6rem; }
+      h2 { font-size: 1.1rem; margin-top: 1.6rem; }
+      code { background: #fff8f4; padding: 1px 5px; border-radius: 4px; }
+      a { color: #e64522; }
+    </style>
+  </head>
+  <body>
+    <h1>Ask Z-Bot — Privacy Policy</h1>
+    <p><strong>Effective date:</strong> 2026-08-05 · <strong>Extension version:</strong> 1.0.0</p>
+
+    <p>
+      Ask Z-Bot is a Chrome extension that answers Zearn support questions by calling a
+      backend Zearn Support Agent API (<code>POST /agent</code>). This policy explains what
+      data is collected and how it is used.
+    </p>
+
+    <h2>What we collect</h2>
+    <ul>
+      <li>
+        <strong>Questions you submit</strong> — sent to the configured Agent API so the
+        agent can retrieve Zearn documentation and generate an answer. Questions are not
+        stored by the extension itself.
+      </li>
+      <li>
+        <strong>Settings you save</strong> — Agent API URL, optional shared API key, and
+        telemetry opt-in preference, stored in <code>chrome.storage.sync</code> on your
+        browser profile.
+      </li>
+      <li>
+        <strong>Anonymous install ID</strong> — a random UUID in
+        <code>chrome.storage.local</code>, used only for API rate limiting
+        (<code>X-Install-Id</code>). It does not identify you personally.
+      </li>
+      <li>
+        <strong>Optional error reports</strong> — only if you enable
+        “Send anonymous error reports.” Reports include a short error message, install ID,
+        and extension version. They never include your question text.
+      </li>
+    </ul>
+
+    <h2>What we do not collect</h2>
+    <ul>
+      <li>Browsing history outside zearn.org pages where the overlay runs</li>
+      <li>Passwords, cookies, or Zearn account credentials</li>
+      <li>OpenAI / Google API keys (those stay on the server)</li>
+    </ul>
+
+    <h2>Third parties</h2>
+    <p>
+      Requests go to the Agent API URL you configure (default:
+      <code>https://ai-internship-i3lw.onrender.com</code>). That server may call OpenAI
+      (embeddings/generation for retrieval tooling), Google Gemini / Google Search (agent),
+      and Pinecone (vector store). Review those providers’ policies if you self-host or
+      change the API URL.
+    </p>
+
+    <h2>Data retention</h2>
+    <p>
+      Extension storage persists until you clear it or uninstall. Server-side logging and
+      telemetry retention depend on the API operator’s configuration; telemetry is disabled
+      unless the server sets <code>TELEMETRY_ENABLED=true</code> <em>and</em> you opt in.
+    </p>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li>Leave the API key blank if the server does not require <code>AGENT_API_KEY</code></li>
+      <li>Disable telemetry anytime in Settings</li>
+      <li>Uninstall the extension to remove local storage</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>
+      This extension is part of an AI Internship / bootcamp project. For questions about
+      this policy, open an issue on the project repository that ships Ask Z-Bot.
+    </p>
+  </body>
+</html>

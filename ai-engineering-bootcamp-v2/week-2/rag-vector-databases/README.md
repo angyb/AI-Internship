@@ -2,7 +2,7 @@
 
 Hybrid RAG over scraped Zearn docs (Pinecone + BM25), golden-set eval, and the **Zearn Support Agent** (ADK + Google Search fallback).
 
-**Summaries:** [`rag-summary.md`](rag-summary.md) (full project) · [`zearn-support-agent-summary.md`](zearn-support-agent-summary.md) (agent) · [`chrome-extension-plan.md`](chrome-extension-plan.md) (next build)
+**Summaries:** [`rag-summary.md`](rag-summary.md) (full project) · [`how-it-works.md`](how-it-works.md) (code-level walkthrough) · [`zearn-support-agent-summary.md`](zearn-support-agent-summary.md) (agent) · [`chrome-extension-plan.md`](chrome-extension-plan.md) (extension) · [`../chrome-extension/ask-zbot-cloud-handoff.md`](../chrome-extension/ask-zbot-cloud-handoff.md) (cloud handoff)
 
 The original bootcamp material lives in [`rag_vector_databases_live_session.ipynb`](rag_vector_databases_live_session.ipynb).
 
@@ -18,7 +18,7 @@ ADK agent (`zearn_support_agent`) with tools **`search_zearn_doc`** (hybrid RAG)
 | **Streamlit (Render UI)** | `https://zearn-faq-bot.onrender.com` |
 | **API (Render)** | `https://ai-internship-i3lw.onrender.com` |
 
-**Requires:** `GOOGLE_API_KEY` for `/agent` and Streamlit local mode. Retrieval still uses `OPENAI_API_KEY` + Pinecone inside `search_zearn_doc`.
+**Requires:** `GOOGLE_API_KEY` for `/agent` and Streamlit local mode. Retrieval still uses `OPENAI_API_KEY` + Pinecone inside `search_zearn_doc`. Optional: `AGENT_API_KEY` (when set, `POST /agent` requires `X-API-Key`).
 
 ```bash
 curl -s -X POST http://127.0.0.1:8000/agent \

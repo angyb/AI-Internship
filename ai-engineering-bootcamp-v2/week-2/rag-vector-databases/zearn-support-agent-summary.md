@@ -43,7 +43,7 @@ rag-vector-databases/
   main.py                    # POST /agent
 ```
 
-Add new tools under `zearn_faq_bot/tools/`, register on the agent in `agent.py`, redeploy the API — no Streamlit or extension changes required per tool.
+Add new tools under `zearn_faq_bot/tools/` — see [`ADDING_A_TOOL.md`](ADDING_A_TOOL.md). Register on the agent in `agent.py`, redeploy the API — no Streamlit or extension changes required per tool.
 
 ---
 
@@ -172,7 +172,7 @@ Latest local run (6 questions): retrieval hit 100%, faithfulness ~0.87, answer_c
 
 ## Next build: Chrome extension
 
-Plan: [`chrome-extension-plan.md`](chrome-extension-plan.md) — floating **Ask Z-Bot** overlay on `zearn.org` / `help.zearn.org` calling `POST /agent` via a service worker. Backend prerequisite is complete.
+**Phases 1–5 complete** (v1.0.0) under [`../chrome-extension/`](../chrome-extension/). See [`chrome-extension-plan.md`](chrome-extension-plan.md). Remaining: human Web Store submit + public privacy URL if publishing.
 
 ---
 

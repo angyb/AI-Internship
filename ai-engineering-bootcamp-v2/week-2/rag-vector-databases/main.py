@@ -10,10 +10,15 @@ from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from openai import APIError, OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
+from agent_security import (
+    record_telemetry_event,
+    require_agent_access,
+    telemetry_enabled,
+)
 from env_utils import bool_env
 
 from ingest import (
@@ -212,6 +217,13 @@ class AgentRequest(BaseModel):
 class AgentResponse(BaseModel):
     answer: str
     steps: list[AgentStep]
+
+
+class TelemetryRequest(BaseModel):
+    event: str = Field(description="Short event name, e.g. client_error")
+    message: str = Field(default="", description="Sanitized error/detail text (no questions)")
+    install_id: str = Field(default="", description="Anonymous extension install UUID")
+    extension_version: str = Field(default="", description="Extension version string")
 
 
 class EvalRequest(BaseModel):
@@ -495,9 +507,13 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
     )
 
 
-@app.post("/agent")
+@app.post("/agent", dependencies=[Depends(require_agent_access)])
 def agent_run(body: AgentRequest) -> AgentResponse:
-    """Run the Zearn ADK support agent (search_zearn_doc + google_search_agent fallback)."""
+    """Run the Zearn ADK support agent (search_zearn_doc + google_search_agent fallback).
+
+    When ``AGENT_API_KEY`` is set, require matching ``X-API-Key`` / Bearer token.
+    Rate-limited per ``X-Install-Id`` (preferred) or client IP.
+    """
 
     if not os.getenv("GOOGLE_API_KEY"):
         raise HTTPException(
@@ -518,6 +534,22 @@ def agent_run(body: AgentRequest) -> AgentResponse:
         answer=answer,
         steps=[AgentStep(**step) for step in steps],
     )
+
+
+@app.post("/telemetry")
+def telemetry(body: TelemetryRequest) -> dict[str, str]:
+    """Optional client error telemetry (opt-in from the extension). Disabled unless TELEMETRY_ENABLED=true."""
+
+    if not telemetry_enabled():
+        return {"status": "disabled"}
+
+    record_telemetry_event(
+        event=body.event,
+        message=body.message,
+        install_id=body.install_id,
+        extension_version=body.extension_version,
+    )
+    return {"status": "ok"}
 
 
 def build_fact_extraction_prompt(

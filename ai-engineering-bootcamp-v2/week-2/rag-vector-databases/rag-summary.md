@@ -157,7 +157,8 @@ python zearn_support_agent.py "What causes a Tower Alert?"
 
 | Done | Next |
 |------|------|
-| Hybrid RAG + eval + Render deploy | Chrome extension (`chrome-extension-plan.md`) |
-| ADK agent + Google Search fallback | Optional: improve add-students answer quality |
-| Source links in agent answers | Optional: agent-specific golden-set eval |
+| Hybrid RAG + eval + Render deploy | Optional: improve add-students answer quality |
+| ADK agent + Google Search fallback | Optional: agent-specific golden-set eval |
+| Source links in agent answers | Optional: host privacy policy publicly + Chrome Web Store submit |
 | Streamlit agent UI on Render | |
+| **Chrome extension v1.0.0** (Phases 1–5: MVP → polish → harden → package → publish prep) | |

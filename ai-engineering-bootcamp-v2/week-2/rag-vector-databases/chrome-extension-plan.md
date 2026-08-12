@@ -1,12 +1,12 @@
 # Chrome Extension + Z-Bot Plan
 
-**Status:** Ready to build. Backend complete; extension not started.
+**Status:** Phases 1–5 complete for the extension track (MVP → polish → harden → package → publish prep). Chrome Web Store **upload** remains a human step.
 
 **Last updated:** 2026-08-05
 
-**Prerequisite:** RAG + Google Search fallback — **COMPLETE**. Backend shipped through commit [`161bc16`](https://github.com/angyb/AI-Internship/commit/161bc16).
+**Prerequisite:** RAG + Google Search fallback — **COMPLETE**. Backend shipped through commit [`00f5ad7`](https://github.com/angyb/AI-Internship/commit/00f5ad7) (retrieval hardening + honest eval; RAG feature-complete at [`161bc16`](https://github.com/angyb/AI-Internship/commit/161bc16)).
 
-**Related docs:** [`zearn-support-agent-summary.md`](zearn-support-agent-summary.md) · [`rag-summary.md`](rag-summary.md) · [`README.md`](README.md)
+**Related docs:** [`zearn-support-agent-summary.md`](zearn-support-agent-summary.md) · [`rag-summary.md`](rag-summary.md) · [`README.md`](README.md) · extension [`../chrome-extension/README.md`](../chrome-extension/README.md) · **cloud handoff** [`../chrome-extension/ask-zbot-cloud-handoff.md`](../chrome-extension/ask-zbot-cloud-handoff.md)
 
 ---
 
@@ -15,14 +15,24 @@
 | ID | Task | Status |
 |----|------|--------|
 | `verify-api` | Confirm Render `POST /agent` returns `{ answer, steps }` and `GOOGLE_API_KEY` is set | done |
-| `scaffold-extension` | Create `../chrome-extension/` with MV3 manifest, content script matches for `*.zearn.org`, service worker | pending |
-| `overlay-ui` | Shadow DOM overlay: Ask Z-Bot pill, question input, markdown answer (Sources links), collapsible Think/Act/Observe steps | pending |
-| `api-proxy` | Background worker: `POST /agent` via `chrome.runtime.sendMessage`; 120s timeout; configurable `AGENT_API_URL`; surface FastAPI `detail` on errors | pending |
-| `fallback-banners` | Web-fallback banner when answer contains `FALLBACK_PREFIX` or `google_search_agent` in steps; refusal banner on corpus miss | pending |
-| `cold-start-mvp` | Wake `GET /health` before first `/agent`; show "Waking up API…" copy (Render free tier) | pending |
-| `cors-optional` | Add FastAPI CORS middleware for chrome-extension origins (optional if proxy-only) | pending |
-| `dev-readme` | Document load-unpacked workflow + how to add a new tool under `zearn_faq_bot/tools/` | pending |
-| `harden-later` | Phase 3: API key auth, rate limits, Chrome Web Store listing before public release | pending |
+| `scaffold-extension` | Create `../chrome-extension/` with MV3 manifest, content script matches for `*.zearn.org`, service worker | done |
+| `overlay-ui` | Shadow DOM overlay: Ask Z-Bot pill, question input, markdown answer (Sources links), collapsible Think/Act/Observe steps | done |
+| `api-proxy` | Background worker: `POST /agent` via `chrome.runtime.sendMessage`; 120s timeout; configurable `AGENT_API_URL`; surface FastAPI `detail` on errors | done |
+| `fallback-banners` | Web-fallback banner when answer contains `FALLBACK_PREFIX` or `google_search_agent` in steps; refusal banner on corpus miss | done |
+| `cold-start-mvp` | Wake `GET /health` before first `/agent`; show "Waking up API…" copy (Render free tier) | done |
+| `cors-optional` | Add FastAPI CORS middleware for chrome-extension origins (optional if proxy-only) | skipped (proxy-only; no CORS needed) |
+| `dev-readme` | Document load-unpacked workflow + how to add a new tool under `zearn_faq_bot/tools/` | done |
+| `phase2-settings` | Full settings panel: API URL override, reset-to-default, health check, shortcut hint | done |
+| `phase2-shortcut` | Keyboard shortcut `Alt+Z` to toggle Ask Z-Bot | done |
+| `phase2-styling` | Zearn-adjacent styling (help center colors/fonts) | done |
+| `phase3-auth` | Optional `AGENT_API_KEY` gate on `POST /agent` (X-API-Key / Bearer) | done |
+| `phase3-rate` | Sliding-window rate limit per `X-Install-Id` or IP | done |
+| `phase3-privacy` | In-extension privacy policy + Settings link | done |
+| `phase3-telemetry` | Opt-in client error telemetry (`POST /telemetry`, server flag) | done |
+| `phase4-package` | `scripts/package.sh` → `dist/ask-zbot-*.zip` + store listing draft | done |
+| `phase4-docs` | Extension README, publish checklist, screenshots folder | done |
+| `phase5-v1` | Bump to v1.0.0 + publish checklist for Web Store human submit | done |
+| `harden-later` | _(superseded by phase3–5)_ | done |
 
 ---
 
@@ -40,7 +50,7 @@
 
 ---
 
-## Current state (backend — done)
+## Current state
 
 | Layer | Status | Key files |
 |-------|--------|-----------|
@@ -53,6 +63,7 @@
 | Golden-set eval | **6 questions** | [`golden_set.json`](golden_set.json) + [`eval_golden.py`](eval_golden.py) |
 | Render API | Live | `https://ai-internship-i3lw.onrender.com` (`week-2-rag-api` in [`render.yaml`](render.yaml)) |
 | Render UI | Live | `https://zearn-faq-bot.onrender.com` (`zearn-agent-ui`; `AGENT_API_URL` → API above) |
+| **Chrome extension** | **Phases 1–5 done (v1.0.0)** | [`../chrome-extension/`](../chrome-extension/) — auth-ready overlay, packaging, privacy policy, Store listing draft |
 
 ### Not used by the extension or agent
 
@@ -66,7 +77,8 @@
 | `f8a2ba5` | Extracted `zearn_faq_bot/` package; empty Streamlit search field |
 | `3052d76` | Agent cites Sources as markdown links; Pinecone + frontmatter enrichment |
 | `c20ca87` | Removed duplicate Streamlit source block — answer text is sole citation UI |
-| **`161bc16`** | PDF titles from filenames + overrides; golden set → 6 questions; README / rag-summary / agent summary / this plan |
+| `161bc16` | PDF titles from filenames + overrides; golden set → 6 questions; README / rag-summary / agent summary / this plan |
+| **`00f5ad7`** | Retrieval speed/concurrency hardening (cached clients, thread locks, single rerank pass, batched neighbor fetch); honest open-corpus eval hit; `env_utils`; `RETRIEVAL_FETCH_K` → 20 |
 
 ### Backend details the extension inherits
 
@@ -75,22 +87,26 @@
 - **Observe steps** still include a `sources` array in JSON (optional raw-step panel); user-facing citations live in `answer`.
 - **`search_zearn_doc`** returns `title`, `source_url`, `document_id` per chunk from Pinecone ([`zearn_faq_bot/tools/search_zearn_doc.py`](zearn_faq_bot/tools/search_zearn_doc.py)).
 - **Agent model:** `GEMINI_MODEL` env (default `gemini-flash-latest`); `MAX_LLM_CALLS=15`.
-- **No CORS middleware** on FastAPI yet — service-worker proxy is the recommended path.
+- **No CORS middleware** on FastAPI — service-worker proxy is the path used by the extension (Phase 1 skipped CORS).
+- **Retrieval config (`00f5ad7`):** `RETRIEVAL_FETCH_K=20` (local `.env` + [`render.yaml`](render.yaml)) widens the candidate pool so borderline-relevant chunks surface. Local cross-encoder rerank is **on** (`RERANK_ENABLED=true`) but stays **off on Render** (512MB limit) — so `/agent` answers the extension sees are hybrid-retrieval-only, without local reranking.
+- **Retrieval internals hardened (`00f5ad7`):** cached Pinecone/embeddings clients, thread-locked BM25 index + cross-encoder singleton, a single cross-encoder scoring pass, and batched neighbor fetches. Transparent to the extension — lower `/agent` latency and safe under concurrent requests. **No re-ingest required** (embedding model, chunk size/overlap, and stored metadata are unchanged).
 - **Re-ingest:** Only when you intentionally refresh Pinecone (chunk/title logic changes). Confirm before running against the shared production index.
 
-### Latest golden-set eval (local, `/ask` pipeline, 2026-08-05)
+### Latest golden-set eval (local API, rerank on, 2026-08-05)
 
-Run: `RAG_API_URL= python eval_golden.py` from this folder.
+Run: `python eval_golden.py` from this folder (API mode against local `uvicorn` with `RERANK_ENABLED=true`, `RETRIEVAL_FETCH_K=20`).
 
 | Metric | Score |
 |--------|-------|
 | retrieval_hit | 100.00% (6/6) |
-| faithfulness | 0.8667 |
-| answer_correctness | 0.7146 |
+| faithfulness | 0.8417 |
+| answer_correctness | 0.6639 |
+
+**Metric change (`00f5ad7`):** `retrieval_hit` is now measured on **open-corpus** retrieval — the eval no longer passes `expected_document_ids` as a retrieval filter, so the number reflects the real retriever rather than an oracle. Local cross-encoder rerank (30 candidates) + `fetch_k=20` recovered "How has Zearn incorporated the science of learning…", which missed under the old dense-only top-10 (its best chunk sat at ~rank 11).
+
+**Render caveat:** the deployed `/agent` runs with rerank **off** (512MB) but now also uses `fetch_k=20`. Extension answers come from Render, so expect its retrieval to differ from these locally-reranked numbers; a wider `fetch_k` is the main open-corpus recall lever available there.
 
 Weakest answer: **"How do I add students to my class?"** (faithfulness 0.50). Extension surfaces the same agent behavior; improving that is a separate prompt/retrieval task.
-
-**Nothing extension-related exists yet** — net-new frontend under [`../chrome-extension/`](../chrome-extension/).
 
 ---
 
@@ -193,7 +209,7 @@ Constants: [`zearn_faq_bot/constants.py`](zearn_faq_bot/constants.py).
 | `st.info("Not found in Zearn docs — sourced from the web")` | Yellow fallback banner |
 | `st.warning("Not found in corpus")` | Refusal banner |
 | Cold-start spinner copy | "Running agent… first request may take up to a minute while the API wakes up." |
-| Raw step JSON expander | Optional "Raw step data" collapsible (dev-friendly) |
+| Raw step JSON expander | Optional "Raw step data" collapsible (dev-friendly) — deferred past MVP |
 
 Default hosted API: `https://ai-internship-i3lw.onrender.com`.
 
@@ -215,14 +231,19 @@ AI-Internship/
       golden_set.json
       chrome-extension-plan.md  # this file
       zearn-support-agent-summary.md
-    chrome-extension/           # NEW — this build
-      manifest.json
-      background.js
+    chrome-extension/           # Phases 1–5 complete (v1.0.0)
+      manifest.json             # commands.toggle-zbot (Alt+Z)
+      background.js             # /agent proxy + API key + install ID + telemetry
       content.js
-      overlay.css
-      overlay.js
+      overlay.css               # Zearn-adjacent coral/navy palette
+      overlay.js                # settings: URL, API key, privacy opt-in
       config.js
-      vendor/                   # e.g. marked.min.js — MV3 forbids remote code
+      privacy-policy.html
+      store-listing.md
+      PUBLISH_CHECKLIST.md
+      scripts/package.sh
+      vendor/marked.min.js
+      icons/
       README.md
 
   rag_vector_db/                # OUT OF PROJECT — notebook Chroma only (optional, local)
@@ -232,47 +253,48 @@ No re-architect required. Extension is standalone JS; only needs `POST /agent` (
 
 ---
 
-## Phase 1 — Overlay MVP
+## Phase 1 — Overlay MVP ✅ DONE
 
-### 1. Scaffold (`../chrome-extension/`)
+### 1. Scaffold (`../chrome-extension/`) — done
 
 **`manifest.json` (MV3):**
 - `manifest_version: 3`
-- `permissions`: none if all fetch goes through service worker
-- `host_permissions`: `https://ai-internship-i3lw.onrender.com/*` (and `http://127.0.0.1:8000/*` for local dev)
+- `permissions`: `storage` (API URL override)
+- `host_permissions`: Render API + `http://127.0.0.1:8000/*` + `http://localhost:8000/*`
 - `background.service_worker`: `background.js`
-- `content_scripts`: `*://*.zearn.org/*`, `*://help.zearn.org/*`; `run_at: document_idle`
-- Primary entry: in-page **Ask Z-Bot** pill (toolbar action optional)
+- `content_scripts`: `*://*.zearn.org/*`, `*://zearn.org/*`; `run_at: document_idle`
+- Primary entry: in-page **Ask Z-Bot** pill
 
-### 2. Background service worker (`background.js`)
+### 2. Background service worker (`background.js`) — done
 
-- Optional: `GET /health` before first `/agent` on a session (wake Render)
-- `chrome.runtime.onMessage` → `{ type: "ask", question }`
-- `fetch(AGENT_API_URL + "/agent", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question }) })`
-- 120s `AbortController` timeout
-- Return `{ answer, steps }` or `{ error }` with FastAPI `detail` when present
+- `GET /health` on first expand (wake Render)
+- `chrome.runtime.onMessage` → `{ type: "ask" | "wake" | "getApiBase" }`
+- 120s `AbortController` timeout on `/agent`; 60s on `/health`
+- Returns `{ answer, steps }` or `{ error }` with FastAPI `detail` when present
 - No API keys in extension
 
-### 3. Content script + overlay (`content.js`, `overlay.js`, `overlay.css`)
+### 3. Content script + overlay — done
 
-- **Collapsed:** floating pill bottom-right — **"Ask Z-Bot"**
-- **Expanded:** question input, Ask button, step log, answer area, close/minimize
-- **Shadow DOM** for style isolation
-- **No chat history in v1**
-- **Markdown:** bundle a library (e.g. `marked`) under `vendor/` — **MV3 forbids remote/CDN scripts**. Render `[Title](url)` links and `Sources:` lists; do not duplicate sources from Observe JSON
+- Collapsed floating pill; expanded panel with input, Ask, steps, answer, minimize
+- Shadow DOM style isolation
+- No chat history in v1
+- Vendored `marked` under `vendor/`; Sources rendered from answer markdown only
 
-### 4. Config (`config.js`)
+### 4. Config (`config.js`) — done
 
-```javascript
-export const DEFAULT_AGENT_API_URL = "https://ai-internship-i3lw.onrender.com";
-export const AGENT_TIMEOUT_MS = 120_000;
-export const HEALTH_TIMEOUT_MS = 60_000;
-// Override via chrome.storage.sync for local uvicorn
-```
+Plain globals on `self.ZBOT_CONFIG` (no ES modules — vanilla load-unpacked). Override via `chrome.storage.sync`.
 
-### 5. CORS (optional)
+### 5. CORS — skipped
 
-Service-worker proxy avoids CORS. Only add `CORSMiddleware` to [`main.py`](main.py) if calling the API directly from the content script.
+Service-worker proxy avoids CORS. No `CORSMiddleware` added to FastAPI.
+
+### Phase 1 decisions (from build session)
+
+- Vanilla JS, no bundler
+- `marked` only (link hardening: `target=_blank` + `rel=noopener noreferrer`); DOMPurify deferred
+- `/health` wake on pill-expand
+- Minimal API-URL field in overlay (expanded to full settings in Phase 2)
+- Raw-step JSON panel deferred
 
 ---
 
@@ -288,7 +310,7 @@ uvicorn main:app --host 127.0.0.1 --port 8000
 AGENT_API_URL=http://127.0.0.1:8000 streamlit run zearn_streamlit_app.py
 
 # Chrome — load unpacked ../chrome-extension/
-# Set AGENT_API_URL to http://127.0.0.1:8000 in extension config/storage
+# Set AGENT_API_URL to http://127.0.0.1:8000 in extension settings panel
 ```
 
 Quick API smoke test:
@@ -301,26 +323,58 @@ curl -s -X POST http://127.0.0.1:8000/agent \
 
 ---
 
-## Phase 2 — Polish
+## Phase 2 — Polish ✅ DONE
 
-- Settings panel: override `AGENT_API_URL` via `chrome.storage.sync`
-- Keyboard shortcut (e.g. `Alt+Z`)
-- Zearn-adjacent styling (help center colors/fonts)
+- [x] Phase 1 MVP (see above)
+- [x] **Settings panel** — gear icon + expandable Settings: API URL Save / Reset to default, health Check now, Alt+Z + timeout hints (`chrome.storage.sync`)
+- [x] **Keyboard shortcut** — `Alt+Z` via `commands.toggle-zbot` → background → content-script `toggle()`
+- [x] **Zearn-adjacent styling** — coral CTA (`#FF5A36`), navy text, warm surface, Nunito Sans stack; answer/steps restyled to match
 
 ---
 
-## Phase 3 — Harden (before public release)
+## Phase 3 — Harden ✅ DONE
 
-- API key auth or signed tokens on `POST /agent`
-- Rate limiting per install or IP
-- Chrome Web Store listing + privacy policy
-- Error telemetry (optional)
+- [x] **API key auth** — `AGENT_API_KEY` env; when set, `POST /agent` requires `X-API-Key` or `Authorization: Bearer` ([`agent_security.py`](agent_security.py)). Unset = open (dev-friendly).
+- [x] **Rate limiting** — sliding window per `X-Install-Id` (extension) or client IP; `AGENT_RATE_LIMIT_PER_MINUTE` (default 20).
+- [x] **Privacy policy** — [`../chrome-extension/privacy-policy.html`](../chrome-extension/privacy-policy.html) + Settings link.
+- [x] **Optional telemetry** — extension opt-in → `POST /telemetry` when `TELEMETRY_ENABLED=true` (no question text).
+- [x] Extension Settings: API key field; Streamlit remote sends `AGENT_API_KEY` when set.
+- [x] Unit tests: [`test_agent_security.py`](test_agent_security.py).
+
+---
+
+## Phase 4 — Package & docs ✅ DONE
+
+Defined as packaging/QA/docs (not in the original 3-phase sketch):
+
+- [x] [`../chrome-extension/scripts/package.sh`](../chrome-extension/scripts/package.sh) → `dist/ask-zbot-<version>.zip`
+- [x] [`../chrome-extension/store-listing.md`](../chrome-extension/store-listing.md) — Store listing draft + permission justifications
+- [x] [`../chrome-extension/screenshots/README.md`](../chrome-extension/screenshots/README.md) — screenshot checklist
+- [x] Extension README updated for auth/packaging
+
+---
+
+## Phase 5 — Publish readiness ✅ DONE
+
+Defined as v1.0.0 + human submit checklist:
+
+- [x] Manifest / config version **1.0.0**
+- [x] [`../chrome-extension/PUBLISH_CHECKLIST.md`](../chrome-extension/PUBLISH_CHECKLIST.md)
+- [ ] **Human:** host privacy policy at a public https URL; upload zip to Chrome Web Store when authorized
+- [ ] **Human:** replace placeholder icons / capture Store screenshots
 
 ---
 
 ## Tool development workflow
 
-1. Add tool under `zearn_faq_bot/tools/my_tool.py`
+Canonical instructions (read these when adding a tool):
+[`zearn_faq_bot/ADDING_A_TOOL.md`](zearn_faq_bot/ADDING_A_TOOL.md)
+
+Also wired for agents via:
+- Skill: `.cursor/skills/add-zearn-agent-tool/`
+- Rule: `.cursor/rules/zearn-agent-tools.mdc` (globs `zearn_faq_bot/**`)
+
+1. Add `zearn_faq_bot/tools/<snake_name>.py` (see `search_zearn_doc.py` — `my_tool.py` was only a placeholder name)
 2. Register in [`zearn_faq_bot/agent.py`](zearn_faq_bot/agent.py)
 3. Redeploy Render API (`week-2-rag-api`)
 4. Extension picks up new capability automatically — no extension code changes
@@ -334,13 +388,16 @@ curl -s -X POST http://127.0.0.1:8000/agent \
 3. ~~Pinecone metadata: `title` / `source_url`; PDF filename titles~~ **DONE** (`161bc16`)
 4. ~~Fix duplicate Sources UI in Streamlit~~ **DONE**
 5. ~~Project docs (README, summaries, this plan)~~ **DONE**
-6. Scaffold `chrome-extension/` + MV3 manifest
-7. Background worker → health wake + `POST /agent` + error `detail`
-8. Shadow DOM overlay — pill, input, bundled markdown, step log
-9. Fallback/refusal banners (copy Streamlit logic exactly)
-10. `README.md` — load unpacked, local vs Render API
+6. ~~Scaffold `chrome-extension/` + MV3 manifest~~ **DONE**
+7. ~~Background worker → health wake + `POST /agent` + error `detail`~~ **DONE**
+8. ~~Shadow DOM overlay — pill, input, bundled markdown, step log~~ **DONE**
+9. ~~Fallback/refusal banners (copy Streamlit logic exactly)~~ **DONE**
+10. ~~`README.md` — load unpacked, local vs Render API~~ **DONE**
 11. Manual test matrix on `help.zearn.org` + `zearn.org`
-12. Phase 2 polish, then Phase 3 hardening
+12. ~~Phase 2 polish (`Alt+Z`, full settings, Zearn-adjacent styling)~~ **DONE** (v0.2.0)
+13. ~~Phase 3 hardening (auth, rate limits, privacy, telemetry)~~ **DONE**
+14. ~~Phase 4 packaging + store listing draft~~ **DONE**
+15. ~~Phase 5 v1.0.0 publish checklist~~ **DONE** (Store upload is human)
 
 ---
 
@@ -353,6 +410,12 @@ curl -s -X POST http://127.0.0.1:8000/agent \
 | "How many students can I add to my class?" | Answer with Sources; links open help.zearn.org or PDF URLs; **one** source list only (in answer) |
 
 Compare side-by-side with Streamlit at `https://zearn-faq-bot.onrender.com`.
+
+**Phase 2 checks:** `Alt+Z` toggles the panel; Settings shows API URL / health / reset; overlay uses coral-navy Zearn-adjacent styling.
+
+**Phase 3 checks:** With `AGENT_API_KEY` set, missing key → 401; over rate limit → 429; privacy link opens; telemetry opt-in only.
+
+**Phase 4–5 checks:** `./scripts/package.sh` produces zip; follow `PUBLISH_CHECKLIST.md` before any Store submit.
 
 ---
 
