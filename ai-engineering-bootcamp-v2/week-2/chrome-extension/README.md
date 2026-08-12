@@ -4,8 +4,8 @@ A floating **Ask Z-Bot** overlay that appears on `zearn.org` / `help.zearn.org` 
 answers Zearn support questions via the **Zearn Support Agent** (`POST /agent`).
 
 MV3, vanilla JS, no build step. Fetches go through the background service worker
-(so no CORS). Answers render markdown with a `Sources:` section; Think → Act →
-Observe steps show above the answer.
+(so no CORS). Answers render markdown with a `Sources:` section on the **Ask** tab;
+the agent's Think → Act → Observe steps live on the **TAO** tab.
 
 **Version:** 1.0.0 (Phase 1–2 UX + Phase 3 hardening + Phase 4 packaging + Phase 5 publish prep)
 
@@ -25,12 +25,14 @@ what “work in the cloud” usually means, and a starter prompt.
 | `manifest.json` | MV3 — content scripts, host permissions, `Alt+Z`, web-accessible CSS/privacy page |
 | `config.js` | Shared constants on `self.ZBOT_CONFIG` |
 | `background.js` | Proxies `/agent` + `/health` + optional `/telemetry`; API key + install ID headers |
-| `overlay.js` / `overlay.css` | Shadow DOM UI + Zearn-adjacent styling + settings |
+| `overlay.js` / `overlay.css` | Shadow DOM UI — tabs, right-panel/overlay layouts, styling |
 | `content.js` | Mount + toggle listener |
 | `privacy-policy.html` | In-extension privacy policy (also host publicly for Web Store) |
 | `store-listing.md` | Chrome Web Store listing draft |
 | `PUBLISH_CHECKLIST.md` | Pre-submit checklist |
 | `scripts/package.sh` | Zip for Web Store upload → `dist/ask-zbot-<version>.zip` |
+| `scripts/preview.sh` | Local UI harness in a normal browser tab (stubbed agent) |
+| `preview.html` / `preview/` | Preview host page + `chrome.*` stub (not packaged) |
 | `vendor/marked.min.js` | Bundled markdown (MV3 forbids remote/CDN code) |
 | `icons/` | Placeholder icons |
 
@@ -43,6 +45,21 @@ what “work in the cloud” usually means, and a starter prompt.
 
 Default API: `https://ai-internship-i3lw.onrender.com`.
 
+### UI preview (no Load unpacked)
+
+For overlay/CSS iteration without installing the extension:
+
+```bash
+./scripts/preview.sh          # http://127.0.0.1:8765/preview.html
+./scripts/preview.sh 8766     # optional port
+```
+
+Opens a fake help.zearn.org page with the real `overlay.js` / `overlay.css` and a
+stubbed `chrome.runtime` (`preview/chrome-stub.js`). Answers and TAO steps are
+fake; Ask → Stop still works. Use `?layout=overlay` to start in floating mode.
+
+The harness is excluded from `./scripts/package.sh`.
+
 ### Keyboard shortcut
 
 **Alt+Z** toggles the overlay. If another extension owns it, assign at
@@ -50,15 +67,40 @@ Default API: `https://ai-internship-i3lw.onrender.com`.
 
 ---
 
+## UI layout
+
+Expanding docks Ask Z-Bot as a **right panel** (full viewport height) by default. The
+icon in the panel's upper-right corner switches between the docked panel and a
+**floating overlay** card; the choice is saved to `chrome.storage.sync` (`layoutMode`)
+and reused on the next page. Minimizing always returns to the bottom-right pill.
+
+The docked panel sits **beside** the page rather than on top of it: when docked and
+expanded, the overlay adds `ask-zbot-page-shift` on `<html>`, sets `--zbot-panel-width`,
+and injects CSS to inset the page and shrink known **fixed headers** (e.g. Zearn
+`.navigation_fixed`, help-center `.header`) so nav controls stay visible beside the
+panel. Everything is removed when you undock or minimize. The panel narrows (to a 300px
+floor) so the page keeps at least 320px, and on viewports too narrow for both it overlays
+instead of squashing the page. Sites with other fixed-header patterns may need additional
+selectors in `overlay.js`.
+
+### Tabs
+
+| Tab | Contents |
+|-----|----------|
+| Ask | Answer above the question box + disclaimer (default tab on every expand) |
+| TAO | Think → Act → Observe steps for the last answer |
+| Trace | Placeholder — coming soon |
+| Memory | Placeholder — coming soon |
+| Settings | API health + shortcuts |
+
+---
+
 ## Settings
 
 | Control | Purpose |
 |---------|---------|
-| Agent API URL | Override Render vs local `http://127.0.0.1:8000` |
-| API key | Sent as `X-API-Key` when the server has `AGENT_API_KEY` set |
 | Check now | `GET /health` |
-| Send anonymous error reports | Opt-in `POST /telemetry` (no question text) |
-| Privacy policy link | Opens `privacy-policy.html` |
+| Privacy policy link | On the Ask tab — opens `privacy-policy.html` |
 
 ---
 

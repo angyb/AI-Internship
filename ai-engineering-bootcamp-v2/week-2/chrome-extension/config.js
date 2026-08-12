@@ -13,6 +13,10 @@
     API_KEY_STORAGE_KEY: "agentApiKey",
     TELEMETRY_STORAGE_KEY: "telemetryOptIn",
     INSTALL_ID_STORAGE_KEY: "installId",
+    LAYOUT_STORAGE_KEY: "layoutMode",
+
+    // "panel" docks the expanded UI to the right edge; "overlay" floats it.
+    DEFAULT_LAYOUT_MODE: "panel",
 
     // First Render request after idle can take ~60s; the agent loop itself
     // (multi-step retrieval + optional Google fallback) can be slow.

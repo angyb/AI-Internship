@@ -35,7 +35,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["overlay.css", "icons/icon48.png", "privacy-policy.html"],
+      "resources": [
+        "overlay.css",
+        "icons/icon48.png",
+        "icons/zbot-mark.png",
+        "privacy-policy.html"
+      ],
       "matches": ["*://*.zearn.org/*", "*://zearn.org/*"]
     }
   ]

@@ -14,10 +14,14 @@ zip -r "$ZIP" . \
   -x './dist/*' \
   -x './scripts/*' \
   -x './screenshots/*' \
+  -x './preview/*' \
+  -x './preview.html' \
+  -x './_preview.html' \
   -x './.DS_Store' \
   -x './**/.DS_Store' \
   -x './store-listing.md' \
-  -x './PUBLISH_CHECKLIST.md'
+  -x './PUBLISH_CHECKLIST.md' \
+  -x './ask-zbot-cloud-handoff.md'
 
 echo "Wrote $ZIP"
 unzip -l "$ZIP" | head -40

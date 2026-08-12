@@ -8,6 +8,7 @@
  * Messages:
  *   - { type: "wake" } -> GET /health
  *   - { type: "ask", question } -> POST /agent
+ *   - { type: "cancelAsk" } -> abort in-flight /agent request
  *   - { type: "getSettings" } / { type: "saveSettings", ... }
  *   - { type: "reportError", message } -> optional POST /telemetry
  *   - chrome.commands "toggle-zbot" (Alt+Z)
@@ -19,6 +20,12 @@ const CONFIG = self.ZBOT_CONFIG;
 
 function normalizeBase(url) {
   return (url || CONFIG.DEFAULT_AGENT_API_URL).replace(/\/+$/, "");
+}
+
+function normalizeLayoutMode(mode) {
+  return mode === "overlay" || mode === "panel"
+    ? mode
+    : CONFIG.DEFAULT_LAYOUT_MODE;
 }
 
 async function ensureInstallId() {
@@ -42,12 +49,14 @@ async function loadSettings() {
     CONFIG.STORAGE_KEY,
     CONFIG.API_KEY_STORAGE_KEY,
     CONFIG.TELEMETRY_STORAGE_KEY,
+    CONFIG.LAYOUT_STORAGE_KEY,
   ]);
   return {
     base: normalizeBase(sync[CONFIG.STORAGE_KEY]),
     defaultBase: CONFIG.DEFAULT_AGENT_API_URL,
     apiKey: (sync[CONFIG.API_KEY_STORAGE_KEY] || "").trim(),
     telemetryOptIn: Boolean(sync[CONFIG.TELEMETRY_STORAGE_KEY]),
+    layoutMode: normalizeLayoutMode(sync[CONFIG.LAYOUT_STORAGE_KEY]),
     agentTimeoutMs: CONFIG.AGENT_TIMEOUT_MS,
     healthTimeoutMs: CONFIG.HEALTH_TIMEOUT_MS,
     extensionVersion: CONFIG.EXTENSION_VERSION,
@@ -65,6 +74,9 @@ async function saveSettings(partial) {
   }
   if (Object.prototype.hasOwnProperty.call(partial, "telemetryOptIn")) {
     toSync[CONFIG.TELEMETRY_STORAGE_KEY] = Boolean(partial.telemetryOptIn);
+  }
+  if (Object.prototype.hasOwnProperty.call(partial, "layoutMode")) {
+    toSync[CONFIG.LAYOUT_STORAGE_KEY] = normalizeLayoutMode(partial.layoutMode);
   }
   if (Object.keys(toSync).length) {
     await chrome.storage.sync.set(toSync);
@@ -87,12 +99,35 @@ async function authHeaders() {
 
 async function fetchWithTimeout(url, options, timeoutMs) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const timer = setTimeout(() => controller.abort("timeout"), timeoutMs);
+  const external = options && options.signal;
+  function onExternalAbort() {
+    controller.abort("cancelled");
+  }
+  if (external) {
+    if (external.aborted) controller.abort("cancelled");
+    else external.addEventListener("abort", onExternalAbort, { once: true });
+  }
   try {
     return await fetch(url, { ...options, signal: controller.signal });
   } finally {
     clearTimeout(timer);
+    if (external) external.removeEventListener("abort", onExternalAbort);
   }
+}
+
+let activeAsk = null;
+
+function cancelAsk() {
+  if (activeAsk) {
+    activeAsk.cancelled = true;
+    try {
+      activeAsk.controller.abort();
+    } catch (_e) {
+      // ignore
+    }
+  }
+  return { cancelled: true };
 }
 
 async function extractDetail(response) {
@@ -130,6 +165,9 @@ async function handleWake() {
 }
 
 async function handleAsk(question) {
+  cancelAsk();
+  const entry = { controller: new AbortController(), cancelled: false };
+  activeAsk = entry;
   const { headers, settings } = await authHeaders();
   try {
     const resp = await fetchWithTimeout(
@@ -138,6 +176,7 @@ async function handleAsk(question) {
         method: "POST",
         headers,
         body: JSON.stringify({ question }),
+        signal: entry.controller.signal,
       },
       CONFIG.AGENT_TIMEOUT_MS
     );
@@ -154,6 +193,7 @@ async function handleAsk(question) {
     };
   } catch (e) {
     if (e && e.name === "AbortError") {
+      if (entry.cancelled) return { cancelled: true };
       const seconds = Math.round(CONFIG.AGENT_TIMEOUT_MS / 1000);
       return {
         error:
@@ -165,6 +205,8 @@ async function handleAsk(question) {
     return {
       error: "Could not reach the agent API at " + settings.base + ": " + String(e),
     };
+  } finally {
+    if (activeAsk === entry) activeAsk = null;
   }
 }
 
@@ -216,6 +258,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type === "ask") {
     handleAsk(String(msg.question || "")).then(sendResponse);
     return true;
+  }
+  if (msg.type === "cancelAsk") {
+    sendResponse(cancelAsk());
+    return false;
   }
   if (msg.type === "wake") {
     handleWake().then(sendResponse);

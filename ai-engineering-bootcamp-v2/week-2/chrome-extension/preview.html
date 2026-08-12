@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ask Z-Bot — UI preview</title>
+    <style>
+      html {
+        width: 100%;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        background: #f7fafc;
+        color: #243047;
+      }
+      .bar {
+        background: #fff;
+        color: #243047;
+        border-bottom: 1px solid #f0f0f0;
+        padding: 0 24px;
+        height: 5rem;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+        box-sizing: border-box;
+      }
+      .bar__actions {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .bar__signup {
+        background: #4b2e83;
+        color: #fff;
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font: inherit;
+      }
+      .bar-spacer {
+        height: 5rem;
+      }
+      .bar__note {
+        font-weight: 500;
+        font-size: 13px;
+        opacity: 0.85;
+      }
+      .wrap {
+        display: flex;
+        gap: 24px;
+        padding: 24px;
+      }
+      .side {
+        flex: 0 0 200px;
+        background: #eef3f7;
+        border-radius: 12px;
+        padding: 16px;
+        line-height: 1.7;
+      }
+      .main {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #dde5ea;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      code {
+        background: rgba(27, 43, 75, 0.06);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 0.92em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar navigation_fixed">
+      <span>ZEARN (preview)</span>
+      <div class="bar__actions">
+        <span aria-hidden="true">🔍</span>
+        <button class="bar__signup" type="button">Sign up</button>
+        <span>Log in →</span>
+        <span class="bar__note">Stubbed agent</span>
+      </div>
+    </div>
+    <div class="bar-spacer navigation-spacer"></div>
+    <div class="wrap">
+      <div class="side">
+        Sidebar<br />
+        Getting started<br />
+        Tower of Power
+      </div>
+      <div class="main">
+        <h1>Ask Z-Bot UI preview</h1>
+        <div class="card">
+          Local harness for the Shadow DOM overlay in
+          <code>overlay.js</code> / <code>overlay.css</code>. Messages are handled by
+          <code>preview/chrome-stub.js</code> (no service worker, no CORS). Answers
+          are fake — use Load unpacked + help.zearn.org for the real agent.
+        </div>
+        <div class="card">
+          Start with <code>./scripts/preview.sh</code>, then open the printed URL.
+          Optional query: <code>?layout=overlay</code> starts in floating mode.
+        </div>
+      </div>
+    </div>
+
+    <!-- Stub chrome.* before overlay scripts. -->
+    <script src="preview/chrome-stub.js"></script>
+    <script src="config.js"></script>
+    <script src="vendor/marked.min.js"></script>
+    <script src="overlay.js"></script>
+    <script>
+      (function () {
+        const params = new URLSearchParams(location.search);
+        const layout = params.get("layout");
+        if (layout === "overlay" || layout === "panel") {
+          window.__ZBOT_PREVIEW_SETTINGS.layoutMode = layout;
+        }
+
+        const overlay = new self.ZBotOverlay();
+        overlay.mount();
+        overlay.expand();
+        window.__askZbotOverlay = overlay;
+        window.__preview = overlay;
+      })();
+    </script>
+  </body>
+</html>
