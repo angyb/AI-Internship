@@ -289,6 +289,9 @@ def pack_units(
                 seed_len += piece_extra + len(piece)
             current = seed + [unit]
             current_len = len(joined(current))
+            if current_len > chunk_size:
+                current = [unit]
+                current_len = len(unit)
         else:
             current.append(unit)
             current_len += extra + len(unit)
@@ -330,13 +333,12 @@ def structure_chunk_document(
     if not text:
         return []
 
-    if len(text) <= chunk_size:
-        return [doc]
-
     source_type = _source_type_for_document(doc)
     units = split_into_units(text, source_type)
 
     if not has_structural_content(text, units):
+        if len(text) <= chunk_size:
+            return [doc]
         return splitter.split_documents([doc])
 
     packed = pack_units(units, chunk_size, chunk_overlap, splitter)

@@ -63,7 +63,14 @@ def test_pack_units_respects_chunk_size() -> None:
     units = ["alpha " * 40, "beta " * 40, "gamma " * 40]
     packed = pack_units(units, chunk_size=120, chunk_overlap=20, splitter=_splitter(120, 20))
     assert packed
-    assert all(len(chunk) <= 120 or "alpha" in chunk for chunk in packed)
+    assert all(len(chunk) <= 120 for chunk in packed)
+
+
+def test_pack_units_overlap_seed_respects_chunk_size() -> None:
+    units = ["a" * 50, "b" * 50, "c" * 90]
+    packed = pack_units(units, chunk_size=100, chunk_overlap=30, splitter=_splitter(100, 30))
+    assert packed
+    assert all(len(chunk) <= 100 for chunk in packed)
 
 
 def test_split_into_units_detects_topic_rows() -> None:
@@ -85,3 +92,17 @@ def test_short_document_kept_whole() -> None:
     chunks = structure_chunk_document(doc, 500, 80, _splitter())
     assert len(chunks) == 1
     assert chunks[0].page_content == doc.page_content
+
+
+def test_short_structural_document_gets_enrichment() -> None:
+    doc = Document(
+        page_content=(
+            "Grade 4 Learning progression\n"
+            "Topic 5: Divide by 1-Digit Numbers (10 lessons)\n"
+            "Note: continue working through Zearn Mission 3"
+        ),
+        metadata={"document_id": "align", "source": "zendesk/pdf/align.pdf", "page_number": 1},
+    )
+    chunks = structure_chunk_document(doc, 500, 80, _splitter())
+    assert len(chunks) == 1
+    assert "enVision Grade 4 Topic 5" in chunks[0].page_content

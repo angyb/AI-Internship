@@ -180,6 +180,28 @@
     "header.site-header",
   ];
 
+  /** Remove docked-panel inset styles from the host page (safe to call anytime). */
+  function cleanupPageShiftStyles() {
+    const root = document.documentElement;
+    if (root) {
+      root.classList.remove(PAGE_SHIFT_CLASS);
+      root.style.removeProperty("--zbot-panel-width");
+      root.style.removeProperty("margin-right");
+      root.style.removeProperty("width");
+    }
+    FIXED_HEADER_SELECTORS.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((el) => {
+        el.style.removeProperty("width");
+        el.style.removeProperty("max-width");
+      });
+    });
+  }
+
+  if (!window.__zbotPageShiftCleanupRegistered) {
+    window.__zbotPageShiftCleanupRegistered = true;
+    window.addEventListener("pagehide", cleanupPageShiftStyles);
+  }
+
   function sendMessage(message) {
     return new Promise((resolve) => {
       try {
@@ -492,19 +514,7 @@
     clearPageShift() {
       if (!this.pageShiftActive) return;
       this.pageShiftActive = false;
-      const root = document.documentElement;
-      if (root) {
-        root.classList.remove(PAGE_SHIFT_CLASS);
-        root.style.removeProperty("--zbot-panel-width");
-        root.style.removeProperty("margin-right");
-        root.style.removeProperty("width");
-      }
-      (this._shiftedHeaders || []).forEach((el) => {
-        if (el && el.isConnected) {
-          el.style.removeProperty("width");
-          el.style.removeProperty("max-width");
-        }
-      });
+      cleanupPageShiftStyles();
       this._shiftedHeaders = [];
     }
 

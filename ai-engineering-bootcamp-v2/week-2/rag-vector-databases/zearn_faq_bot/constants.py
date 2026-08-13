@@ -10,7 +10,8 @@ load_dotenv()
 
 MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 MAX_LLM_CALLS = 15
-CHUNK_TEXT_LIMIT = 800
+# Neighbor merge can combine several ingest chunks (~500 chars each) into one block.
+CHUNK_TEXT_LIMIT = int(os.getenv("CHUNK_TEXT_LIMIT", "2400"))
 
 REFUSAL_MESSAGE = (
     "I couldn't find that in the Zearn documentation corpus. "
