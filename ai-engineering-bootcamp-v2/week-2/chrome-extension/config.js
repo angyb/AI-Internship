@@ -8,7 +8,7 @@
   self.ZBOT_CONFIG = {
     // Default Render API. Override per-install via the overlay's API URL field
     // (persisted to chrome.storage.sync under STORAGE_KEY) for local uvicorn.
-    DEFAULT_AGENT_API_URL: "https://ai-internship-i3lw.onrender.com",
+    DEFAULT_AGENT_API_URL: "https://zearn-faq-bot.onrender.com",
     STORAGE_KEY: "agentApiUrl",
     API_KEY_STORAGE_KEY: "agentApiKey",
     TELEMETRY_STORAGE_KEY: "telemetryOptIn",
