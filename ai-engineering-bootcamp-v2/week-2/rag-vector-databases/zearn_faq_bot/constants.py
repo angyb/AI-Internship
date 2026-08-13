@@ -10,7 +10,7 @@ load_dotenv()
 
 MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 MAX_LLM_CALLS = 15
-CHUNK_TEXT_LIMIT = 500
+CHUNK_TEXT_LIMIT = 800
 
 REFUSAL_MESSAGE = (
     "I couldn't find that in the Zearn documentation corpus. "

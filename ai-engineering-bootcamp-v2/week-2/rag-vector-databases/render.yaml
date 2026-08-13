@@ -51,7 +51,7 @@ services:
       - key: RETRIEVAL_FETCH_K
         value: "20"
       - key: MAX_CHUNKS_PER_DOCUMENT
-        value: "1"
+        value: "3"
 
       # Ingest chunking (used by POST /ingest when query params omitted)
       - key: CHUNK_SIZE
@@ -61,11 +61,11 @@ services:
 
       # Neighbor-chunk expansion
       - key: NEIGHBOR_CHUNKS_ENABLED
-        value: "false"
+        value: "true"
       - key: NEIGHBOR_CHUNK_RADIUS
         value: "1"
       - key: NEIGHBOR_MERGE_ENABLED
-        value: "false"
+        value: "true"
 
       # Cap LLM context blocks after neighbor expand/merge
       - key: MAX_CONTEXT_CHUNKS_ENABLED

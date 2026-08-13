@@ -35,8 +35,8 @@
     runtime: {
       lastError: null,
       getURL: function (path) {
-        // Load CSS / privacy from this origin instead of chrome-extension://.
-        return path;
+        // Absolute URLs so @font-face and stylesheets work inside Shadow DOM.
+        return new URL(String(path || "").replace(/^\//, ""), location.href).href;
       },
       onMessage: {
         addListener: function () {},
@@ -100,8 +100,8 @@
             }
             respond(cb, {
               answer:
-                "A **Tower Alert** appears when students struggle repeatedly on a Tower of Power.\n\n" +
-                "Sources: [Tower Alerts](https://help.zearn.org)",
+                "A Tower Alert is generated for a teacher when a student receives **three Boosts** in the same Tower of Power.\n\n" +
+                "Sources: [Boosts](https://help.zearn.org/hc/en-us/articles/boosts)",
               steps: [
                 {
                   phase: "Think",

@@ -2,11 +2,19 @@
   "manifest_version": 3,
   "name": "Ask Z-Bot — Zearn Support Agent",
   "version": "1.0.0",
-  "description": "Floating Ask Z-Bot overlay on zearn.org that answers Zearn support questions via the Zearn Support Agent (POST /agent).",
+  "description": "Floating Ask Z-Bot overlay on zearn.org and Zearn staging that answers support questions via the Zearn Support Agent (POST /agent).",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Ask Z-Bot (Alt+Z)"
   },
   "permissions": ["storage"],
   "host_permissions": [
@@ -28,7 +36,11 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.zearn.org/*", "*://zearn.org/*"],
+      "matches": [
+        "*://*.zearn.org/*",
+        "*://zearn.org/*",
+        "*://staging-zearny.herokuapp.com/*"
+      ],
       "js": ["config.js", "vendor/marked.min.js", "overlay.js", "content.js"],
       "run_at": "document_idle"
     }
@@ -37,11 +49,20 @@
     {
       "resources": [
         "overlay.css",
+        "fonts/source-sans-pro.css",
+        "fonts/source-sans-pro-regular.ttf",
+        "fonts/source-sans-pro-semibold.ttf",
+        "fonts/source-sans-pro-bold.ttf",
+        "fonts/source-sans-pro-italic.ttf",
         "icons/icon48.png",
         "icons/zbot-mark.png",
         "privacy-policy.html"
       ],
-      "matches": ["*://*.zearn.org/*", "*://zearn.org/*"]
+      "matches": [
+        "*://*.zearn.org/*",
+        "*://zearn.org/*",
+        "*://staging-zearny.herokuapp.com/*"
+      ]
     }
   ]
 }

@@ -37,26 +37,26 @@
   --zbot-danger-line: #f5c2c0;
   --zbot-shadow: 0 14px 40px rgba(27, 43, 75, 0.22);
 
-  font-family: "Nunito Sans", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-family: "Source Sans Pro", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-synthesis: none;
   line-height: 1.5;
   color: var(--zbot-ink);
 }
 
-/* --- Collapsed pill --- */
+/* --- Collapsed launcher (round icon button) --- */
 
 .zbot-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px 10px 12px;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
   background: var(--zbot-accent);
   color: var(--zbot-on-accent);
   border: none;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.01em;
+  border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 8px 22px rgba(28, 199, 230, 0.38);
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
@@ -69,8 +69,8 @@
 }
 
 .zbot-pill__mark {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
 }
 
 .zbot-brand-mark {
@@ -132,7 +132,7 @@
 
 .zbot-header__title {
   font-weight: 800;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: 0.01em;
 }
 
@@ -149,7 +149,7 @@
   height: 28px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -183,7 +183,7 @@
   border-bottom: 3px solid transparent;
   color: var(--zbot-muted);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
@@ -233,13 +233,13 @@
   border: 1px dashed var(--zbot-line);
   border-radius: 12px;
   color: var(--zbot-muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .zbot-trace-intro {
   margin: 0 0 12px;
   color: var(--zbot-muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -253,7 +253,7 @@
   background: var(--zbot-surface);
   border: 1px solid var(--zbot-line);
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -278,22 +278,96 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Empty / status-only state (e.g. "Waking up the API…") — no scrollbar flicker. */
-.zbot-ask-scroll:not(:has([data-el="output"] > *)) {
+/* Empty / status-only state — no scrollbar flicker before first question. */
+.zbot-ask-scroll:not(:has(.zbot-thread > *)) {
   overflow-y: hidden;
 }
 
-.zbot-ask-scroll [data-el="output"]:empty {
+.zbot-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.zbot-thread:empty {
   display: none;
 }
 
-.zbot-ask-scroll [data-el="output"] > :first-child {
-  margin-top: 0;
+.zbot-thread-ask,
+.zbot-thread-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 16px;
+}
+
+.zbot-thread-ask {
+  padding-left: 24px;
+}
+
+.zbot-thread-answer {
+  padding-right: 24px;
+}
+
+.zbot-thread-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.66px;
+  line-height: 16.5px;
+  text-transform: uppercase;
+  color: var(--zbot-muted);
+}
+
+.zbot-thread-ask .zbot-thread-label {
+  padding-right: 4px;
+  text-align: right;
+}
+
+.zbot-thread-answer .zbot-thread-label {
+  padding-left: 4px;
+}
+
+.zbot-thread-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 13px;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.3125;
+  color: var(--zbot-ink);
+}
+
+.zbot-thread-ask .zbot-thread-bubble {
+  background: #f6f6f6;
+  border: 1px solid #d8d8d8;
+}
+
+.zbot-thread-answer .zbot-thread-bubble {
+  background: #fff;
+  border: 1px solid #cfdae1;
+}
+
+.zbot-thread-bubble__body {
+  word-break: break-word;
+}
+
+.zbot-thread-bubble__body--pending {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--zbot-muted);
+}
+
+.zbot-thread-bubble .zbot-banner {
+  margin: 0;
 }
 
 .zbot-ask-footer {
   flex: 0 0 auto;
-  padding-top: 10px;
+  padding-top: 11px;
   margin-top: 4px;
   border-top: 1px solid var(--zbot-line);
   display: flex;
@@ -304,7 +378,7 @@
 
 .zbot-disclaimer {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--zbot-muted);
 }
 
@@ -319,17 +393,32 @@
 .zbot-form {
   display: flex;
   gap: 8px;
+  align-items: flex-end;
 }
 
 .zbot-input {
   flex: 1 1 auto;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid var(--zbot-line);
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 16px;
   font-family: inherit;
   color: var(--zbot-ink);
   background: #fff;
+}
+
+.zbot-input--question {
+  resize: none;
+  min-height: 42px;
+  max-height: var(--zbot-question-max-height, 50%);
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.zbot-input::placeholder {
+  color: #8e8e8e;
+  font-style: italic;
 }
 
 .zbot-input:focus {
@@ -345,7 +434,7 @@
   border: none;
   border-radius: 10px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
   font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
@@ -384,7 +473,7 @@
 
 .zbot-status {
   margin-top: 10px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--zbot-muted);
   min-height: 16px;
 }
@@ -393,7 +482,7 @@
   margin-top: 12px;
   padding: 10px 12px;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 14px;
   border: 1px solid transparent;
 }
 
@@ -424,7 +513,7 @@
 
 .zbot-section-title {
   margin: 16px 0 8px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -441,7 +530,7 @@
   border: 1px solid var(--zbot-line);
   border-radius: 10px;
   padding: 8px 10px;
-  font-size: 13px;
+  font-size: 14px;
   background: #fff;
 }
 
@@ -472,7 +561,7 @@
   background: rgba(27, 43, 75, 0.06);
   padding: 1px 4px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .zbot-step details {
@@ -482,7 +571,7 @@
 .zbot-step summary {
   cursor: pointer;
   color: var(--zbot-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .zbot-step pre {
@@ -492,25 +581,24 @@
   color: #f5efe9;
   border-radius: 8px;
   overflow-x: auto;
-  font-size: 11px;
+  font-size: 12px;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-/* --- Answer --- */
+/* --- Answer markdown (inside thread bubbles) --- */
 
 .zbot-answer {
-  margin-top: 6px;
   color: var(--zbot-ink);
   word-break: break-word;
-  background: #fff;
-  border: 1px solid var(--zbot-line);
-  border-radius: 12px;
-  padding: 12px;
 }
 
 .zbot-answer p:first-child {
   margin-top: 0;
+}
+
+.zbot-answer p:last-child {
+  margin-bottom: 0;
 }
 
 .zbot-answer a {
@@ -574,7 +662,7 @@
 
 .zbot-settings__status {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--zbot-btn);
   min-height: 16px;
@@ -582,7 +670,7 @@
 
 .zbot-settings__label {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--zbot-navy);
   margin-bottom: 6px;
@@ -600,13 +688,13 @@
 }
 
 .zbot-settings__row .zbot-input {
-  font-size: 12px;
+  font-size: 13px;
   padding: 8px 10px;
 }
 
 .zbot-settings__hint {
   margin-top: 6px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--zbot-muted);
   word-break: break-word;
 }
@@ -615,13 +703,13 @@
   background: rgba(27, 43, 75, 0.06);
   padding: 1px 4px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .zbot-settings__meta {
   margin: 0;
   padding-left: 18px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--zbot-ink);
 }
 
@@ -636,7 +724,7 @@
   border-bottom-width: 2px;
   border-radius: 4px;
   background: var(--zbot-warm);
-  font-size: 11px;
+  font-size: 12px;
   font-family: inherit;
 }
 
@@ -644,7 +732,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--zbot-ink);
   cursor: pointer;
 }
@@ -659,7 +747,7 @@
 
 .zbot-health {
   flex: 1 1 auto;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--zbot-muted);
   word-break: break-word;
 }

@@ -238,10 +238,12 @@ async function reportError(message) {
 }
 
 async function handleEvalAgent() {
-  const { headers, settings } = await authHeaders();
+  let base = CONFIG.DEFAULT_AGENT_API_URL;
   try {
+    const { headers, settings } = await authHeaders();
+    base = settings.base;
     const resp = await fetchWithTimeout(
-      settings.base + "/eval-agent",
+      base + "/eval-agent",
       {
         method: "POST",
         headers,
@@ -255,7 +257,7 @@ async function handleEvalAgent() {
         return {
           error:
             "POST /eval-agent not found on " +
-            settings.base +
+            base +
             ". Deploy the latest week-2-rag-api to Render.",
           status: resp.status,
         };
@@ -267,7 +269,7 @@ async function handleEvalAgent() {
     const timedOut = e && e.name === "AbortError";
     return {
       error: timedOut ? "Agent checks timed out" : String(e),
-      base: settings.base,
+      base,
     };
   }
 }

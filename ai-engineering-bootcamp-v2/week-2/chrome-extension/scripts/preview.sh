@@ -11,7 +11,10 @@ cd "$ROOT"
 
 if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
   echo "Port $PORT is already in use."
-  echo "Open $URL (or pass a free port: ./scripts/preview.sh 8766)"
+  echo "Stop the old preview server so you pick up latest JS/CSS/fonts:"
+  echo "  kill \$(lsof -t -iTCP:$PORT -sTCP:LISTEN)"
+  echo "Then run ./scripts/preview.sh again."
+  echo "Open $URL (hard-refresh: Cmd+Shift+R)"
   if command -v open >/dev/null 2>&1; then
     open "$URL"
   fi

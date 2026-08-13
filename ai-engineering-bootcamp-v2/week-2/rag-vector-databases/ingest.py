@@ -19,6 +19,7 @@ from bm25_index import ensure_bm25_ready, get_bm25_index
 from model_config import embedding_model
 from retrieval_config import chunk_overlap as configured_chunk_overlap
 from retrieval_config import chunk_size as configured_chunk_size
+from structure_chunking import soft_normalize_pdf_text, structure_chunk_document
 
 try:
     import fitz  # pymupdf
@@ -256,9 +257,8 @@ def _load_markdown(path: Path) -> Document | None:
 
 
 def _normalize_pdf_text(text: str) -> str:
-    """Collapse PDF extraction whitespace so chunk boundaries land on words."""
-    text = _strip_invisible_chars(text)
-    return re.sub(r"\s+", " ", text).strip()
+    """Preserve PDF line structure for structure-aware chunking."""
+    return soft_normalize_pdf_text(text)
 
 
 def _extract_pdf_page_texts(path: Path) -> list[tuple[int, str]]:
@@ -414,6 +414,7 @@ def chunk_text(
     title: str = "",
     source_url: str = "",
 ) -> list[Document]:
+    chunk_size, chunk_overlap = resolve_chunk_settings(chunk_size, chunk_overlap)
     splitter = _make_splitter(chunk_size, chunk_overlap)
     metadata: dict[str, str] = {"document_id": document_id, "source": source}
     if title:
@@ -421,7 +422,7 @@ def chunk_text(
     if source_url:
         metadata["source_url"] = source_url
     doc = Document(page_content=text, metadata=metadata)
-    return splitter.split_documents([doc])
+    return structure_chunk_document(doc, chunk_size, chunk_overlap, splitter)
 
 
 def chunk_documents(
@@ -431,20 +432,9 @@ def chunk_documents(
 ) -> list[Document]:
     chunk_size, chunk_overlap = resolve_chunk_settings(chunk_size, chunk_overlap)
     splitter = _make_splitter(chunk_size, chunk_overlap)
-
-    markdown_docs = [doc for doc in documents if not _is_pdf_page_document(doc)]
-    pdf_page_docs = [doc for doc in documents if _is_pdf_page_document(doc)]
-
     chunks: list[Document] = []
-    if markdown_docs:
-        chunks.extend(splitter.split_documents(markdown_docs))
-
-    for page_doc in pdf_page_docs:
-        if len(page_doc.page_content) <= chunk_size:
-            chunks.append(page_doc)
-            continue
-        chunks.extend(splitter.split_documents([page_doc]))
-
+    for doc in documents:
+        chunks.extend(structure_chunk_document(doc, chunk_size, chunk_overlap, splitter))
     return chunks
 
 

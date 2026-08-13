@@ -53,9 +53,9 @@
 
   const PANEL_HTML = `
     <div class="zbot-root">
-      <button class="zbot-pill" type="button" data-act="open" title="Ask Z-Bot (Alt+Z)">
-        <img class="zbot-brand-mark zbot-pill__mark" data-el="brand-mark" alt="" width="22" height="22" aria-hidden="true" />
-        <span>Ask Z-Bot</span>
+      <button class="zbot-pill" type="button" data-act="open"
+              title="Ask Z-Bot (Alt+Z)" aria-label="Ask Z-Bot (Alt+Z)">
+        <img class="zbot-brand-mark zbot-pill__mark" data-el="brand-mark" alt="" width="26" height="26" aria-hidden="true" />
       </button>
 
       <div class="zbot-panel zbot-hidden" role="dialog" aria-label="Ask Z-Bot">
@@ -81,13 +81,13 @@
           <section class="zbot-tabpanel zbot-tabpanel--ask" role="tabpanel" data-tabpanel="ask"
                    id="zbot-panel-ask" aria-labelledby="zbot-tab-ask">
             <div class="zbot-ask-scroll">
-              <div data-el="output"></div>
+              <div class="zbot-thread" data-el="output"></div>
               <div class="zbot-status" data-el="status"></div>
             </div>
             <div class="zbot-ask-footer">
               <form class="zbot-form" data-el="form">
-                <input class="zbot-input" data-el="question" type="text"
-                       placeholder="Ask a Zearn support question..." autocomplete="off" />
+                <textarea class="zbot-input zbot-input--question" data-el="question" rows="1"
+                          placeholder="Ask a Zearn support question..." autocomplete="off"></textarea>
                 <button class="zbot-btn" data-el="ask" type="submit">Ask</button>
               </form>
               <p class="zbot-disclaimer">
@@ -172,36 +172,13 @@
 
   const PAGE_SHIFT_CLASS = "ask-zbot-page-shift";
   const PAGE_SHIFT_STYLE_ID = "ask-zbot-page-shift-style";
-  const PAGE_SHIFT_CSS =
-    "html." +
-    PAGE_SHIFT_CLASS +
-    "{margin-right:var(--zbot-panel-width)!important;width:auto!important;}" +
-    "html." +
-    PAGE_SHIFT_CLASS +
-    " .navigation_fixed," +
-    "html." +
-    PAGE_SHIFT_CLASS +
-    " .navigation_fixed.w-nav," +
-    "html." +
-    PAGE_SHIFT_CLASS +
-    " .w-nav-overlay," +
-    "html." +
-    PAGE_SHIFT_CLASS +
-    " .header," +
-    "html." +
-    PAGE_SHIFT_CLASS +
-    " header.site-header{" +
-    "width:calc(100% - var(--zbot-panel-width))!important;" +
-    "max-width:calc(100% - var(--zbot-panel-width))!important;" +
-    "}";
-
-  function ensurePageShiftStyle() {
-    if (document.getElementById(PAGE_SHIFT_STYLE_ID)) return;
-    const style = document.createElement("style");
-    style.id = PAGE_SHIFT_STYLE_ID;
-    style.textContent = PAGE_SHIFT_CSS;
-    document.head.appendChild(style);
-  }
+  const FIXED_HEADER_SELECTORS = [
+    ".navigation_fixed",
+    ".navigation_fixed.w-nav",
+    ".w-nav-overlay",
+    ".header",
+    "header.site-header",
+  ];
 
   function sendMessage(message) {
     return new Promise((resolve) => {
@@ -250,6 +227,69 @@
     });
   }
 
+  function classifyAnswer(answer, steps) {
+    const text = (answer || "").trim();
+    const isWebFallback =
+      text.indexOf(CONFIG.FALLBACK_PREFIX) !== -1 || usedWebFallback(steps);
+    const isRefusal =
+      !isWebFallback &&
+      (!text ||
+        text === CONFIG.REFUSAL_MESSAGE ||
+        text
+          .toLowerCase()
+          .indexOf("couldn't find that in the zearn documentation corpus") !== -1);
+    return { isWebFallback, isRefusal, text };
+  }
+
+  const FONT_FAMILY = "Source Sans Pro";
+  const FONT_DEFS = [
+    { weight: "400", style: "normal", path: "fonts/source-sans-pro-regular.ttf" },
+    { weight: "600", style: "normal", path: "fonts/source-sans-pro-semibold.ttf" },
+    { weight: "700", style: "normal", path: "fonts/source-sans-pro-bold.ttf" },
+    { weight: "400", style: "italic", path: "fonts/source-sans-pro-italic.ttf" },
+  ];
+
+  /** Register bundled Source Sans Pro for the shadow overlay (absolute extension URLs). */
+  function injectBundledFonts(shadow) {
+    const faces = FONT_DEFS.map((def) => ({
+      ...def,
+      url: chrome.runtime.getURL(def.path),
+    }));
+
+    const style = document.createElement("style");
+    style.textContent = faces
+      .map(
+        (f) =>
+          '@font-face{font-family:"' +
+          FONT_FAMILY +
+          '";font-style:' +
+          f.style +
+          ";font-weight:" +
+          f.weight +
+          ';font-display:swap;src:url("' +
+          f.url +
+          '") format("truetype");}'
+      )
+      .join("");
+    shadow.appendChild(style);
+
+    if (typeof FontFace !== "undefined" && document.fonts) {
+      Promise.all(
+        faces.map(function (f) {
+          const face = new FontFace(FONT_FAMILY, 'url("' + f.url + '")', {
+            weight: f.weight,
+            style: f.style,
+          });
+          return face.load().then(function (loaded) {
+            document.fonts.add(loaded);
+          });
+        })
+      ).catch(function () {
+        /* @font-face block above is the fallback */
+      });
+    }
+  }
+
   class ZBotOverlay {
     constructor() {
       this.host = null;
@@ -262,6 +302,8 @@
       this.layoutMode = CONFIG.DEFAULT_LAYOUT_MODE;
       this.activeTab = DEFAULT_TAB;
       this.pageShiftActive = false;
+      this._shiftedHeaders = [];
+      this.thread = [];
       this.askGeneration = 0;
     }
 
@@ -270,6 +312,8 @@
       this.host.id = "ask-zbot-overlay-host";
       this.host.style.cssText = HOST_CSS_FLOATING;
       this.shadow = this.host.attachShadow({ mode: "open" });
+
+      injectBundledFonts(this.shadow);
 
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -325,18 +369,44 @@
         if (this.loading) this.stopAsk();
         else this.ask();
       });
+      this.els.question.addEventListener("input", () => this.resizeQuestionInput());
+      this.els.question.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (this.loading) this.stopAsk();
+          else this.ask();
+        }
+      });
       this.els.healthCheck.addEventListener("click", () => this.checkHealth(true));
       this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
 
       window.addEventListener("resize", () => {
         if (this.layoutMode === "panel" && this.expanded) this.applyPageShift();
+        if (this.expanded) this.resizeQuestionInput();
       });
 
-      document.documentElement.appendChild(this.host);
+      this.attachHostToPage();
       this.applyLayout();
       this.switchTab(DEFAULT_TAB);
       this.renderTaoEmpty();
       this.loadSettings();
+    }
+
+    attachHostToPage() {
+      const pageRoot = document.documentElement || document.body;
+      if (pageRoot) {
+        pageRoot.appendChild(this.host);
+        return;
+      }
+      const finish = () => {
+        const root = document.documentElement || document.body;
+        if (root) root.appendChild(this.host);
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", finish, { once: true });
+      } else {
+        requestAnimationFrame(finish);
+      }
     }
 
     applyLayout() {
@@ -358,6 +428,22 @@
         this.panel.style.removeProperty("width");
         this.clearPageShift();
       }
+      if (this.expanded) this.resizeQuestionInput();
+    }
+
+    /** Grow the question box with wrapped lines, capped at half the panel height. */
+    resizeQuestionInput() {
+      const el = this.els.question;
+      if (!el || !this.panel) return;
+
+      const maxHeight = Math.floor(this.panel.clientHeight * 0.5);
+      this.panel.style.setProperty("--zbot-question-max-height", maxHeight + "px");
+
+      el.style.height = "auto";
+      const scrollHeight = el.scrollHeight;
+      const nextHeight = Math.min(scrollHeight, maxHeight);
+      el.style.height = nextHeight + "px";
+      el.style.overflowY = scrollHeight > maxHeight ? "auto" : "hidden";
     }
 
     /**
@@ -376,10 +462,30 @@
       const width = Math.min(DOCKED_PANEL_WIDTH_PX, available);
       this.panel.style.width = width + "px";
 
-      ensurePageShiftStyle();
       const root = document.documentElement;
-      root.style.setProperty("--zbot-panel-width", width + "px");
-      root.classList.add(PAGE_SHIFT_CLASS);
+      if (!root) {
+        this.pageShiftActive = false;
+        return;
+      }
+
+      const staleStyle = document.getElementById(PAGE_SHIFT_STYLE_ID);
+      if (staleStyle) staleStyle.remove();
+
+      const inset = width + "px";
+      root.style.setProperty("--zbot-panel-width", inset);
+      root.style.setProperty("margin-right", inset, "important");
+      root.style.setProperty("width", "auto", "important");
+      root.classList.remove(PAGE_SHIFT_CLASS);
+
+      this._shiftedHeaders = [];
+      FIXED_HEADER_SELECTORS.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((el) => {
+          this._shiftedHeaders.push(el);
+          el.style.setProperty("width", "calc(100% - " + inset + ")", "important");
+          el.style.setProperty("max-width", "calc(100% - " + inset + ")", "important");
+        });
+      });
+
       this.pageShiftActive = true;
     }
 
@@ -387,8 +493,19 @@
       if (!this.pageShiftActive) return;
       this.pageShiftActive = false;
       const root = document.documentElement;
-      root.classList.remove(PAGE_SHIFT_CLASS);
-      root.style.removeProperty("--zbot-panel-width");
+      if (root) {
+        root.classList.remove(PAGE_SHIFT_CLASS);
+        root.style.removeProperty("--zbot-panel-width");
+        root.style.removeProperty("margin-right");
+        root.style.removeProperty("width");
+      }
+      (this._shiftedHeaders || []).forEach((el) => {
+        if (el && el.isConnected) {
+          el.style.removeProperty("width");
+          el.style.removeProperty("max-width");
+        }
+      });
+      this._shiftedHeaders = [];
     }
 
     toggleLayout() {
@@ -431,6 +548,7 @@
       this.applyLayout();
       this.switchTab(DEFAULT_TAB);
       this.els.question.focus();
+      this.resizeQuestionInput();
       if (!this.wakeTriggered) {
         this.wakeTriggered = true;
         this.wake();
@@ -566,7 +684,10 @@
       const generation = ++this.askGeneration;
       this.loading = true;
       this.setAskButtonMode("stop");
-      this.els.output.innerHTML = "";
+      this.els.question.value = "";
+      this.resizeQuestionInput();
+      this.thread.push({ question: question, pending: true, generation: generation });
+      this.renderThread();
       this.els.tao.innerHTML = "";
       this.setStatus(
         "Running agent… first request may take up to a minute while the API wakes up.",
@@ -574,33 +695,190 @@
       );
 
       const resp = await sendMessage({ type: "ask", question });
-      if (generation !== this.askGeneration) return;
+      if (generation !== this.askGeneration) {
+        this.removePendingTurn(generation);
+        return;
+      }
 
       this.loading = false;
       this.setAskButtonMode("ask");
       this.setStatus("");
 
       if (resp && resp.cancelled) {
+        this.removePendingTurn(generation);
         this.setStatus("Stopped.");
         return;
       }
       if (!resp || resp.error) {
         const message = (resp && resp.error) || "Unknown error.";
-        this.renderError(message);
+        this.completePendingTurn({
+          answer: "",
+          steps: [],
+          error: message,
+        });
         sendMessage({ type: "reportError", message: message });
         return;
       }
-      this.renderResult(resp.answer || "", resp.steps || []);
+      this.completePendingTurn({
+        answer: resp.answer || "",
+        steps: resp.steps || [],
+      });
+    }
+
+    removePendingTurn(generation) {
+      const index = this.thread.findIndex(
+        (turn) => turn.pending && turn.generation === generation
+      );
+      if (index === -1) return;
+      this.thread.splice(index, 1);
+      this.renderThread();
+    }
+
+    completePendingTurn(result) {
+      const turn = this.thread[this.thread.length - 1];
+      if (!turn || !turn.pending) return;
+
+      turn.pending = false;
+      turn.answer = result.answer || "";
+      turn.steps = result.steps || [];
+      turn.error = result.error || "";
+
+      const classified = classifyAnswer(turn.answer, turn.steps);
+      if (turn.error) {
+        turn.banner = "error";
+        turn.bannerText = turn.error;
+      } else if (classified.isWebFallback) {
+        turn.banner = "web";
+        turn.bannerText = "Not found in Zearn docs — sourced from the web";
+      } else if (classified.isRefusal) {
+        turn.banner = "refusal";
+        turn.bannerText = "Not found in corpus";
+      }
+
+      if (turn.steps && turn.steps.length) {
+        this.els.tao.innerHTML = "";
+        this.els.tao.appendChild(this.buildSteps(turn.steps));
+      } else {
+        this.renderTaoEmpty();
+      }
+
+      this.renderThread();
+    }
+
+    renderThread() {
+      const container = this.els.output;
+      container.innerHTML = "";
+
+      this.thread.forEach((turn) => {
+        container.appendChild(this.buildThreadAskBlock(turn.question));
+        if (turn.pending) {
+          container.appendChild(this.buildThreadPendingBlock());
+        } else {
+          container.appendChild(this.buildThreadAnswerBlock(turn));
+        }
+      });
+
+      this.scrollThreadToBottom();
+    }
+
+    scrollThreadToBottom() {
+      const scroll = this.shadow.querySelector(".zbot-ask-scroll");
+      if (!scroll) return;
+      requestAnimationFrame(() => {
+        scroll.scrollTop = scroll.scrollHeight;
+      });
+    }
+
+    buildThreadAskBlock(question) {
+      const block = document.createElement("div");
+      block.className = "zbot-thread-ask";
+
+      const label = document.createElement("div");
+      label.className = "zbot-thread-label";
+      label.textContent = "Ask";
+
+      const bubble = document.createElement("div");
+      bubble.className = "zbot-thread-bubble";
+
+      const body = document.createElement("div");
+      body.className = "zbot-thread-bubble__body";
+      body.textContent = question;
+
+      bubble.appendChild(body);
+      block.appendChild(label);
+      block.appendChild(bubble);
+      return block;
+    }
+
+    buildThreadPendingBlock() {
+      const block = document.createElement("div");
+      block.className = "zbot-thread-answer";
+
+      const label = document.createElement("div");
+      label.className = "zbot-thread-label";
+      label.textContent = "Answer";
+
+      const bubble = document.createElement("div");
+      bubble.className = "zbot-thread-bubble zbot-thread-bubble--pending";
+
+      const body = document.createElement("div");
+      body.className = "zbot-thread-bubble__body zbot-thread-bubble__body--pending";
+      const spinner = document.createElement("span");
+      spinner.className = "zbot-spinner";
+      body.appendChild(spinner);
+      body.appendChild(document.createTextNode(" Thinking…"));
+
+      bubble.appendChild(body);
+      block.appendChild(label);
+      block.appendChild(bubble);
+      return block;
+    }
+
+    buildThreadAnswerBlock(turn) {
+      const block = document.createElement("div");
+      block.className = "zbot-thread-answer";
+
+      const label = document.createElement("div");
+      label.className = "zbot-thread-label";
+      label.textContent = "Answer";
+
+      const bubble = document.createElement("div");
+      bubble.className = "zbot-thread-bubble";
+
+      if (turn.banner) {
+        bubble.appendChild(this.buildBanner(turn.banner, turn.bannerText));
+      }
+
+      const displayText =
+        (turn.answer || "").trim() ||
+        (turn.banner === "refusal" ? CONFIG.REFUSAL_MESSAGE : "");
+
+      const body = document.createElement("div");
+      body.className = "zbot-thread-bubble__body zbot-answer";
+      if (turn.error && !displayText) {
+        body.textContent = "Error: " + turn.error;
+      } else {
+        renderMarkdownInto(body, displayText || CONFIG.REFUSAL_MESSAGE);
+      }
+      bubble.appendChild(body);
+
+      block.appendChild(label);
+      block.appendChild(bubble);
+      return block;
     }
 
     stopAsk() {
       if (!this.loading) return;
+      const activeGeneration = this.askGeneration;
       this.askGeneration += 1;
       this.loading = false;
       this.setAskButtonMode("ask");
       this.setStatus("Stopping…");
       sendMessage({ type: "cancelAsk" }).then(() => {
-        if (!this.loading) this.setStatus("Stopped.");
+        if (!this.loading) {
+          this.removePendingTurn(activeGeneration);
+          this.setStatus("Stopped.");
+        }
       });
     }
 
@@ -624,11 +902,11 @@
     }
 
     renderError(message) {
-      const banner = document.createElement("div");
-      banner.className = "zbot-banner zbot-banner--error";
-      banner.textContent = "Error: " + message;
-      this.els.output.appendChild(banner);
-      this.renderTaoEmpty();
+      this.completePendingTurn({
+        answer: "",
+        steps: [],
+        error: message,
+      });
     }
 
     renderTaoEmpty() {
@@ -638,47 +916,6 @@
       empty.textContent =
         "Ask a question to see the agent's Think → Act → Observe steps.";
       this.els.tao.appendChild(empty);
-    }
-
-    renderResult(answer, steps) {
-      const output = this.els.output;
-      output.innerHTML = "";
-
-      if (steps && steps.length) {
-        this.els.tao.innerHTML = "";
-        this.els.tao.appendChild(this.buildSteps(steps));
-      } else {
-        this.renderTaoEmpty();
-      }
-
-      const text = (answer || "").trim();
-      const isWebFallback =
-        text.indexOf(CONFIG.FALLBACK_PREFIX) !== -1 || usedWebFallback(steps);
-      const isRefusal =
-        !isWebFallback &&
-        (!text ||
-          text === CONFIG.REFUSAL_MESSAGE ||
-          text
-            .toLowerCase()
-            .indexOf("couldn't find that in the zearn documentation corpus") !== -1);
-
-      if (isWebFallback) {
-        output.appendChild(
-          this.buildBanner("web", "Not found in Zearn docs — sourced from the web")
-        );
-      } else if (isRefusal) {
-        output.appendChild(this.buildBanner("refusal", "Not found in corpus"));
-      }
-
-      const answerTitle = document.createElement("div");
-      answerTitle.className = "zbot-section-title";
-      answerTitle.textContent = "Answer";
-      output.appendChild(answerTitle);
-
-      const answerEl = document.createElement("div");
-      answerEl.className = "zbot-answer";
-      renderMarkdownInto(answerEl, text || CONFIG.REFUSAL_MESSAGE);
-      output.appendChild(answerEl);
     }
 
     buildBanner(kind, text) {
