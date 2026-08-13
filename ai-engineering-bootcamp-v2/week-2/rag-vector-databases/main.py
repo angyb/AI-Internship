@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -94,14 +95,21 @@ async def lifespan(_app: FastAPI):
     )
 
     if rerank_enabled() or relevance_filter_enabled() or context_order_by_rerank_score_enabled():
-        start = time.perf_counter()
-        try:
-            warmup_reranker()
-            elapsed = time.perf_counter() - start
-            if elapsed > 0.01:
-                logger.info("Cross-encoder reranker ready in %.1fs", elapsed)
-        except Exception as exc:
-            logger.warning("Cross-encoder reranker warmup failed: %s", exc)
+        def _warmup_reranker_background() -> None:
+            start = time.perf_counter()
+            try:
+                warmup_reranker()
+                elapsed = time.perf_counter() - start
+                if elapsed > 0.01:
+                    logger.info("Cross-encoder reranker ready in %.1fs", elapsed)
+            except Exception as exc:
+                logger.warning("Cross-encoder reranker warmup failed: %s", exc)
+
+        threading.Thread(
+            target=_warmup_reranker_background,
+            name="rerank-warmup",
+            daemon=True,
+        ).start()
 
     yield
 
