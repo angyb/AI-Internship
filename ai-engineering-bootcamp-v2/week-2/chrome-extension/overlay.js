@@ -105,8 +105,17 @@
 
           <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="trace"
                    id="zbot-panel-trace" aria-labelledby="zbot-tab-trace">
-            <div class="zbot-section-title">Trace</div>
-            <div class="zbot-empty">Coming soon.</div>
+            <div class="zbot-section-title">Agent checks</div>
+            <p class="zbot-trace-intro">
+              Deterministic pass/fail checks on committed agent traces (Week 4 TRACE).
+            </p>
+            <div class="zbot-settings__row zbot-settings__row--actions">
+              <button class="zbot-btn zbot-btn--ghost" data-el="trace-run" type="button">
+                Run checks
+              </button>
+            </div>
+            <div class="zbot-status" data-el="trace-status"></div>
+            <div data-el="trace-output"></div>
           </section>
 
           <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="memory"
@@ -234,7 +243,7 @@
     });
   }
 
-  function sendMessage(message) {
+  function usedWebFallback(steps) {
     return (steps || []).some((step) => {
       const tool = (step && step.tool) || "";
       return tool === "google_search_agent" || tool === "google_search";
@@ -287,6 +296,9 @@
         iconPanel: this.shadow.querySelector('[data-el="icon-panel"]'),
         health: this.shadow.querySelector('[data-el="health"]'),
         healthCheck: this.shadow.querySelector('[data-el="health-check"]'),
+        traceRun: this.shadow.querySelector('[data-el="trace-run"]'),
+        traceStatus: this.shadow.querySelector('[data-el="trace-status"]'),
+        traceOutput: this.shadow.querySelector('[data-el="trace-output"]'),
         timeouts: this.shadow.querySelector('[data-el="timeouts"]'),
         version: this.shadow.querySelector('[data-el="version"]'),
         privacyLink: this.shadow.querySelector('[data-el="privacy-link"]'),
@@ -314,6 +326,7 @@
         else this.ask();
       });
       this.els.healthCheck.addEventListener("click", () => this.checkHealth(true));
+      this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
 
       window.addEventListener("resize", () => {
         if (this.layoutMode === "panel" && this.expanded) this.applyPageShift();
@@ -466,6 +479,84 @@
           (resp && (resp.error || "HTTP " + resp.status)) || "unreachable";
         this.els.health.textContent = "Unreachable · " + detail;
       }
+    }
+
+    async runTraceChecks() {
+      this.els.traceStatus.textContent = "Running agent checks…";
+      this.els.traceOutput.innerHTML = "";
+      const resp = await sendMessage({ type: "evalAgent" });
+      if (!resp || resp.error) {
+        this.els.traceStatus.textContent =
+          "Checks failed: " + ((resp && resp.error) || "unknown error");
+        return;
+      }
+      this.renderTraceResults(resp);
+      const summary = resp.summary || {};
+      this.els.traceStatus.textContent =
+        summary.all_checks_passed +
+        "/" +
+        summary.trace_count +
+        " traces passed all checks";
+    }
+
+    renderTraceResults(data) {
+      const container = document.createElement("div");
+      container.className = "zbot-trace-results";
+      const summary = data.summary || {};
+      const checks = summary.checks || {};
+
+      const heading = document.createElement("div");
+      heading.className = "zbot-section-title";
+      heading.textContent = "Check pass rates";
+      container.appendChild(heading);
+
+      Object.keys(checks).forEach((name) => {
+        const stats = checks[name] || {};
+        const row = document.createElement("div");
+        row.className = "zbot-trace-row";
+        const rate =
+          typeof stats.pass_rate === "number"
+            ? Math.round(stats.pass_rate * 100) + "%"
+            : "—";
+        row.textContent =
+          name + ": " + stats.passed + "/" + summary.trace_count + " (" + rate + ")";
+        container.appendChild(row);
+      });
+
+      const before = data.before && data.before.summary && data.before.summary.checks;
+      const after = data.after && data.after.summary && data.after.summary.checks;
+      if (before && after && before.citation_present && after.citation_present) {
+        const compare = document.createElement("div");
+        compare.className = "zbot-trace-row zbot-trace-row--highlight";
+        const bRate = Math.round((before.citation_present.pass_rate || 0) * 100);
+        const aRate = Math.round((after.citation_present.pass_rate || 0) * 100);
+        compare.textContent =
+          "citation_present: " + bRate + "% → " + aRate + "% (before/after fix)";
+        container.appendChild(compare);
+      }
+
+      const rows = data.rows || [];
+      if (rows.length) {
+        const failHeading = document.createElement("div");
+        failHeading.className = "zbot-section-title";
+        failHeading.textContent = "Failed traces";
+        container.appendChild(failHeading);
+
+        rows
+          .filter((row) => !row.passed)
+          .forEach((row) => {
+            const item = document.createElement("div");
+            item.className = "zbot-trace-row";
+            const failed = Object.keys(row.checks || {}).filter(
+              (name) => row.checks[name] && !row.checks[name].passed
+            );
+            item.textContent =
+              row.id + " — " + failed.join(", ") + " — " + row.question;
+            container.appendChild(item);
+          });
+      }
+
+      this.els.traceOutput.appendChild(container);
     }
 
     async ask() {

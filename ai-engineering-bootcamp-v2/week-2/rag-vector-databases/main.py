@@ -268,6 +268,49 @@ class EvalResponse(BaseModel):
     questions: list[EvalQuestionResult]
 
 
+class EvalAgentRequest(BaseModel):
+    regenerate: bool = Field(
+        default=False,
+        description="Re-run the agent on trace_questions.json before scoring (slow).",
+    )
+
+
+class AgentCheckResult(BaseModel):
+    passed: bool
+    reason: str
+
+
+class AgentEvalRow(BaseModel):
+    id: str
+    question: str
+    expected_outcome: str
+    actual_outcome: str
+    passed: bool
+    checks: dict[str, AgentCheckResult]
+
+
+class AgentEvalCheckStats(BaseModel):
+    passed: int
+    failed: int
+    pass_rate: float
+
+
+class AgentEvalSummary(BaseModel):
+    trace_count: int
+    all_checks_passed: int
+    all_checks_pass_rate: float
+    checks: dict[str, AgentEvalCheckStats]
+
+
+class EvalAgentResponse(BaseModel):
+    traces_file: str
+    trace_count: int
+    summary: AgentEvalSummary
+    rows: list[AgentEvalRow]
+    before: dict[str, Any] | None = None
+    after: dict[str, Any] | None = None
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -797,6 +840,71 @@ def ask(body: AskRequest) -> AskResponse:
     raise HTTPException(
         status_code=502,
         detail=f"Model response failed schema validation after retry: {last_error}",
+    )
+
+
+@app.post("/eval-agent")
+def run_agent_eval_endpoint(body: EvalAgentRequest | None = None) -> EvalAgentResponse:
+    """Run deterministic pass/fail checks on committed agent traces (Week 4 TRACE)."""
+
+    from pathlib import Path
+
+    from agent_trace import DEFAULT_TRACES, capture_traces
+    from eval_agent import load_eval_result, run_agent_eval
+
+    traces_dir = Path(__file__).resolve().parent / "traces"
+    before_path = traces_dir / "eval_before.json"
+    after_path = traces_dir / "eval_after.json"
+
+    regenerate = bool(body and body.regenerate)
+    if regenerate:
+        if not os.getenv("GOOGLE_API_KEY"):
+            raise HTTPException(
+                status_code=500,
+                detail="GOOGLE_API_KEY is not set — required to regenerate traces",
+            )
+        try:
+            capture_traces()
+        except Exception as exc:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Trace capture failed: {exc}",
+            ) from exc
+
+    try:
+        result = run_agent_eval(traces_path=DEFAULT_TRACES)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Agent eval failed: {exc}") from exc
+
+    summary = result["summary"]
+    return EvalAgentResponse(
+        traces_file=result["traces_file"],
+        trace_count=result["trace_count"],
+        summary=AgentEvalSummary(
+            trace_count=summary["trace_count"],
+            all_checks_passed=summary["all_checks_passed"],
+            all_checks_pass_rate=summary["all_checks_pass_rate"],
+            checks={
+                name: AgentEvalCheckStats(**stats)
+                for name, stats in (summary.get("checks") or {}).items()
+            },
+        ),
+        rows=[
+            AgentEvalRow(
+                id=row["id"],
+                question=row["question"],
+                expected_outcome=row["expected_outcome"],
+                actual_outcome=row["actual_outcome"],
+                passed=row["passed"],
+                checks={
+                    name: AgentCheckResult(**check)
+                    for name, check in (row.get("checks") or {}).items()
+                },
+            )
+            for row in result["rows"]
+        ],
+        before=load_eval_result(before_path),
+        after=load_eval_result(after_path),
     )
 
 

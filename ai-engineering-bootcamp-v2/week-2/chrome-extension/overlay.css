@@ -205,12 +205,17 @@
 
 .zbot-body {
   padding: 14px;
-  overflow-y: auto;
+  overflow: hidden;
   flex: 1 1 auto;
   background: var(--zbot-warm);
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+.zbot-tabpanel:not(.zbot-tabpanel--ask) {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .zbot-tabpanel {
@@ -231,6 +236,32 @@
   font-size: 13px;
 }
 
+.zbot-trace-intro {
+  margin: 0 0 12px;
+  color: var(--zbot-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.zbot-trace-results {
+  margin-top: 12px;
+}
+
+.zbot-trace-row {
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background: var(--zbot-surface);
+  border: 1px solid var(--zbot-line);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.zbot-trace-row--highlight {
+  border-color: var(--zbot-accent);
+  font-weight: 600;
+}
+
 .zbot-tabpanel--ask {
   display: flex;
   flex-direction: column;
@@ -243,7 +274,13 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Empty / status-only state (e.g. "Waking up the API…") — no scrollbar flicker. */
+.zbot-ask-scroll:not(:has([data-el="output"] > *)) {
+  overflow-y: hidden;
 }
 
 .zbot-ask-scroll [data-el="output"]:empty {

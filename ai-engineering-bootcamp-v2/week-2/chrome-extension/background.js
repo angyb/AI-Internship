@@ -237,6 +237,41 @@ async function reportError(message) {
   }
 }
 
+async function handleEvalAgent() {
+  const { headers, settings } = await authHeaders();
+  try {
+    const resp = await fetchWithTimeout(
+      settings.base + "/eval-agent",
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ regenerate: false }),
+      },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      if (resp.status === 404) {
+        return {
+          error:
+            "POST /eval-agent not found on " +
+            settings.base +
+            ". Deploy the latest week-2-rag-api to Render.",
+          status: resp.status,
+        };
+      }
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    return await resp.json();
+  } catch (e) {
+    const timedOut = e && e.name === "AbortError";
+    return {
+      error: timedOut ? "Agent checks timed out" : String(e),
+      base: settings.base,
+    };
+  }
+}
+
 async function toggleActiveTab() {
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -265,6 +300,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
   if (msg.type === "wake") {
     handleWake().then(sendResponse);
+    return true;
+  }
+  if (msg.type === "evalAgent") {
+    handleEvalAgent().then(sendResponse);
     return true;
   }
   if (msg.type === "getSettings" || msg.type === "getApiBase") {

@@ -128,6 +128,55 @@
           return;
         }
 
+        if (msg.type === "evalAgent") {
+          respond(cb, {
+            traces_file: "traces/zearn_agent_traces.jsonl",
+            trace_count: 18,
+            summary: {
+              trace_count: 18,
+              all_checks_passed: 15,
+              all_checks_pass_rate: 0.8333,
+              checks: {
+                used_tool: { passed: 18, failed: 0, pass_rate: 1.0 },
+                citation_present: { passed: 18, failed: 0, pass_rate: 1.0 },
+                fallback_banner: { passed: 18, failed: 0, pass_rate: 1.0 },
+                outcome_appropriate: { passed: 15, failed: 3, pass_rate: 0.8333 },
+                length_budget: { passed: 17, failed: 1, pass_rate: 0.9444 },
+              },
+            },
+            rows: [
+              {
+                id: "q09",
+                question: "How do I bake sourdough bread?",
+                expected_outcome: "refuse",
+                actual_outcome: "web",
+                passed: false,
+                checks: {
+                  outcome_appropriate: {
+                    passed: false,
+                    reason: "Should refuse off-topic question but returned web.",
+                  },
+                },
+              },
+            ],
+            before: {
+              summary: {
+                checks: {
+                  citation_present: { pass_rate: 0.7778 },
+                },
+              },
+            },
+            after: {
+              summary: {
+                checks: {
+                  citation_present: { pass_rate: 1.0 },
+                },
+              },
+            },
+          });
+          return;
+        }
+
         respond(cb, {});
       },
     },

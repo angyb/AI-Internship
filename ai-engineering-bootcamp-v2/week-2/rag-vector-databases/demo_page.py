@@ -20,6 +20,9 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from eval_format import (
+    agent_check_comparison_rows,
+    agent_check_summary_rows,
+    agent_trace_check_rows,
     averages_rows,
     per_question_score_rows,
     questions_and_answers_rows,
@@ -124,7 +127,9 @@ st.sidebar.code(
     language="bash",
 )
 
-ingest_tab, ask_tab, eval_tab = st.tabs(["Ingest", "Ask", "Eval"])
+ingest_tab, ask_tab, eval_tab, agent_checks_tab = st.tabs(
+    ["Ingest", "Ask", "Eval", "Agent Checks"]
+)
 
 with ingest_tab:
     st.subheader("POST /ingest — paste a document")
@@ -278,6 +283,60 @@ with eval_tab:
                 st.markdown("**Questions and answers**")
                 st.dataframe(
                     questions_and_answers_rows(questions),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+
+            with st.expander("Full JSON response"):
+                st.json(data)
+
+with agent_checks_tab:
+    st.subheader("POST /eval-agent — TRACE deterministic checks")
+    st.markdown(
+        "Scores committed agent traces in `traces/zearn_agent_traces.jsonl` with "
+        "binary pass/fail checks (used_tool, citation_present, fallback_banner, "
+        "outcome_appropriate, length_budget). Includes before/after snapshots from "
+        "`traces/eval_before.json` and `traces/eval_after.json` when present."
+    )
+    regenerate = st.checkbox(
+        "Regenerate traces first (slow — re-runs the ADK agent on all questions)",
+        value=False,
+    )
+
+    if st.button("Run agent checks", type="primary"):
+        payload = {"regenerate": regenerate}
+        with st.spinner("Running agent checks…"):
+            status, data = call_json("POST", "/eval-agent", payload, timeout=600.0)
+
+        if status != 200 or not isinstance(data, dict):
+            render_api_error(status, data)
+        else:
+            summary = data.get("summary") or {}
+            st.success(
+                f"Agent checks complete — {summary.get('all_checks_passed', 0)}/"
+                f"{summary.get('trace_count', 0)} traces passed all checks"
+            )
+
+            if summary:
+                st.markdown("**Check pass rates**")
+                st.dataframe(
+                    agent_check_summary_rows(summary),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+
+            before = data.get("before")
+            after = data.get("after")
+            comparison = agent_check_comparison_rows(before, after)
+            if comparison:
+                st.markdown("**Before / after fix (citation_present target)**")
+                st.dataframe(comparison, use_container_width=True, hide_index=True)
+
+            rows = data.get("rows") or []
+            if rows:
+                st.markdown("**Per-trace results**")
+                st.dataframe(
+                    agent_trace_check_rows(rows),
                     use_container_width=True,
                     hide_index=True,
                 )

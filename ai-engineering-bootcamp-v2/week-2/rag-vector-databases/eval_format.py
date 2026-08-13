@@ -214,6 +214,83 @@ def format_questions_and_answers_table_markdown(questions: list[dict[str, Any]])
     return format_markdown_table(QA_TABLE_HEADERS, rows)
 
 
+def agent_check_summary_rows(summary: dict[str, Any]) -> list[dict[str, str]]:
+    checks = summary.get("checks") or {}
+    rows: list[dict[str, str]] = []
+    for name, stats in checks.items():
+        passed = int(stats.get("passed") or 0)
+        failed = int(stats.get("failed") or 0)
+        total = passed + failed
+        rate = stats.get("pass_rate")
+        rows.append(
+            {
+                "Check": name,
+                "Pass rate": f"{rate:.1%}" if isinstance(rate, (int, float)) else "—",
+                "Passed": str(passed),
+                "Failed": str(failed),
+                "Total": str(total),
+            }
+        )
+    rows.insert(
+        0,
+        {
+            "Check": "all_checks",
+            "Pass rate": f"{summary.get('all_checks_pass_rate', 0):.1%}",
+            "Passed": str(summary.get("all_checks_passed", 0)),
+            "Failed": str(
+                int(summary.get("trace_count") or 0)
+                - int(summary.get("all_checks_passed") or 0)
+            ),
+            "Total": str(summary.get("trace_count", 0)),
+        },
+    )
+    return rows
+
+
+def agent_check_comparison_rows(
+    before: dict[str, Any] | None,
+    after: dict[str, Any] | None,
+) -> list[dict[str, str]]:
+    if not before or not after:
+        return []
+    before_checks = (before.get("summary") or {}).get("checks") or {}
+    after_checks = (after.get("summary") or {}).get("checks") or {}
+    rows: list[dict[str, str]] = []
+    for name in sorted(set(before_checks) | set(after_checks)):
+        b_rate = before_checks.get(name, {}).get("pass_rate")
+        a_rate = after_checks.get(name, {}).get("pass_rate")
+        delta = None
+        if isinstance(b_rate, (int, float)) and isinstance(a_rate, (int, float)):
+            delta = a_rate - b_rate
+        rows.append(
+            {
+                "Check": name,
+                "Before": f"{b_rate:.1%}" if isinstance(b_rate, (int, float)) else "—",
+                "After": f"{a_rate:.1%}" if isinstance(a_rate, (int, float)) else "—",
+                "Delta": f"{delta:+.1%}" if delta is not None else "—",
+            }
+        )
+    return rows
+
+
+def agent_trace_check_rows(rows: list[dict[str, Any]]) -> list[dict[str, str]]:
+    table_rows: list[dict[str, str]] = []
+    for row in rows:
+        checks = row.get("checks") or {}
+        failed = [name for name, item in checks.items() if not item.get("passed")]
+        table_rows.append(
+            {
+                "ID": row.get("id", ""),
+                "Question": row.get("question", ""),
+                "Expected": row.get("expected_outcome", ""),
+                "Actual": row.get("actual_outcome", ""),
+                "Pass": "✅" if row.get("passed") else "❌",
+                "Failed checks": ", ".join(failed) if failed else "—",
+            }
+        )
+    return table_rows
+
+
 def format_eval_report_markdown(result: dict[str, Any]) -> str:
     """Full markdown eval report including Q&A table."""
     config = result.get("config", {})
