@@ -164,18 +164,26 @@ async function handleWake() {
   }
 }
 
-async function handleAsk(question) {
+async function handleAsk(msg) {
   cancelAsk();
   const entry = { controller: new AbortController(), cancelled: false };
   activeAsk = entry;
-  const { headers, settings } = await authHeaders();
+  const { headers, settings, installId } = await authHeaders();
+  const question = String((msg && msg.question) || "");
+  const sessionId = (msg && msg.sessionId) || null;
+  const history = Array.isArray(msg && msg.history) ? msg.history : [];
   try {
     const resp = await fetchWithTimeout(
       settings.base + "/agent",
       {
         method: "POST",
         headers,
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({
+          question,
+          session_id: sessionId,
+          install_id: installId,
+          history,
+        }),
         signal: entry.controller.signal,
       },
       CONFIG.AGENT_TIMEOUT_MS
@@ -190,6 +198,14 @@ async function handleAsk(question) {
     return {
       answer: typeof data.answer === "string" ? data.answer : "",
       steps: Array.isArray(data.steps) ? data.steps : [],
+      sessionId: data.session_id || sessionId,
+      title: typeof data.title === "string" ? data.title : "",
+      tokenCount:
+        typeof data.token_count === "number" ? data.token_count : 0,
+      contextTokenLimit:
+        typeof data.context_token_limit === "number"
+          ? data.context_token_limit
+          : CONFIG.CONTEXT_TOKEN_LIMIT,
     };
   } catch (e) {
     if (e && e.name === "AbortError") {
@@ -274,6 +290,102 @@ async function handleEvalAgent() {
   }
 }
 
+async function handleHistoryList() {
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const url =
+      settings.base +
+      "/history/sessions?install_id=" +
+      encodeURIComponent(installId);
+    const resp = await fetchWithTimeout(
+      url,
+      { method: "GET", headers },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    const data = await resp.json();
+    return { sessions: Array.isArray(data.sessions) ? data.sessions : [] };
+  } catch (e) {
+    return { error: String(e) };
+  }
+}
+
+async function handleHistoryGet(sessionId) {
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const url =
+      settings.base +
+      "/history/sessions/" +
+      encodeURIComponent(sessionId) +
+      "?install_id=" +
+      encodeURIComponent(installId);
+    const resp = await fetchWithTimeout(
+      url,
+      { method: "GET", headers },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    return await resp.json();
+  } catch (e) {
+    return { error: String(e) };
+  }
+}
+
+async function handleHistoryDelete(sessionId) {
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const url =
+      settings.base +
+      "/history/sessions/" +
+      encodeURIComponent(sessionId) +
+      "?install_id=" +
+      encodeURIComponent(installId);
+    const resp = await fetchWithTimeout(
+      url,
+      { method: "DELETE", headers },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    return await resp.json();
+  } catch (e) {
+    return { error: String(e) };
+  }
+}
+
+async function handleEndSession(sessionId, reason) {
+  if (!sessionId) return { status: "skipped" };
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const resp = await fetchWithTimeout(
+      settings.base + "/history/sessions/" + encodeURIComponent(sessionId),
+      {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({
+          install_id: installId,
+          status: "ended",
+          ended_reason: String(reason || "closed").slice(0, 64),
+        }),
+        keepalive: true,
+      },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) return { status: "failed", code: resp.status };
+    return await resp.json();
+  } catch (e) {
+    return { status: "failed", error: String(e) };
+  }
+}
+
 async function toggleActiveTab() {
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -293,12 +405,28 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (!msg || typeof msg.type !== "string") return undefined;
 
   if (msg.type === "ask") {
-    handleAsk(String(msg.question || "")).then(sendResponse);
+    handleAsk(msg).then(sendResponse);
     return true;
   }
   if (msg.type === "cancelAsk") {
     sendResponse(cancelAsk());
     return false;
+  }
+  if (msg.type === "getHistoryList") {
+    handleHistoryList().then(sendResponse);
+    return true;
+  }
+  if (msg.type === "getHistorySession") {
+    handleHistoryGet(String(msg.sessionId || "")).then(sendResponse);
+    return true;
+  }
+  if (msg.type === "deleteHistorySession") {
+    handleHistoryDelete(String(msg.sessionId || "")).then(sendResponse);
+    return true;
+  }
+  if (msg.type === "endSession") {
+    handleEndSession(String(msg.sessionId || ""), msg.reason).then(sendResponse);
+    return true;
   }
   if (msg.type === "wake") {
     handleWake().then(sendResponse);

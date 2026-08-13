@@ -15,6 +15,15 @@
     INSTALL_ID_STORAGE_KEY: "installId",
     LAYOUT_STORAGE_KEY: "layoutMode",
 
+    // Local cache of the in-progress chat so a refresh/reopen resumes the
+    // same session (completed turns are also persisted server-side).
+    CURRENT_SESSION_STORAGE_KEY: "currentSession",
+
+    // Conversational context guardrail (mirrors backend CONTEXT_TOKEN_LIMIT).
+    // Warn the user near the cap; hard-block sending once the cap is reached.
+    CONTEXT_TOKEN_LIMIT: 100000,
+    CONTEXT_TOKEN_WARN: 90000,
+
     // "panel" docks the expanded UI to the right edge; "overlay" floats it.
     DEFAULT_LAYOUT_MODE: "panel",
 

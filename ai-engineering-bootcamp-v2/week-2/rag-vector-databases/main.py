@@ -19,6 +19,7 @@ from agent_security import (
     require_agent_access,
     telemetry_enabled,
 )
+import db
 from env_utils import bool_env
 
 from ingest import (
@@ -69,6 +70,11 @@ def two_step_generation_enabled() -> bool:
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    try:
+        db.init_db()
+    except Exception as exc:
+        logger.warning("Chat history DB init failed: %s", exc)
+
     if hybrid_search_enabled():
         from bm25_index import get_bm25_index
 
@@ -104,6 +110,16 @@ app = FastAPI(title="Week 2 RAG API", lifespan=lifespan)
 client = OpenAI()
 
 DEFAULT_MODEL = answer_model()
+
+# Conversational context guardrail — the extension warns at 90% and hard-blocks
+# once the running context (latest turn's total tokens) reaches this limit.
+CONTEXT_TOKEN_LIMIT = int(os.getenv("CONTEXT_TOKEN_LIMIT", "100000"))
+
+
+def title_model() -> str:
+    """Small chat model used to name a session by its topic."""
+    value = os.getenv("TITLE_MODEL", "gpt-4o-mini").strip()
+    return value or "gpt-4o-mini"
 
 MODEL_PRICES_PER_1K: dict[str, tuple[float, float]] = {
     "gpt-4o": (0.0025, 0.01),
@@ -210,13 +226,77 @@ class AgentStep(BaseModel):
     text: str | None = None
 
 
+class HistoryTurn(BaseModel):
+    role: str = Field(description="'user' or 'assistant'")
+    content: str = ""
+
+
 class AgentRequest(BaseModel):
     question: str
+    session_id: str | None = Field(
+        default=None,
+        description="Client-generated chat session UUID. Enables history persistence.",
+    )
+    install_id: str | None = Field(
+        default=None,
+        description="Anonymous per-install UUID that owns the session.",
+    )
+    history: list[HistoryTurn] = Field(
+        default_factory=list,
+        description="Prior conversation turns (chronological, excluding this question).",
+    )
+
+
+class TokenUsage(BaseModel):
+    prompt_tokens: int = 0
+    output_tokens: int = 0
+    total_tokens: int = 0
 
 
 class AgentResponse(BaseModel):
     answer: str
     steps: list[AgentStep]
+    session_id: str | None = None
+    title: str | None = None
+    token_count: int = 0
+    context_token_limit: int = 0
+    usage: TokenUsage = Field(default_factory=TokenUsage)
+
+
+class HistorySessionSummary(BaseModel):
+    id: str
+    title: str = ""
+    token_count: int = 0
+    status: str = "active"
+    ended_reason: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
+
+
+class HistoryMessage(BaseModel):
+    id: int
+    role: str
+    content: str = ""
+    steps: list[AgentStep] | None = None
+    error: str | None = None
+    prompt_tokens: int | None = None
+    total_tokens: int | None = None
+    created_at: str | None = None
+
+
+class HistorySessionDetail(HistorySessionSummary):
+    messages: list[HistoryMessage] = Field(default_factory=list)
+
+
+class HistoryListResponse(BaseModel):
+    sessions: list[HistorySessionSummary]
+
+
+class HistoryPatchRequest(BaseModel):
+    install_id: str
+    title: str | None = None
+    status: str | None = None
+    ended_reason: str | None = None
 
 
 class TelemetryRequest(BaseModel):
@@ -550,12 +630,89 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
     )
 
 
+def generate_session_title(question: str, answer: str) -> str:
+    """Name a session by its topic via a small LLM call; fall back to the question.
+
+    Never raises — on any error, returns the first 100 characters of the question.
+    """
+    fallback = (question or "").strip()[:100] or "New chat"
+    try:
+        completion = client.chat.completions.create(
+            model=title_model(),
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Write a short, specific title (3-6 words, no quotes, no trailing "
+                        "punctuation) describing the topic of this support chat."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": f"Question: {question}\n\nAnswer: {answer[:800]}",
+                },
+            ],
+            temperature=0,
+            max_tokens=20,
+        )
+        title = (completion.choices[0].message.content or "").strip().strip('"').strip()
+        return title[:120] if title else fallback
+    except Exception as exc:  # pragma: no cover - title is best-effort
+        logger.warning("Session title generation failed: %s", exc)
+        return fallback
+
+
+def _persist_agent_turn(
+    body: AgentRequest,
+    answer: str,
+    steps: list[dict[str, Any]],
+    usage: dict[str, int],
+) -> tuple[str | None, int]:
+    """Save the user question + assistant answer, updating token count and title.
+
+    Returns ``(title, token_count)``. Persistence is best-effort: any DB error is
+    logged and swallowed so the user still gets their answer.
+    """
+    if not (db.database_enabled() and body.session_id and body.install_id):
+        return None, usage.get("total_tokens", 0)
+
+    try:
+        summary = db.ensure_session(body.session_id, body.install_id)
+        is_first_turn = not summary.get("title")
+        db.add_message(body.session_id, "user", content=body.question)
+        db.add_message(
+            body.session_id,
+            "assistant",
+            content=answer,
+            steps=steps or None,
+            prompt_tokens=usage.get("prompt_tokens"),
+            total_tokens=usage.get("total_tokens"),
+        )
+        title = summary.get("title") or None
+        if is_first_turn:
+            title = generate_session_title(body.question, answer)
+        token_count = usage.get("total_tokens", 0)
+        db.update_session(
+            body.session_id,
+            title=title,
+            token_count=token_count,
+            status="active",
+        )
+        return title, token_count
+    except Exception as exc:
+        logger.warning("Failed to persist chat turn: %s", exc)
+        return None, usage.get("total_tokens", 0)
+
+
 @app.post("/agent", dependencies=[Depends(require_agent_access)])
 def agent_run(body: AgentRequest) -> AgentResponse:
     """Run the Zearn ADK support agent (search_zearn_doc + google_search_agent fallback).
 
     When ``AGENT_API_KEY`` is set, require matching ``X-API-Key`` / Bearer token.
     Rate-limited per ``X-Install-Id`` (preferred) or client IP.
+
+    Conversational: pass ``history`` (prior turns) to give the agent memory, plus
+    ``session_id`` + ``install_id`` to persist the chat for the History tab.
     """
 
     if not os.getenv("GOOGLE_API_KEY"):
@@ -564,19 +721,113 @@ def agent_run(body: AgentRequest) -> AgentResponse:
             detail="GOOGLE_API_KEY is not set — required for POST /agent",
         )
 
+    history = [{"role": turn.role, "content": turn.content} for turn in body.history]
+
     try:
         from zearn_support_agent import run_zearn_agent
 
-        answer, steps = run_zearn_agent(body.question)
+        answer, steps, usage = run_zearn_agent(body.question, history)
     except HTTPException:
         raise
     except Exception as exc:
+        # Persist the question (and the error) so the session survives a failure.
+        if db.database_enabled() and body.session_id and body.install_id:
+            try:
+                db.ensure_session(body.session_id, body.install_id)
+                db.add_message(body.session_id, "user", content=body.question)
+                db.add_message(
+                    body.session_id, "assistant", content="", error=str(exc)
+                )
+                db.update_session(body.session_id, status="error", ended_reason="error")
+            except Exception as persist_exc:
+                logger.warning("Failed to persist errored turn: %s", persist_exc)
         raise HTTPException(status_code=500, detail=f"Agent run failed: {exc}") from exc
+
+    title, token_count = _persist_agent_turn(body, answer, steps, usage)
 
     return AgentResponse(
         answer=answer,
         steps=[AgentStep(**step) for step in steps],
+        session_id=body.session_id,
+        title=title,
+        token_count=token_count,
+        context_token_limit=CONTEXT_TOKEN_LIMIT,
+        usage=TokenUsage(
+            prompt_tokens=usage.get("prompt_tokens", 0),
+            output_tokens=usage.get("output_tokens", 0),
+            total_tokens=usage.get("total_tokens", 0),
+        ),
     )
+
+
+@app.get("/history/sessions", dependencies=[Depends(require_agent_access)])
+def history_list(install_id: str) -> HistoryListResponse:
+    """List a caller's saved chat sessions (newest first), scoped by install_id."""
+    if not db.database_enabled():
+        return HistoryListResponse(sessions=[])
+    if not install_id:
+        raise HTTPException(status_code=400, detail="install_id is required")
+    try:
+        rows = db.list_sessions(install_id)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"History lookup failed: {exc}") from exc
+    return HistoryListResponse(
+        sessions=[HistorySessionSummary(**row) for row in rows]
+    )
+
+
+@app.get("/history/sessions/{session_id}", dependencies=[Depends(require_agent_access)])
+def history_get(session_id: str, install_id: str) -> HistorySessionDetail:
+    """Return a full session transcript, if it belongs to this install_id."""
+    if not db.database_enabled():
+        raise HTTPException(status_code=404, detail="History not available")
+    if not install_id:
+        raise HTTPException(status_code=400, detail="install_id is required")
+    try:
+        row = db.get_session(session_id, install_id)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"History lookup failed: {exc}") from exc
+    if row is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return HistorySessionDetail(**row)
+
+
+@app.patch("/history/sessions/{session_id}", dependencies=[Depends(require_agent_access)])
+def history_patch(session_id: str, body: HistoryPatchRequest) -> HistorySessionSummary:
+    """Rename a session or mark it ended (e.g. on refresh/tab closure)."""
+    if not db.database_enabled():
+        raise HTTPException(status_code=404, detail="History not available")
+    if not body.install_id:
+        raise HTTPException(status_code=400, detail="install_id is required")
+    existing = db.get_session(session_id, body.install_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    try:
+        updated = db.update_session(
+            session_id,
+            title=body.title,
+            status=body.status,
+            ended_reason=body.ended_reason,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"History update failed: {exc}") from exc
+    return HistorySessionSummary(**updated)
+
+
+@app.delete("/history/sessions/{session_id}", dependencies=[Depends(require_agent_access)])
+def history_delete(session_id: str, install_id: str) -> dict[str, Any]:
+    """Delete a session and its messages, if owned by this install_id."""
+    if not db.database_enabled():
+        raise HTTPException(status_code=404, detail="History not available")
+    if not install_id:
+        raise HTTPException(status_code=400, detail="install_id is required")
+    try:
+        removed = db.delete_session(session_id, install_id)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"History delete failed: {exc}") from exc
+    if not removed:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return {"status": "deleted", "id": session_id}
 
 
 @app.post("/telemetry")

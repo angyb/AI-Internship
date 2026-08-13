@@ -146,7 +146,7 @@ def capture_traces(
 
     traces: list[dict[str, Any]] = []
     for item in questions:
-        answer, steps = run_zearn_agent(item["question"])
+        answer, steps, _usage = run_zearn_agent(item["question"])
         traces.append(build_trace_record(item, answer, steps))
 
     save_traces(traces, output_path)

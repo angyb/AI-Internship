@@ -19,3 +19,5 @@ pypdf
 ragas>=0.4.3
 sentence-transformers>=3.4.0
 rank-bm25
+sqlalchemy>=2.0
+psycopg[binary]>=3.1

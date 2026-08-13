@@ -167,7 +167,7 @@ if run_clicked and question.strip():
             if REMOTE_MODE:
                 answer, steps = run_agent_remote(question.strip())
             else:
-                answer, steps = run_zearn_agent(question.strip())
+                answer, steps, _usage = run_zearn_agent(question.strip())
         except httpx.HTTPStatusError as exc:
             st.error(f"API error {exc.response.status_code}: {exc.response.text[:500]}")
             st.stop()

@@ -15,3 +15,5 @@ ragas>=0.4.3
 rank-bm25
 google-adk>=1.0.0
 google-genai>=1.0.0
+sqlalchemy>=2.0
+psycopg[binary]>=3.1

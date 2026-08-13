@@ -11,6 +11,7 @@
 
   const TABS = [
     { id: "ask", label: "Ask" },
+    { id: "history", label: "History" },
     { id: "tao", label: "TAO" },
     { id: "trace", label: "Trace" },
     { id: "memory", label: "Memory" },
@@ -80,6 +81,10 @@
         <div class="zbot-body">
           <section class="zbot-tabpanel zbot-tabpanel--ask" role="tabpanel" data-tabpanel="ask"
                    id="zbot-panel-ask" aria-labelledby="zbot-tab-ask">
+            <div class="zbot-ask-toolbar">
+              <span class="zbot-context-note" data-el="context-note"></span>
+              <button class="zbot-btn zbot-btn--ghost zbot-newchat" data-el="new-chat" type="button">New chat</button>
+            </div>
             <div class="zbot-ask-scroll">
               <div class="zbot-thread" data-el="output"></div>
               <div class="zbot-status" data-el="status"></div>
@@ -94,6 +99,26 @@
                 AI can make mistakes. See
                 <a data-el="privacy-link" href="#" target="_blank" rel="noopener noreferrer">privacy policy</a>.
               </p>
+            </div>
+          </section>
+
+          <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="history"
+                   id="zbot-panel-history" aria-labelledby="zbot-tab-history">
+            <div class="zbot-history-list-view" data-el="history-list-view">
+              <div class="zbot-settings__row zbot-settings__row--actions">
+                <div class="zbot-section-title">Saved chats</div>
+                <button class="zbot-btn zbot-btn--ghost" data-el="history-refresh" type="button">Refresh</button>
+              </div>
+              <div class="zbot-status" data-el="history-status"></div>
+              <div class="zbot-history-list" data-el="history-list"></div>
+            </div>
+            <div class="zbot-history-detail-view zbot-hidden" data-el="history-detail-view">
+              <div class="zbot-settings__row zbot-settings__row--actions">
+                <button class="zbot-btn zbot-btn--ghost" data-el="history-back" type="button">&#8592; Back</button>
+                <button class="zbot-btn" data-el="history-continue" type="button">Continue this chat</button>
+              </div>
+              <div class="zbot-history-detail-title" data-el="history-detail-title"></div>
+              <div class="zbot-thread" data-el="history-detail"></div>
             </div>
           </section>
 
@@ -341,6 +366,18 @@
       this._shiftedHeaders = [];
       this.thread = [];
       this.askGeneration = 0;
+      this.sessionId = null;
+      this.sessionTitle = "";
+      this.tokenCount = 0;
+      this.contextLimit = CONFIG.CONTEXT_TOKEN_LIMIT;
+      this.contextWarn = CONFIG.CONTEXT_TOKEN_WARN;
+      this.historyLoaded = false;
+      this.openHistoryData = null;
+    }
+
+    genSessionId() {
+      if (self.crypto && crypto.randomUUID) return crypto.randomUUID();
+      return "sess-" + Date.now() + "-" + Math.random().toString(16).slice(2);
     }
 
     mount() {
@@ -382,6 +419,17 @@
         timeouts: this.shadow.querySelector('[data-el="timeouts"]'),
         version: this.shadow.querySelector('[data-el="version"]'),
         privacyLink: this.shadow.querySelector('[data-el="privacy-link"]'),
+        newChat: this.shadow.querySelector('[data-el="new-chat"]'),
+        contextNote: this.shadow.querySelector('[data-el="context-note"]'),
+        historyListView: this.shadow.querySelector('[data-el="history-list-view"]'),
+        historyDetailView: this.shadow.querySelector('[data-el="history-detail-view"]'),
+        historyList: this.shadow.querySelector('[data-el="history-list"]'),
+        historyStatus: this.shadow.querySelector('[data-el="history-status"]'),
+        historyDetail: this.shadow.querySelector('[data-el="history-detail"]'),
+        historyDetailTitle: this.shadow.querySelector('[data-el="history-detail-title"]'),
+        historyRefresh: this.shadow.querySelector('[data-el="history-refresh"]'),
+        historyBack: this.shadow.querySelector('[data-el="history-back"]'),
+        historyContinue: this.shadow.querySelector('[data-el="history-continue"]'),
       };
 
       this.els.privacyLink.href = chrome.runtime.getURL("privacy-policy.html");
@@ -415,10 +463,29 @@
       });
       this.els.healthCheck.addEventListener("click", () => this.checkHealth(true));
       this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
+      this.els.newChat.addEventListener("click", () => this.startNewChat());
+      this.els.historyRefresh.addEventListener("click", () => this.loadHistory(true));
+      this.els.historyBack.addEventListener("click", () => this.showHistoryList());
+      this.els.historyContinue.addEventListener("click", () =>
+        this.continueHistorySession()
+      );
 
       window.addEventListener("resize", () => {
         if (this.layoutMode === "panel" && this.expanded) this.applyPageShift();
         if (this.expanded) this.resizeQuestionInput();
+      });
+
+      // Best-effort: on refresh / tab close / navigation, mark the session
+      // ended. Completed turns are already persisted server-side per turn, so
+      // this only records why the session stopped.
+      window.addEventListener("pagehide", () => {
+        if (this.sessionId && this.thread.some((turn) => !turn.pending)) {
+          sendMessage({
+            type: "endSession",
+            sessionId: this.sessionId,
+            reason: "unload",
+          });
+        }
       });
 
       this.attachHostToPage();
@@ -426,6 +493,7 @@
       this.switchTab(DEFAULT_TAB);
       this.renderTaoEmpty();
       this.loadSettings();
+      this.restoreCurrentSession();
     }
 
     attachHostToPage() {
@@ -554,6 +622,11 @@
           panel.dataset.tabpanel !== id
         );
       });
+
+      if (id === "history") {
+        this.showHistoryList();
+        this.loadHistory(!this.historyLoaded);
+      }
     }
 
     isExpanded() {
@@ -705,6 +778,18 @@
       const question = this.els.question.value.trim();
       if (!question || this.loading) return;
 
+      if (this.tokenCount >= this.contextLimit) {
+        this.updateContextNote();
+        this.setStatus(
+          "Context limit reached. Start a new chat to continue.",
+          false
+        );
+        return;
+      }
+
+      if (!this.sessionId) this.sessionId = this.genSessionId();
+      const history = this.buildHistory();
+
       const generation = ++this.askGeneration;
       this.loading = true;
       this.setAskButtonMode("stop");
@@ -718,7 +803,12 @@
         true
       );
 
-      const resp = await sendMessage({ type: "ask", question });
+      const resp = await sendMessage({
+        type: "ask",
+        question,
+        sessionId: this.sessionId,
+        history,
+      });
       if (generation !== this.askGeneration) {
         this.removePendingTurn(generation);
         return;
@@ -740,13 +830,35 @@
           steps: [],
           error: message,
         });
+        this.saveCurrentSession();
         sendMessage({ type: "reportError", message: message });
         return;
+      }
+      if (resp.sessionId) this.sessionId = resp.sessionId;
+      if (resp.title) this.sessionTitle = resp.title;
+      if (typeof resp.tokenCount === "number") this.tokenCount = resp.tokenCount;
+      if (typeof resp.contextTokenLimit === "number" && resp.contextTokenLimit > 0) {
+        this.contextLimit = resp.contextTokenLimit;
       }
       this.completePendingTurn({
         answer: resp.answer || "",
         steps: resp.steps || [],
       });
+      this.saveCurrentSession();
+      this.updateContextNote();
+    }
+
+    /** Prior completed, non-error turns as [{role, content}] for agent memory. */
+    buildHistory() {
+      const history = [];
+      this.thread.forEach((turn) => {
+        if (turn.pending || !turn.question) return;
+        history.push({ role: "user", content: turn.question });
+        if (turn.answer && !turn.error) {
+          history.push({ role: "assistant", content: turn.answer });
+        }
+      });
+      return history;
     }
 
     removePendingTurn(generation) {
@@ -1011,6 +1123,343 @@
       });
 
       return container;
+    }
+
+    startNewChat() {
+      if (this.sessionId) {
+        sendMessage({
+          type: "endSession",
+          sessionId: this.sessionId,
+          reason: "new_chat",
+        });
+      }
+      this.sessionId = null;
+      this.sessionTitle = "";
+      this.tokenCount = 0;
+      this.thread = [];
+      this.askGeneration += 1;
+      this.loading = false;
+      this.setAskButtonMode("ask");
+      this.setStatus("");
+      this.renderThread();
+      this.renderTaoEmpty();
+      this.clearCurrentSession();
+      this.updateContextNote();
+      this.switchTab("ask");
+      this.els.question.focus();
+    }
+
+    updateContextNote() {
+      const note = this.els.contextNote;
+      const input = this.els.question;
+      const askBtn = this.els.ask;
+      if (!note) return;
+
+      const limit = this.contextLimit || CONFIG.CONTEXT_TOKEN_LIMIT;
+      const warn = this.contextWarn || CONFIG.CONTEXT_TOKEN_WARN;
+      const used = this.tokenCount || 0;
+      const kUsed = Math.round(used / 1000);
+      const kLimit = Math.round(limit / 1000);
+
+      note.classList.remove("zbot-context-note--warn", "zbot-context-note--block");
+
+      if (used >= limit) {
+        note.textContent =
+          "Context limit reached (" + kUsed + "k / " + kLimit +
+          "k). Start a new chat to continue.";
+        note.classList.add("zbot-context-note--block");
+        if (input) {
+          input.disabled = true;
+          input.placeholder = "Context limit reached — start a new chat.";
+        }
+        if (askBtn) askBtn.disabled = true;
+        return;
+      }
+
+      if (input) {
+        input.disabled = false;
+        input.placeholder = "Ask a Zearn support question...";
+      }
+      if (askBtn) askBtn.disabled = false;
+
+      if (used >= warn) {
+        note.textContent =
+          "Approaching context limit (" + kUsed + "k / " + kLimit +
+          "k). Consider starting a new chat.";
+        note.classList.add("zbot-context-note--warn");
+        return;
+      }
+
+      note.textContent = used > 0 ? kUsed + "k / " + kLimit + "k tokens" : "";
+    }
+
+    currentSessionSnapshot() {
+      return {
+        sessionId: this.sessionId,
+        title: this.sessionTitle,
+        tokenCount: this.tokenCount,
+        contextLimit: this.contextLimit,
+        thread: this.thread
+          .filter((turn) => !turn.pending)
+          .map((turn) => ({
+            question: turn.question,
+            answer: turn.answer || "",
+            steps: turn.steps || [],
+            error: turn.error || "",
+            banner: turn.banner || "",
+            bannerText: turn.bannerText || "",
+          })),
+      };
+    }
+
+    saveCurrentSession() {
+      if (!this.sessionId) return;
+      try {
+        chrome.storage.local.set({
+          [CONFIG.CURRENT_SESSION_STORAGE_KEY]: this.currentSessionSnapshot(),
+        });
+      } catch (_e) {
+        // best-effort cache
+      }
+    }
+
+    clearCurrentSession() {
+      try {
+        chrome.storage.local.remove(CONFIG.CURRENT_SESSION_STORAGE_KEY);
+      } catch (_e) {
+        // ignore
+      }
+    }
+
+    restoreCurrentSession() {
+      let done = false;
+      try {
+        chrome.storage.local.get(CONFIG.CURRENT_SESSION_STORAGE_KEY, (stored) => {
+          done = true;
+          const data = stored && stored[CONFIG.CURRENT_SESSION_STORAGE_KEY];
+          if (!data || !data.sessionId || !Array.isArray(data.thread)) {
+            this.updateContextNote();
+            return;
+          }
+          this.sessionId = data.sessionId;
+          this.sessionTitle = data.title || "";
+          this.tokenCount = data.tokenCount || 0;
+          if (data.contextLimit) this.contextLimit = data.contextLimit;
+          this.thread = data.thread.map((turn) => ({
+            question: turn.question,
+            answer: turn.answer || "",
+            steps: turn.steps || [],
+            error: turn.error || "",
+            banner: turn.banner || "",
+            bannerText: turn.bannerText || "",
+            pending: false,
+          }));
+          this.renderThread();
+          this.updateContextNote();
+        });
+      } catch (_e) {
+        // ignore
+      }
+      if (!done) this.updateContextNote();
+    }
+
+    showHistoryList() {
+      this.els.historyDetailView.classList.add("zbot-hidden");
+      this.els.historyListView.classList.remove("zbot-hidden");
+    }
+
+    showHistoryDetail() {
+      this.els.historyListView.classList.add("zbot-hidden");
+      this.els.historyDetailView.classList.remove("zbot-hidden");
+    }
+
+    async loadHistory(force) {
+      if (this.historyLoaded && !force) return;
+      this.els.historyStatus.textContent = "Loading saved chats…";
+      this.els.historyList.innerHTML = "";
+      const resp = await sendMessage({ type: "getHistoryList" });
+      this.historyLoaded = true;
+      if (!resp || resp.error) {
+        this.els.historyStatus.textContent =
+          "Could not load history: " + ((resp && resp.error) || "unknown error");
+        return;
+      }
+      this.renderHistoryList(resp.sessions || []);
+    }
+
+    renderHistoryList(sessions) {
+      const list = this.els.historyList;
+      list.innerHTML = "";
+      if (!sessions.length) {
+        this.els.historyStatus.textContent = "No saved chats yet.";
+        return;
+      }
+      this.els.historyStatus.textContent = "";
+
+      sessions.forEach((session) => {
+        const item = document.createElement("div");
+        item.className = "zbot-history-item";
+
+        const main = document.createElement("button");
+        main.type = "button";
+        main.className = "zbot-history-item__main";
+        const title = document.createElement("div");
+        title.className = "zbot-history-item__title";
+        title.textContent = session.title || "Untitled chat";
+        const meta = document.createElement("div");
+        meta.className = "zbot-history-item__meta";
+        meta.textContent = this.formatHistoryMeta(session);
+        main.appendChild(title);
+        main.appendChild(meta);
+        main.addEventListener("click", () => this.openHistorySession(session.id));
+
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "zbot-history-item__delete";
+        del.setAttribute("aria-label", "Delete chat");
+        del.title = "Delete chat";
+        del.textContent = "\u2715";
+        del.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.deleteHistorySession(session.id);
+        });
+
+        item.appendChild(main);
+        item.appendChild(del);
+        list.appendChild(item);
+      });
+    }
+
+    formatHistoryMeta(session) {
+      const parts = [];
+      if (session.updated_at) {
+        const date = new Date(session.updated_at);
+        if (!isNaN(date.getTime())) parts.push(date.toLocaleString());
+      }
+      if (session.token_count) {
+        parts.push(Math.round(session.token_count / 1000) + "k tokens");
+      }
+      if (session.ended_reason) parts.push(session.ended_reason);
+      return parts.join(" · ");
+    }
+
+    async openHistorySession(sessionId) {
+      this.showHistoryDetail();
+      this.openHistoryData = null;
+      this.els.historyContinue.disabled = true;
+      this.els.historyDetailTitle.textContent = "Loading…";
+      this.els.historyDetail.innerHTML = "";
+      const resp = await sendMessage({ type: "getHistorySession", sessionId });
+      if (!resp || resp.error) {
+        this.els.historyDetailTitle.textContent =
+          "Could not load chat: " + ((resp && resp.error) || "unknown error");
+        return;
+      }
+      this.openHistoryData = resp;
+      this.els.historyContinue.disabled = false;
+      this.els.historyDetailTitle.textContent = resp.title || "Untitled chat";
+      this.renderHistoryTranscript(resp.messages || []);
+    }
+
+    /** Rebuild Ask thread turns from a saved session's flat message list. */
+    threadFromMessages(messages) {
+      const turns = [];
+      messages.forEach((message) => {
+        const content = message.content || "";
+        if (message.role === "user") {
+          turns.push({
+            question: content,
+            answer: "",
+            steps: [],
+            error: "",
+            banner: "",
+            bannerText: "",
+            pending: false,
+          });
+        } else {
+          let turn = turns[turns.length - 1];
+          if (!turn || turn.answer || turn.error) {
+            turn = {
+              question: "",
+              answer: "",
+              steps: [],
+              error: "",
+              banner: "",
+              bannerText: "",
+              pending: false,
+            };
+            turns.push(turn);
+          }
+          turn.answer = content;
+          turn.steps = message.steps || [];
+          turn.error = message.error || "";
+          if (message.error) {
+            turn.banner = "error";
+            turn.bannerText = message.error;
+          }
+        }
+      });
+      return turns;
+    }
+
+    continueHistorySession() {
+      const data = this.openHistoryData;
+      if (!data || !data.id) return;
+
+      this.sessionId = data.id;
+      this.sessionTitle = data.title || "";
+      this.tokenCount = data.token_count || 0;
+      this.thread = this.threadFromMessages(data.messages || []);
+      this.askGeneration += 1;
+      this.loading = false;
+      this.setAskButtonMode("ask");
+      this.setStatus("");
+      this.renderThread();
+      this.renderTaoEmpty();
+      this.saveCurrentSession();
+      this.updateContextNote();
+      this.switchTab("ask");
+      if (this.els.question && !this.els.question.disabled) {
+        this.els.question.focus();
+      }
+    }
+
+    renderHistoryTranscript(messages) {
+      const container = this.els.historyDetail;
+      container.innerHTML = "";
+      messages.forEach((message) => {
+        if (message.role === "user") {
+          container.appendChild(this.buildThreadAskBlock(message.content || ""));
+        } else {
+          container.appendChild(
+            this.buildThreadAnswerBlock({
+              answer: message.content || "",
+              error: message.error || "",
+              banner: message.error ? "error" : "",
+              bannerText: message.error || "",
+            })
+          );
+        }
+      });
+    }
+
+    async deleteHistorySession(sessionId) {
+      const resp = await sendMessage({ type: "deleteHistorySession", sessionId });
+      if (!resp || resp.error) {
+        this.els.historyStatus.textContent =
+          "Delete failed: " + ((resp && resp.error) || "unknown error");
+        return;
+      }
+      if (sessionId === this.sessionId) {
+        this.clearCurrentSession();
+        this.sessionId = null;
+        this.sessionTitle = "";
+        this.tokenCount = 0;
+        this.thread = [];
+        this.renderThread();
+        this.updateContextNote();
+      }
+      this.loadHistory(true);
     }
 
     async loadSettings() {

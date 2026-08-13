@@ -42,7 +42,7 @@ def main() -> None:
         sys.exit(1)
 
     print(f"Question: {question}\n")
-    answer, steps = run_zearn_agent(question)
+    answer, steps, _usage = run_zearn_agent(question)
     for i, step in enumerate(steps, start=1):
         print(f"[{i}] {step.get('phase')} — {step}")
     print("\nFINAL ANSWER\n", answer)
