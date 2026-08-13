@@ -13,6 +13,7 @@ from google.genai import types
 
 from zearn_faq_bot.agent import zearn_agent
 from zearn_faq_bot.constants import MAX_LLM_CALLS, REFUSAL_MESSAGE
+from zearn_faq_bot.formatting import strip_duplicate_inline_sources
 
 
 def _fallback_answer(_steps: list[dict[str, Any]]) -> str:
@@ -82,6 +83,9 @@ def _classify_step(part: Any, author: str) -> dict[str, Any] | None:
 
 
 async def run_zearn_agent_async(question: str) -> tuple[str, list[dict[str, Any]]]:
+    from zearn_faq_bot.tools.search_zearn_doc import reset_search_call_count
+
+    reset_search_call_count()
     service = InMemorySessionService()
     runner = Runner(agent=zearn_agent, app_name="zearn_support", session_service=service)
     session = await service.create_session(app_name="zearn_support", user_id="user1")
@@ -115,7 +119,7 @@ async def run_zearn_agent_async(question: str) -> tuple[str, list[dict[str, Any]
     if not final:
         final = _fallback_answer(steps)
 
-    return final, steps
+    return strip_duplicate_inline_sources(final), steps
 
 
 def run_zearn_agent(question: str) -> tuple[str, list[dict[str, Any]]]:

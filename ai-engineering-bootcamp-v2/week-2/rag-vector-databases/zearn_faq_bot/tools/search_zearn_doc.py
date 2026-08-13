@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 import json
+from contextvars import ContextVar
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from zearn_faq_bot.constants import CHUNK_TEXT_LIMIT
+from zearn_faq_bot.constants import CHUNK_TEXT_LIMIT, MAX_SEARCH_ZEARN_DOC_CALLS
 
 DOCS_DIR = Path(__file__).resolve().parents[3] / "documents"
+_search_call_count: ContextVar[int] = ContextVar("search_zearn_doc_call_count", default=0)
+
+
+def reset_search_call_count() -> None:
+    """Reset per-question search_zearn_doc call count (called at start of each agent run)."""
+    _search_call_count.set(0)
 
 
 @lru_cache(maxsize=512)
@@ -115,6 +122,19 @@ def search_zearn_doc(question: str) -> dict:
         Dict with chunk_count and chunks (chunk_id, document_id, title,
         text, source, source_url). Use title + source_url for citations.
     """
+    call_count = _search_call_count.get()
+    if call_count >= MAX_SEARCH_ZEARN_DOC_CALLS:
+        return {
+            "error": (
+                f"search_zearn_doc call limit ({MAX_SEARCH_ZEARN_DOC_CALLS}) "
+                "reached for this question. Answer from prior results, use "
+                "google_search_agent, or refuse."
+            ),
+            "chunks": [],
+            "chunk_count": 0,
+        }
+    _search_call_count.set(call_count + 1)
+
     try:
         # Lazy import avoids circular dependency with main.py → zearn_support_agent.
         from main import retrieve_context

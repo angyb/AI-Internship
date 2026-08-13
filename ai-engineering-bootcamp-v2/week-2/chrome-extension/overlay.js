@@ -227,6 +227,20 @@
       .replace(/'/g, "&#39;");
   }
 
+  function hasBulletedSourcesSection(text) {
+    return /(?:\*\*Sources:\*\*|Sources:)\s*\n(?:(?:[-*]\s+|\d+\.\s+)\[[^\]]+\]\([^)]+\)\s*\n?)+/i.test(
+      String(text || "")
+    );
+  }
+
+  function stripDuplicateInlineSources(text) {
+    let raw = String(text || "").trim();
+    if (!hasBulletedSourcesSection(raw)) return raw;
+    raw = raw.replace(/\n---\s*\n+Source:\s*[^\n]+\s*$/i, "");
+    raw = raw.replace(/\n+Source:\s*[^\n]+\s*$/i, "");
+    return raw.trim();
+  }
+
   function renderMarkdownInto(element, text) {
     let html;
     try {
@@ -859,9 +873,10 @@
         bubble.appendChild(this.buildBanner(turn.banner, turn.bannerText));
       }
 
-      const displayText =
+      const displayText = stripDuplicateInlineSources(
         (turn.answer || "").trim() ||
-        (turn.banner === "refusal" ? CONFIG.REFUSAL_MESSAGE : "");
+          (turn.banner === "refusal" ? CONFIG.REFUSAL_MESSAGE : "")
+      );
 
       const body = document.createElement("div");
       body.className = "zbot-thread-bubble__body zbot-answer";
