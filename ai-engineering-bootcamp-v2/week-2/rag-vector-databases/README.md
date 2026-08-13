@@ -57,17 +57,18 @@ If you see `Could not import module "main"`, the **Root Directory** is wrong or 
 
 Free/Starter Render instances have a **512MB RAM limit**. Loading PyTorch + the local cross-encoder reranker at startup exceeds that and causes **Out of memory (used over 512Mi)** / exit 137.
 
-**On Render, keep these off** (already set in `render.yaml` and forced by `sync_render_env.py`):
+**On Render (512MB free tier), keep rerank off** — use `requirements-render.txt` and set
+`RERANK_ENABLED=false`. On a **paid plan with ≥1GB RAM**, switch the build command to
+`requirements.txt` and enable rerank (see `sync_render_env.py --full-deps`).
 
-| Variable | Render value |
-|---|---|
-| `RERANK_ENABLED` | `false` |
-| `RELEVANCE_FILTER_ENABLED` | `false` |
-| `CONTEXT_ORDER_BY_RERANK_SCORE` | `false` |
+| Variable | Free-tier Render | Paid Render (≥1GB) |
+|---|---|---|
+| Build command | `requirements-render.txt` | `requirements.txt` |
+| `RERANK_ENABLED` | `false` | `true` |
+| `RELEVANCE_FILTER_ENABLED` | `false` | `true` |
+| `CONTEXT_ORDER_BY_RERANK_SCORE` | `false` | `true` |
 
-Hybrid BM25 + dense retrieval still works. Tune reranking locally with `requirements.txt`, then sync other vars to Render.
-
-To use cross-encoder reranking in production, upgrade to a Render plan with **≥1GB RAM** and switch the build command back to `requirements.txt`.
+Hybrid BM25 + dense retrieval works on all tiers. Cross-encoder reranking needs the full deps.
 
 ### Sync env to Render
 

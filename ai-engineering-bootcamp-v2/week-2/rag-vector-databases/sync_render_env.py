@@ -39,17 +39,13 @@ SKIP_KEYS = frozenset(
     }
 )
 
-# 512MB Render instances cannot load PyTorch + cross-encoder — always override on sync.
-RENDER_OVERRIDES: dict[str, str] = {
-    "RERANK_ENABLED": "false",
-    "RELEVANCE_FILTER_ENABLED": "false",
-    "CONTEXT_ORDER_BY_RERANK_SCORE": "false",
-}
+# Full deps (PyTorch + cross-encoder) for paid Render instances with >=1GB RAM.
+FULL_DEPS_BUILD_COMMAND = "pip install --upgrade pip && pip install -r requirements.txt"
 
 
 def load_env_pairs(path: Path) -> list[dict[str, str]]:
     raw = dotenv_values(path)
-    merged = {**{k: str(v) for k, v in raw.items() if k and v is not None}, **RENDER_OVERRIDES}
+    merged = {k: str(v) for k, v in raw.items() if k and v is not None}
     pairs: list[dict[str, str]] = []
     for key, value in merged.items():
         if key in SKIP_KEYS:
@@ -132,6 +128,29 @@ def trigger_deploy(service_id: str, api_key: str) -> None:
     print(f"Triggered deploy: {deploy_id}")
 
 
+def update_service_build(service_id: str, api_key: str, build_command: str) -> None:
+    """Set the Render build command (does not deploy by itself)."""
+    url = f"https://api.render.com/v1/services/{service_id}"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "serviceDetails": {
+            "envSpecificDetails": {
+                "buildCommand": build_command,
+            }
+        }
+    }
+    response = httpx.patch(url, headers=headers, json=payload, timeout=60.0)
+    if response.status_code >= 400:
+        print(f"Build update failed {response.status_code}: {response.text}", file=sys.stderr)
+        sys.exit(1)
+    print(f"Updated build command for {service_id}:")
+    print(f"  {build_command}")
+
+
 def resolve_service_id(api_key: str, slug_hint: str | None) -> str | None:
     """Best-effort lookup when RENDER_SERVICE_ID is unset."""
     headers = {"Authorization": f"Bearer {api_key}", "Accept": "application/json"}
@@ -178,6 +197,11 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--print-bulk", action="store_true", help="Print .env bulk paste for Dashboard")
     parser.add_argument("--deploy", action="store_true", help="Trigger deploy after sync")
+    parser.add_argument(
+        "--full-deps",
+        action="store_true",
+        help="Switch build to requirements.txt (PyTorch + cross-encoder) before sync",
+    )
     parser.add_argument("--service-id", default="")
     parser.add_argument("--api-key", default="")
     args = parser.parse_args()
@@ -216,6 +240,8 @@ def main() -> None:
         sys.exit(1)
 
     sync_to_render(service_id, api_key, pairs, dry_run=args.dry_run)
+    if args.full_deps and not args.dry_run:
+        update_service_build(service_id, api_key, FULL_DEPS_BUILD_COMMAND)
     if args.deploy and not args.dry_run:
         trigger_deploy(service_id, api_key)
 
