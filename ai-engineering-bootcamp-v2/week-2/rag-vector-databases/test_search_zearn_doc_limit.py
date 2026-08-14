@@ -10,7 +10,7 @@ def test_search_zearn_doc_call_cap(monkeypatch) -> None:
     reset_search_call_count()
     retrieve_calls = {"n": 0}
 
-    def fake_retrieve(_question: str):
+    def fake_retrieve(_question: str, **_kwargs):
         retrieve_calls["n"] += 1
         return [], "", [], []
 

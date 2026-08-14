@@ -702,10 +702,13 @@ def retrieve_chunks(
     document_ids: list[str] | None = None,
     exclude_document_ids: list[str] | None = None,
 ) -> list[RetrievedChunk]:
+    from timing import timed_span
+
     embeddings = _embeddings_client()
     index = _pinecone_index()
 
-    query_vector = embeddings.embed_query(question)
+    with timed_span("retrieve_embed"):
+        query_vector = embeddings.embed_query(question)
     query_kwargs: dict = {
         "vector": query_vector,
         "top_k": k,
@@ -716,7 +719,8 @@ def retrieve_chunks(
     if metadata_filter:
         query_kwargs["filter"] = metadata_filter
 
-    results = index.query(**query_kwargs)
+    with timed_span("retrieve_pinecone_fetch"):
+        results = index.query(**query_kwargs)
 
     return [
         _hydrate_from_bm25(_match_to_retrieved_chunk(match))
@@ -770,6 +774,20 @@ def _match_to_retrieved_chunk(match: dict) -> RetrievedChunk:
 
 
 def retrieve_chunks_bm25(
+    question: str,
+    k: int = 3,
+    document_ids: list[str] | None = None,
+    exclude_document_ids: list[str] | None = None,
+) -> list[RetrievedChunk]:
+    from timing import timed_span
+
+    with timed_span("retrieve_bm25"):
+        return _retrieve_chunks_bm25_impl(
+            question, k=k, document_ids=document_ids, exclude_document_ids=exclude_document_ids
+        )
+
+
+def _retrieve_chunks_bm25_impl(
     question: str,
     k: int = 3,
     document_ids: list[str] | None = None,

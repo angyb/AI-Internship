@@ -581,6 +581,39 @@
   gap: 8px;
 }
 
+.zbot-perf {
+  margin-top: 8px;
+  border: 1px dashed var(--zbot-line);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 13px;
+  background: #fafafa;
+}
+
+.zbot-perf summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--zbot-muted);
+}
+
+.zbot-perf__table {
+  width: 100%;
+  margin-top: 6px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.zbot-perf__table td {
+  padding: 2px 4px;
+  border-top: 1px solid var(--zbot-line);
+}
+
+.zbot-perf__table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .zbot-step {
   border: 1px solid var(--zbot-line);
   border-radius: 10px;
@@ -963,11 +996,26 @@
 
 /* --- History tab --- */
 
+.zbot-history-list-view > .zbot-section-title:first-child {
+  margin-top: 0;
+}
+
+.zbot-history-list-view > .zbot-status:empty {
+  display: none;
+  margin: 0;
+  min-height: 0;
+}
+
+.zbot-history-list-view > .zbot-status:not(:empty) {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
 .zbot-history-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 .zbot-history-item {
@@ -977,7 +1025,12 @@
   background: #fff;
   border: 1px solid var(--zbot-line);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
+}
+
+.zbot-history-item--menu-open {
+  z-index: 30;
 }
 
 .zbot-history-item__main {
@@ -990,6 +1043,7 @@
   font-family: inherit;
   color: var(--zbot-ink);
   min-width: 0;
+  border-radius: 9px 0 0 9px;
 }
 
 .zbot-history-item__main:hover {
@@ -1032,6 +1086,7 @@
   line-height: 1;
   padding: 0;
   font-family: inherit;
+  border-radius: 0 9px 9px 0;
 }
 
 .zbot-history-item__menu-btn:hover,
@@ -1049,7 +1104,7 @@
   border: 1px solid var(--zbot-line);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
-  z-index: 20;
+  z-index: 40;
   padding: 4px;
 }
 

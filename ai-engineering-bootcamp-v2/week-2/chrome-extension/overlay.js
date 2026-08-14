@@ -477,9 +477,14 @@
         this.continueHistorySession()
       );
       this.shadow.addEventListener("click", (e) => {
-        if (!e.target.closest(".zbot-history-item__menu-wrap")) {
-          this.closeHistoryMenu();
-        }
+        if (!this.activeHistoryMenu) return;
+        const path = typeof e.composedPath === "function" ? e.composedPath() : [e.target];
+        const insideMenu = path.some(
+          (node) =>
+            node instanceof Element &&
+            node.classList.contains("zbot-history-item__menu-wrap")
+        );
+        if (!insideMenu) this.closeHistoryMenu();
       });
 
       window.addEventListener("resize", () => {
@@ -1036,6 +1041,9 @@
       this.completePendingTurn({
         answer: resp.answer || "",
         steps: resp.steps || [],
+        timingsMs: resp.timingsMs || {},
+        searchCallCount:
+          typeof resp.searchCallCount === "number" ? resp.searchCallCount : 0,
       });
       this.saveCurrentSession();
       this.updateContextNote();
@@ -1070,6 +1078,9 @@
       turn.pending = false;
       turn.answer = result.answer || "";
       turn.steps = result.steps || [];
+      turn.timingsMs = result.timingsMs || {};
+      turn.searchCallCount =
+        typeof result.searchCallCount === "number" ? result.searchCallCount : 0;
       turn.error = result.error || "";
 
       const classified = classifyAnswer(turn.answer, turn.steps);
@@ -1087,6 +1098,11 @@
       if (turn.steps && turn.steps.length) {
         this.els.tao.innerHTML = "";
         this.els.tao.appendChild(this.buildSteps(turn.steps));
+        const perf = this.buildPerformancePanel(
+          turn.timingsMs,
+          turn.searchCallCount
+        );
+        if (perf) this.els.tao.appendChild(perf);
       } else {
         this.renderTaoEmpty();
       }
@@ -1318,6 +1334,45 @@
       return container;
     }
 
+    buildPerformancePanel(timingsMs, searchCallCount) {
+      const timings = timingsMs && typeof timingsMs === "object" ? timingsMs : {};
+      const keys = Object.keys(timings);
+      if (!keys.length) return null;
+
+      const sorted = keys
+        .map((name) => ({ name, ms: Number(timings[name]) || 0 }))
+        .sort((a, b) => b.ms - a.ms);
+
+      const details = document.createElement("details");
+      details.className = "zbot-perf";
+
+      const summary = document.createElement("summary");
+      const totalMs = Number(timings.agent_total) || sorted.reduce((s, r) => s + r.ms, 0);
+      summary.textContent =
+        "Performance — " +
+        Math.round(totalMs) +
+        " ms total" +
+        (searchCallCount ? " · " + searchCallCount + " search" : "");
+      details.appendChild(summary);
+
+      const table = document.createElement("table");
+      table.className = "zbot-perf__table";
+
+      sorted.forEach((row) => {
+        const tr = document.createElement("tr");
+        const nameCell = document.createElement("td");
+        nameCell.textContent = row.name;
+        const msCell = document.createElement("td");
+        msCell.textContent = Math.round(row.ms) + " ms";
+        tr.appendChild(nameCell);
+        tr.appendChild(msCell);
+        table.appendChild(tr);
+      });
+
+      details.appendChild(table);
+      return details;
+    }
+
     startNewChat() {
       if (this.sessionId) {
         sendMessage({
@@ -1468,19 +1523,32 @@
 
     async loadHistory() {
       this.closeHistoryMenu();
-      this.els.historyStatus.textContent = "Loading saved chats…";
-      this.els.historyList.innerHTML = "";
+      this.els.historyStatus.textContent = "";
+      this.renderHistoryPlaceholder("Loading saved chats…");
       const resp = await sendMessage({ type: "getHistoryList" });
       if (!resp || resp.error) {
-        this.els.historyStatus.textContent =
-          "Could not load history: " + ((resp && resp.error) || "unknown error");
+        this.renderHistoryPlaceholder(
+          "Could not load history: " + ((resp && resp.error) || "unknown error")
+        );
         return;
       }
       this.renderHistoryList(resp.sessions || []);
     }
 
+    renderHistoryPlaceholder(message) {
+      const list = this.els.historyList;
+      list.innerHTML = "";
+      const empty = document.createElement("div");
+      empty.className = "zbot-empty";
+      empty.textContent = message;
+      list.appendChild(empty);
+    }
+
     closeHistoryMenu() {
       if (!this.activeHistoryMenu) return;
+      this.activeHistoryMenu
+        .closest(".zbot-history-item")
+        ?.classList.remove("zbot-history-item--menu-open");
       this.activeHistoryMenu.classList.add("zbot-hidden");
       const btn = this.activeHistoryMenu.parentElement?.querySelector(
         ".zbot-history-item__menu-btn"
@@ -1497,6 +1565,7 @@
       this.closeHistoryMenu();
       menuEl.classList.remove("zbot-hidden");
       menuBtn.setAttribute("aria-expanded", "true");
+      menuEl.closest(".zbot-history-item")?.classList.add("zbot-history-item--menu-open");
       this.activeHistoryMenu = menuEl;
     }
 
@@ -1504,7 +1573,8 @@
       const list = this.els.historyList;
       list.innerHTML = "";
       if (!sessions.length) {
-        this.els.historyStatus.textContent = "No saved chats yet.";
+        this.els.historyStatus.textContent = "";
+        this.renderHistoryPlaceholder("No saved chats yet.");
         return;
       }
       this.els.historyStatus.textContent = "";
@@ -1572,8 +1642,13 @@
         menu.appendChild(renameBtn);
         menu.appendChild(deleteBtn);
         menuBtn.addEventListener("click", (e) => {
+          e.preventDefault();
           e.stopPropagation();
           this.toggleHistoryMenu(menu, menuBtn);
+        });
+
+        menuWrap.addEventListener("click", (e) => {
+          e.stopPropagation();
         });
 
         menuWrap.appendChild(menuBtn);

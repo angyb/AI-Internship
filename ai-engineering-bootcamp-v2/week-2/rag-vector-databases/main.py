@@ -270,6 +270,14 @@ class AgentResponse(BaseModel):
     token_count: int = 0
     context_token_limit: int = 0
     usage: TokenUsage = Field(default_factory=TokenUsage)
+    timings_ms: dict[str, float] = Field(
+        default_factory=dict,
+        description="Per-stage latency breakdown for this /agent request (milliseconds).",
+    )
+    search_call_count: int = Field(
+        default=0,
+        description="Number of search_zearn_doc tool calls during this request.",
+    )
 
 
 class HistorySessionSummary(BaseModel):
@@ -534,6 +542,7 @@ def retrieve_context(
     *,
     use_hybrid: bool = True,
     use_rerank: bool | None = None,
+    lite: bool = False,
     document_ids: list[str] | None = None,
     exclude_document_ids: list[str] | None = None,
 ) -> tuple[list[RetrievedChunk], str, list[str], list[str]]:
@@ -545,9 +554,10 @@ def retrieve_context(
         rerank_chunks,
         rerank_enabled,
     )
+    from timing import timed_span
 
     filter_ids, exclude_ids = resolve_retrieval_filters(document_ids, exclude_document_ids)
-    do_rerank = rerank_enabled() if use_rerank is None else use_rerank
+    do_rerank = False if lite else (rerank_enabled() if use_rerank is None else use_rerank)
     final_k = retrieval_k()
     final_max_per_doc = max_chunks_per_document()
 
@@ -578,7 +588,8 @@ def retrieve_context(
         )
 
     if do_rerank and candidates:
-        candidates = rerank_chunks(question, candidates)
+        with timed_span("retrieve_rerank"):
+            candidates = rerank_chunks(question, candidates)
 
     chunks = apply_diverse_filter(
         candidates,
@@ -587,15 +598,22 @@ def retrieve_context(
     )
 
     context_cap = max_context_chunks() if max_context_chunks_enabled() else None
-    chunks = prepare_context_chunks(
-        chunks,
-        radius=neighbor_chunk_radius(),
-        expand_neighbors=neighbor_chunks_enabled(),
-        merge_neighbors=neighbor_merge_enabled(),
-        max_chunks=context_cap,
-    )
+    expand_neighbors = neighbor_chunks_enabled() and not lite
+    merge_neighbors = neighbor_merge_enabled() and not lite
+    with timed_span("retrieve_neighbors"):
+        chunks = prepare_context_chunks(
+            chunks,
+            radius=neighbor_chunk_radius(),
+            expand_neighbors=expand_neighbors,
+            merge_neighbors=merge_neighbors,
+            max_chunks=context_cap,
+        )
 
-    chunks = filter_and_order_chunks_by_relevance(question, chunks)
+    with timed_span("retrieve_relevance_filter"):
+        if lite:
+            pass
+        else:
+            chunks = filter_and_order_chunks_by_relevance(question, chunks)
 
     if not chunks:
         return [], "", [], []
@@ -690,31 +708,35 @@ def _persist_agent_turn(
     Returns ``(title, token_count)``. Persistence is best-effort: any DB error is
     logged and swallowed so the user still gets their answer.
     """
+    from timing import timed_span
+
     if not (db.database_enabled() and body.session_id and body.install_id):
         return None, usage.get("total_tokens", 0)
 
     try:
-        summary = db.ensure_session(body.session_id, body.install_id)
-        is_first_turn = not summary.get("title")
-        db.add_message(body.session_id, "user", content=body.question)
-        db.add_message(
-            body.session_id,
-            "assistant",
-            content=answer,
-            steps=steps or None,
-            prompt_tokens=usage.get("prompt_tokens"),
-            total_tokens=usage.get("total_tokens"),
-        )
-        title = summary.get("title") or None
-        if is_first_turn:
-            title = generate_session_title(body.question, answer)
-        token_count = usage.get("total_tokens", 0)
-        db.update_session(
-            body.session_id,
-            title=title,
-            token_count=token_count,
-            status="active",
-        )
+        with timed_span("db_persist"):
+            summary = db.ensure_session(body.session_id, body.install_id)
+            is_first_turn = not summary.get("title")
+            db.add_message(body.session_id, "user", content=body.question)
+            db.add_message(
+                body.session_id,
+                "assistant",
+                content=answer,
+                steps=steps or None,
+                prompt_tokens=usage.get("prompt_tokens"),
+                total_tokens=usage.get("total_tokens"),
+            )
+            title = summary.get("title") or None
+            if is_first_turn:
+                with timed_span("session_title"):
+                    title = generate_session_title(body.question, answer)
+            token_count = usage.get("total_tokens", 0)
+            db.update_session(
+                body.session_id,
+                title=title,
+                token_count=token_count,
+                status="active",
+            )
         return title, token_count
     except Exception as exc:
         logger.warning("Failed to persist chat turn: %s", exc)
@@ -738,12 +760,16 @@ def agent_run(body: AgentRequest) -> AgentResponse:
             detail="GOOGLE_API_KEY is not set — required for POST /agent",
         )
 
+    from timing import get_timings, reset_timings, timed_span
+
+    reset_timings()
     history = [{"role": turn.role, "content": turn.content} for turn in body.history]
 
     try:
         from zearn_support_agent import run_zearn_agent
 
-        answer, steps, usage = run_zearn_agent(body.question, history)
+        with timed_span("agent_total"):
+            answer, steps, usage = run_zearn_agent(body.question, history)
     except HTTPException:
         raise
     except Exception as exc:
@@ -762,6 +788,16 @@ def agent_run(body: AgentRequest) -> AgentResponse:
 
     title, token_count = _persist_agent_turn(body, answer, steps, usage)
 
+    timings = get_timings()
+    search_call_count = int(usage.get("search_call_count") or 0)
+    logger.info(
+        "agent_timings session_id=%s total_ms=%.1f search_calls=%d timings=%s",
+        body.session_id or "",
+        timings.get("agent_total", 0.0),
+        search_call_count,
+        timings,
+    )
+
     return AgentResponse(
         answer=answer,
         steps=[AgentStep(**step) for step in steps],
@@ -774,6 +810,8 @@ def agent_run(body: AgentRequest) -> AgentResponse:
             output_tokens=usage.get("output_tokens", 0),
             total_tokens=usage.get("total_tokens", 0),
         ),
+        timings_ms=timings,
+        search_call_count=search_call_count,
     )
 
 

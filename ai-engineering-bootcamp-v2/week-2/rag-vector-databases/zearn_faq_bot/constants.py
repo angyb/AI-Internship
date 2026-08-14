@@ -25,7 +25,7 @@ FALLBACK_PREFIX = (
 
 GOOGLE_SEARCH_INSTRUCTION = (
     "You are a Google search sub-agent. "
-    "Search the web for current information relevant to the user's question. "
+    "Search the web once for current information relevant to the user's question. "
     "Always cite source URLs in your answer."
 )
 
@@ -38,9 +38,10 @@ AGENT_INSTRUCTION = (
     "standards PDF; you may suggest similar_codes_in_state but do NOT list lessons "
     "or topics and do NOT substitute a different state's data. "
     "For other factual Zearn questions, call search_zearn_doc before answering. "
-    "Use only retrieved content from search_zearn_doc when it answers the question. "
-    "If the first search is insufficient, refine your query and search again "
+    "Write one precise search query first; only call search_zearn_doc again if the "
+    "first call returned zero chunks or an error "
     f"(at most {MAX_SEARCH_ZEARN_DOC_CALLS} search_zearn_doc calls per question). "
+    "Use only retrieved content from search_zearn_doc when it answers the question. "
     "When citing Zearn docs, end with exactly one **Sources:** section: a markdown "
     "bullet list with one [Title](source_url) link per line from each chunk's title "
     "and source_url. If source_url is missing, use the title as plain text on that "
@@ -49,7 +50,8 @@ AGENT_INSTRUCTION = (
     "Every non-refusal final answer MUST include at least one markdown link "
     "in the Sources section — never finish without a link. "
     "If search_zearn_doc returns no chunks, returns an error, or the retrieved chunks "
-    "clearly do not answer the question, call google_search_agent for a web fallback. "
+    "clearly do not answer the question, call google_search_agent once for a web fallback. "
+    "Do not call google_search_agent if search_zearn_doc already answered the question. "
     f"When you use google_search_agent, start your final answer with exactly: \"{FALLBACK_PREFIX}\" "
     "and end with a **Sources:** bullet list that includes at least one markdown link "
     "to a URL from the web search results. "

@@ -20,6 +20,11 @@ def reset_search_call_count() -> None:
     _search_call_count.set(0)
 
 
+def get_search_call_count() -> int:
+    """Return how many search_zearn_doc calls ran in the current agent request."""
+    return _search_call_count.get()
+
+
 @lru_cache(maxsize=512)
 def _doc_meta_from_source(source: str) -> tuple[str, str]:
     """Return (title, source_url) from local docs when Pinecone metadata is sparse."""
@@ -135,12 +140,16 @@ def search_zearn_doc(question: str) -> dict:
             "chunk_count": 0,
         }
     _search_call_count.set(call_count + 1)
+    span_name = f"search_zearn_doc_{call_count + 1}"
 
     try:
-        # Lazy import avoids circular dependency with main.py → zearn_support_agent.
+        from env_utils import bool_env
         from main import retrieve_context
+        from timing import timed_span
 
-        chunks, _context, _chunk_ids, _sources = retrieve_context(question)
+        lite = bool_env("AGENT_LITE_RETRIEVAL", False)
+        with timed_span(span_name):
+            chunks, _context, _chunk_ids, _sources = retrieve_context(question, lite=lite)
     except KeyError as exc:
         return {
             "error": f"Missing required environment variable: {exc.args[0]}",

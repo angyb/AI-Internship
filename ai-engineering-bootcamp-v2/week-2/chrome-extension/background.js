@@ -212,6 +212,14 @@ async function handleAsk(msg) {
         typeof data.context_token_limit === "number"
           ? data.context_token_limit
           : CONFIG.CONTEXT_TOKEN_LIMIT,
+      timingsMs:
+        data.timings_ms && typeof data.timings_ms === "object"
+          ? data.timings_ms
+          : {},
+      searchCallCount:
+        typeof data.search_call_count === "number"
+          ? data.search_call_count
+          : 0,
     };
   } catch (e) {
     if (e && e.name === "AbortError") {

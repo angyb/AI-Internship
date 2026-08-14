@@ -199,6 +199,19 @@
                   result: "3 chunks retrieved from Pinecone.",
                 },
               ],
+              timingsMs: {
+                agent_total: 6200,
+                gemini_llm: 3100,
+                search_zearn_doc_1: 2100,
+                retrieve_embed: 420,
+                retrieve_pinecone_fetch: 380,
+                retrieve_bm25: 120,
+                retrieve_rerank: 680,
+                retrieve_neighbors: 90,
+                retrieve_relevance_filter: 110,
+                db_persist: 45,
+              },
+              searchCallCount: 1,
             });
           }, ASK_DELAY_MS);
           return;

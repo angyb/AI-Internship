@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import time
 import uuid
 from typing import Any
 
@@ -135,10 +136,20 @@ def _usage_from_event(event: Any, current: dict[str, int]) -> dict[str, int]:
     return current
 
 
+def _google_search_tool_name(name: str | None) -> bool:
+    tool = (name or "").lower()
+    return tool in ("google_search_agent", "google_search")
+
+
+def _google_search_author(author: str | None) -> bool:
+    return "google_search" in (author or "").lower()
+
+
 async def run_zearn_agent_async(
     question: str,
     history: list[dict[str, Any]] | None = None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, int]]:
+    from timing import record_event
     from zearn_faq_bot.tools.search_zearn_doc import reset_search_call_count
 
     reset_search_call_count()
@@ -154,16 +165,36 @@ async def run_zearn_agent_async(
     last_think_text = ""
     usage: dict[str, int] = {"prompt_tokens": 0, "output_tokens": 0, "total_tokens": 0}
 
+    last_event_time = time.perf_counter()
+    in_google_search = False
+
     async for event in runner.run_async(
         user_id="user1",
         session_id=session.id,
         new_message=content,
         run_config=run_config,
     ):
+        now = time.perf_counter()
+        delta_ms = (now - last_event_time) * 1000
+        if in_google_search:
+            record_event("google_search_agent", delta_ms)
+        else:
+            record_event("gemini_llm", delta_ms)
+        last_event_time = now
+
         usage = _usage_from_event(event, usage)
         author = getattr(event, "author", "unknown")
+        if _google_search_author(author):
+            in_google_search = True
         if event.content and event.content.parts:
             for part in event.content.parts:
+                fc = getattr(part, "function_call", None)
+                fr = getattr(part, "function_response", None)
+                if fc and _google_search_tool_name(fc.name):
+                    in_google_search = True
+                if fr and _google_search_tool_name(fr.name):
+                    in_google_search = False
+
                 step = _classify_step(part, author)
                 if step:
                     steps.append(step)
@@ -178,6 +209,9 @@ async def run_zearn_agent_async(
     if not final:
         final = _fallback_answer(steps)
 
+    from zearn_faq_bot.tools.search_zearn_doc import get_search_call_count
+
+    usage["search_call_count"] = get_search_call_count()
     return strip_duplicate_inline_sources(final), steps, usage
 
 
