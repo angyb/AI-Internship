@@ -27,6 +27,15 @@
     database: "Chat history database",
   };
 
+  const HEALTH_USAGE_LABELS = {
+    render: "Render",
+    pinecone: "Pinecone",
+    openai: "OpenAI",
+    gemini: "Gemini",
+  };
+
+  const HEALTH_USAGE_ORDER = ["render", "pinecone", "openai", "gemini"];
+
   // Layout toggle icons: a window frame holding either a small floating card
   // (overlay) or a filled right third (right panel). Each one shows the layout
   // the button switches *to*, and inherits the header's text color.
@@ -165,6 +174,10 @@
             <div class="zbot-settings__section">
               <div class="zbot-settings__label">Dependencies</div>
               <ul class="zbot-health-list" data-el="health-checks"></ul>
+            </div>
+            <div class="zbot-settings__section">
+              <div class="zbot-settings__label">Usage &amp; quotas</div>
+              <ul class="zbot-health-list" data-el="health-usage"></ul>
             </div>
           </section>
         </div>
@@ -410,6 +423,7 @@
         health: this.shadow.querySelector('[data-el="health"]'),
         healthCheck: this.shadow.querySelector('[data-el="health-check"]'),
         healthChecks: this.shadow.querySelector('[data-el="health-checks"]'),
+        healthUsage: this.shadow.querySelector('[data-el="health-usage"]'),
         traceRun: this.shadow.querySelector('[data-el="trace-run"]'),
         traceStatus: this.shadow.querySelector('[data-el="trace-status"]'),
         traceOutput: this.shadow.querySelector('[data-el="trace-output"]'),
@@ -691,21 +705,39 @@
       this.els.health.className = "zbot-health zbot-health--pending";
       this.els.health.textContent = "Checking…";
       this.renderHealthChecks(null, "Checking…");
+      this.renderHealthUsage(null, "Checking…");
     }
 
     applyHealthResult(resp) {
       if (resp && resp.ok) {
         const health = (resp && resp.health) || {};
-        const degraded = health.status === "degraded";
-        this.els.health.className =
-          "zbot-health " + (degraded ? "zbot-health--warn" : "zbot-health--ok");
-        this.els.health.textContent =
-          (degraded ? "Reachable, but a dependency is failing · " : "Reachable · ") +
-          (resp.base || "");
         const checks = health.checks || {};
+        const usage = health.usage || {};
+        const checkFail = Object.keys(checks).some(function (name) {
+          return checks[name] && checks[name].ok === false;
+        });
+        const usageLevel = health.usage_level || "";
+        let tone = "ok";
+        let summary = "Reachable · ";
+        if (checkFail) {
+          tone = "warn";
+          summary = "Reachable, but a dependency is failing · ";
+        } else if (usageLevel === "over") {
+          tone = "warn";
+          summary = "Reachable, but a quota is exhausted · ";
+        } else if (usageLevel === "warn") {
+          tone = "warn";
+          summary = "Reachable · approaching a quota · ";
+        }
+        this.els.health.className = "zbot-health zbot-health--" + tone;
+        this.els.health.textContent = summary + (resp.base || "");
         this.renderHealthChecks(
           checks,
           "This API build does not report dependency checks yet. Redeploy week-2-rag-api."
+        );
+        this.renderHealthUsage(
+          usage,
+          "This API build does not report usage yet. Redeploy week-2-rag-api."
         );
       } else {
         this.els.health.className = "zbot-health zbot-health--bad";
@@ -713,6 +745,7 @@
           (resp && (resp.error || "HTTP " + resp.status)) || "unreachable";
         this.els.health.textContent = "Unreachable · " + detail;
         this.renderHealthChecks(null, "Skipped — API unreachable");
+        this.renderHealthUsage(null, "Skipped — API unreachable");
       }
     }
 
@@ -749,6 +782,111 @@
         li.appendChild(detail);
         list.appendChild(li);
       });
+    }
+
+    renderHealthUsage(usage, emptyMessage) {
+      const list = this.els.healthUsage;
+      if (!list) return;
+      list.innerHTML = "";
+      if (!usage || !Object.keys(usage).length) {
+        const li = document.createElement("li");
+        li.className = "zbot-health-list__empty";
+        li.textContent = emptyMessage || "Not checked yet";
+        list.appendChild(li);
+        return;
+      }
+      const names = HEALTH_USAGE_ORDER.filter((name) =>
+        Object.prototype.hasOwnProperty.call(usage, name)
+      );
+      Object.keys(usage).forEach((name) => {
+        if (names.indexOf(name) === -1) names.push(name);
+      });
+      names.forEach((name) => {
+        const item = usage[name] || {};
+        const level = item.level || (item.ok ? "ok" : "info");
+        const li = document.createElement("li");
+        li.className =
+          "zbot-health-item zbot-health-item--" +
+          (level === "over"
+            ? "bad"
+            : level === "warn"
+              ? "warn"
+              : level === "info"
+                ? "info"
+                : "ok");
+        const label = document.createElement("span");
+        label.className = "zbot-health-item__label";
+        label.textContent = HEALTH_USAGE_LABELS[name] || name;
+        li.appendChild(label);
+        const meters = Array.isArray(item.meters) ? item.meters : [];
+        meters.forEach((meter) => {
+          li.appendChild(this.buildUsageMeter(meter, level));
+        });
+        const detail = document.createElement("span");
+        detail.className = "zbot-health-item__detail";
+        detail.textContent = item.detail || "";
+        li.appendChild(detail);
+        if (item.dashboard) {
+          const link = document.createElement("a");
+          link.className = "zbot-health-item__link";
+          link.href = item.dashboard;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = "Open dashboard";
+          li.appendChild(link);
+        }
+        list.appendChild(li);
+      });
+    }
+
+    buildUsageMeter(meter, level) {
+      const wrap = document.createElement("div");
+      wrap.className = "zbot-meter";
+      const row = document.createElement("div");
+      row.className = "zbot-meter__row";
+      const name = document.createElement("span");
+      name.className = "zbot-meter__name";
+      name.textContent = meter.label || "";
+      const value = document.createElement("span");
+      value.className = "zbot-meter__value";
+      const unit = meter.unit || "";
+      const usedTxt = this.formatUsageQty(meter.used, unit);
+      if (meter.limit == null) {
+        value.textContent = usedTxt;
+      } else {
+        value.textContent =
+          usedTxt + " / " + this.formatUsageQty(meter.limit, unit);
+      }
+      row.appendChild(name);
+      row.appendChild(value);
+      wrap.appendChild(row);
+      if (meter.limit != null && Number(meter.limit) > 0) {
+        const pct = Math.max(
+          0,
+          Math.min(100, Number(meter.pct != null ? meter.pct : 0))
+        );
+        const track = document.createElement("div");
+        track.className = "zbot-meter__track";
+        const fill = document.createElement("div");
+        fill.className =
+          "zbot-meter__fill zbot-meter__fill--" +
+          (level === "over" ? "bad" : level === "warn" ? "warn" : "ok");
+        fill.style.width = pct + "%";
+        track.appendChild(fill);
+        wrap.appendChild(track);
+      }
+      return wrap;
+    }
+
+    formatUsageQty(value, unit) {
+      const n = Number(value);
+      const u = String(unit || "");
+      if (!isFinite(n)) return "—";
+      if (u.toUpperCase() === "USD") {
+        return "$" + n.toFixed(2);
+      }
+      const digits = Math.abs(n) >= 100 ? 0 : Math.abs(n) >= 10 ? 1 : 2;
+      return n.toFixed(digits) + (u ? " " + u : "");
     }
 
     async runTraceChecks() {

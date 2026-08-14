@@ -30,7 +30,9 @@ from dotenv import dotenv_values
 THIS_DIR = Path(__file__).resolve().parent
 DEFAULT_ENV = THIS_DIR / ".env"
 
-# Local-only keys — never push to the Render service
+# Local-only keys — never push to the Render service.
+# RENDER_API_KEY is skipped here, but production /health usage meters need it
+# set on the service in the Render Dashboard (Environment).
 SKIP_KEYS = frozenset(
     {
         "RAG_API_URL",

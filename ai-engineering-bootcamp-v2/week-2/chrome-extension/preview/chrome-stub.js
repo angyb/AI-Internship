@@ -88,6 +88,73 @@
                 bm25: { ok: true, detail: "preview stub" },
                 database: { ok: true, detail: "preview stub" },
               },
+              usage_level: "ok",
+              usage: {
+                render: {
+                  ok: true,
+                  level: "ok",
+                  detail:
+                    "0.11 GB of 5.00 GB outbound this month. Remaining workspace credits are not in the Render API.",
+                  meters: [
+                    {
+                      label: "Outbound bandwidth (preview)",
+                      used: 0.11,
+                      limit: 5,
+                      unit: "GB",
+                      pct: 2.2,
+                    },
+                    {
+                      label: "Postgres disk",
+                      used: 0.08,
+                      limit: 5,
+                      unit: "GB",
+                      pct: 1.6,
+                    },
+                  ],
+                  dashboard: "https://dashboard.render.com/billing",
+                },
+                pinecone: {
+                  ok: true,
+                  level: "ok",
+                  detail:
+                    "15,776 vectors · ~0.10 GB of 2.00 GB storage (starter plan). Remaining monthly egress is not exposed via API.",
+                  meters: [
+                    {
+                      label: "Estimated storage",
+                      used: 0.1,
+                      limit: 2,
+                      unit: "GB",
+                      pct: 5,
+                    },
+                  ],
+                  dashboard:
+                    "https://app.pinecone.io/organizations/-/settings/usage",
+                },
+                openai: {
+                  ok: true,
+                  level: "info",
+                  detail:
+                    "Spend needs an OpenAI Admin key (OPENAI_ADMIN_KEY). Remaining prepaid credits are not available via API.",
+                  meters: [],
+                  dashboard: "https://platform.openai.com/usage",
+                },
+                gemini: {
+                  ok: true,
+                  level: "ok",
+                  detail:
+                    "$0.80 of $250.00 Tier 1 $250 cap used in preview (12 Ask Z-Bot turns, Flash list prices).",
+                  meters: [
+                    {
+                      label: "Est. spend (preview)",
+                      used: 0.8,
+                      limit: 250,
+                      unit: "USD",
+                      pct: 0.3,
+                    },
+                  ],
+                  dashboard: "https://aistudio.google.com/usage",
+                },
+              },
             },
           });
           return;

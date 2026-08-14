@@ -852,6 +852,14 @@
   border-left-color: var(--zbot-teal);
 }
 
+.zbot-health-item--info {
+  border-left-color: var(--zbot-line);
+}
+
+.zbot-health-item--warn {
+  border-left-color: var(--zbot-amber);
+}
+
 .zbot-health-item--bad {
   border-left-color: var(--zbot-danger);
 }
@@ -870,6 +878,67 @@
 
 .zbot-health-item--bad .zbot-health-item__detail {
   color: var(--zbot-danger);
+}
+
+.zbot-health-item__link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--zbot-btn);
+  text-decoration: none;
+  margin-top: 2px;
+}
+
+.zbot-health-item__link:hover {
+  text-decoration: underline;
+}
+
+.zbot-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 4px 0 2px;
+}
+
+.zbot-meter__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--zbot-ink);
+}
+
+.zbot-meter__name {
+  font-weight: 600;
+}
+
+.zbot-meter__value {
+  color: var(--zbot-muted);
+  white-space: nowrap;
+}
+
+.zbot-meter__track {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--zbot-line);
+  overflow: hidden;
+}
+
+.zbot-meter__fill {
+  height: 100%;
+  border-radius: 99px;
+  min-width: 0;
+}
+
+.zbot-meter__fill--ok {
+  background: var(--zbot-teal);
+}
+
+.zbot-meter__fill--warn {
+  background: var(--zbot-amber);
+}
+
+.zbot-meter__fill--bad {
+  background: var(--zbot-danger);
 }
 
 /* --- Ask footer token count --- */

@@ -100,7 +100,7 @@ Preview without sending: `python sync_render_env.py --dry-run`
 
 **When to re-run sync:** after any change to local `.env` that should match Render (retrieval, rerank, models, chunk size, etc.).
 
-**When to re-ingest:** after changing `CHUNK_SIZE`, `CHUNK_OVERLAP`, `EMBEDDING_MODEL`, or ingest/title logic in `ingest.py`. Full ingest clears the Pinecone index by default and takes several minutes. Confirm before running against a shared production index.
+**When to re-ingest:** after changing `CHUNK_SIZE`, `CHUNK_OVERLAP`, `EMBEDDING_MODEL`, ingest/title logic in `ingest.py`, **or** after deploying slim Pinecone metadata (so existing vectors drop stored `text` bodies). Full ingest clears the Pinecone index by default and takes several minutes. Confirm before running against a shared production index.
 
 After deploy, ingest documents once (from your machine or a one-off shell):
 
@@ -121,10 +121,12 @@ curl -s -X POST "https://your-app.onrender.com/ask" \
 Retrieval combines **Pinecone dense search** with an in-process **BM25 keyword index**, fused via reciprocal rank fusion (RRF). This helps exact-term queries (e.g. `director`, `09:00`, `POL-101`) while keeping semantic matches strong.
 
 - **Default:** hybrid is on for `/ask`, `/retrieve`, and `/eval`
-- **Render startup:** BM25 rebuilds from existing Pinecone vectors (so pasted ingests work without local files)
-- **Ingest sync:** every `POST /ingest` updates both Pinecone and BM25
+- **Render startup:** BM25 loads from Postgres (`bm25_chunks`). If that table is empty, a **one-time** Pinecone metadata backfill runs (`include_values=false`) and writes Postgres, then never full-fetches the index again.
+- **Ingest sync:** every `POST /ingest` updates Pinecone (vectors + slim metadata) **and** Postgres/BM25 (chunk text)
 - **Disable:** set `HYBRID_SEARCH=false` in the environment to fall back to dense-only
 - **Compare in Swagger:** `POST /retrieve` accepts `"use_hybrid": false` for dense-only debugging
+
+Pinecone metadata no longer stores chunk bodies (ids, title, source_url only). Query/fetch use `include_values=false`. After this change, **re-ingest once** (or run the empty-table backfill while old vectors still have `text`) so existing vectors drop stored bodies and BM25 is populated.
 
 ## Retrieval tuning (env)
 
@@ -141,7 +143,7 @@ Values below match **`render.yaml`** (production). Local `.env` may differ — c
 | `MAX_CONTEXT_CHUNKS_ENABLED` | `true` | Cap blocks sent to the LLM after expand/merge |
 | `MAX_CONTEXT_CHUNKS` | `5` | Maximum context blocks when cap is enabled |
 
-After diverse filtering, neighbor expansion loads `chunk_index ± radius` from the same `document_id` (BM25 index first, Pinecone fetch fallback). When merge is on, each hit becomes a single concatenated block; `MAX_CONTEXT_CHUNKS` then trims to the top blocks in retrieval order.
+After diverse filtering, neighbor expansion loads `chunk_index ± radius` from the same `document_id` (BM25/Postgres first, Pinecone fetch fallback). When merge is on, each hit becomes a single concatenated block; `MAX_CONTEXT_CHUNKS` then trims to the top blocks in retrieval order.
 
 ## Cross-encoder reranking (local, free)
 

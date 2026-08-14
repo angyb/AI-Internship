@@ -77,15 +77,15 @@ async def lifespan(_app: FastAPI):
         logger.warning("Chat history DB init failed: %s", exc)
 
     if hybrid_search_enabled():
-        from bm25_index import get_bm25_index
+        from bm25_index import ensure_bm25_ready
 
         start = time.perf_counter()
         try:
-            chunk_count = get_bm25_index().rebuild_from_pinecone()
+            chunk_count = ensure_bm25_ready().record_count()
             elapsed = time.perf_counter() - start
-            logger.info("BM25 index rebuilt: %d chunks in %.1fs", chunk_count, elapsed)
+            logger.info("BM25 index ready: %d chunks in %.1fs", chunk_count, elapsed)
         except Exception as exc:
-            logger.warning("BM25 rebuild from Pinecone failed: %s", exc)
+            logger.warning("BM25 startup load failed: %s", exc)
 
     from rerank import (
         context_order_by_rerank_score_enabled,
@@ -401,10 +401,11 @@ class EvalAgentResponse(BaseModel):
 
 @app.get("/health")
 def health() -> dict[str, Any]:
-    """Liveness plus dependency checks (Pinecone, embeddings, Gemini, BM25, DB).
+    """Liveness plus dependency checks and vendor usage snapshots.
 
     Always HTTP 200 when this process is up. ``status`` is ``ok`` or ``degraded``
-    so the extension Health tab can show per-check errors (e.g. Pinecone egress).
+    so the extension Health tab can show per-check errors (e.g. Pinecone egress)
+    and remaining-quota meters for Render / Pinecone / OpenAI / Gemini.
     """
     from health_checks import collect_health
 

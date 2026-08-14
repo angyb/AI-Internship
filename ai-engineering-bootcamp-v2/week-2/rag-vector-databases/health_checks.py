@@ -36,9 +36,16 @@ def _check_pinecone_uncached() -> dict[str, Any]:
 
         stats = _pinecone_index().describe_index_stats()
         count = int(getattr(stats, "total_vector_count", 0) or 0)
+        dimension = int(getattr(stats, "dimension", 0) or 0)
         if count <= 0:
-            return _check(False, "Index is empty — ingest documents before asking.")
-        return _check(True, f"{count:,} vectors in index")
+            result = _check(False, "Index is empty — ingest documents before asking.")
+            result["vector_count"] = count
+            result["dimension"] = dimension
+            return result
+        result = _check(True, f"{count:,} vectors in index")
+        result["vector_count"] = count
+        result["dimension"] = dimension
+        return result
     except KeyError as exc:
         return _check(False, f"Missing environment variable: {exc.args[0]}")
     except Exception as exc:
@@ -77,7 +84,7 @@ def check_bm25() -> dict[str, Any]:
         if count <= 0:
             return _check(
                 False,
-                "Keyword index is empty — hybrid search will miss until BM25 rebuilds.",
+                "Keyword index is empty — hybrid search will miss until Postgres load or ingest.",
             )
         return _check(True, f"{count:,} chunks indexed")
     except Exception as exc:
@@ -107,6 +114,8 @@ _CHECKS: tuple[tuple[str, Callable[[], dict[str, Any]]], ...] = (
 
 def collect_health() -> dict[str, Any]:
     """Return API liveness plus per-dependency checks. Always safe to serialize."""
+    from usage_checks import collect_usage, usage_level
+
     checks: dict[str, Any] = {}
     all_ok = True
     for name, fn in _CHECKS:
@@ -114,7 +123,14 @@ def collect_health() -> dict[str, Any]:
         checks[name] = result
         if not result.get("ok"):
             all_ok = False
+    usage = collect_usage()
+    level = usage_level(usage)
+    status = "ok" if all_ok else "degraded"
+    if all_ok and level == "over":
+        status = "degraded"
     return {
-        "status": "ok" if all_ok else "degraded",
+        "status": status,
+        "usage_level": level,
         "checks": checks,
+        "usage": usage,
     }

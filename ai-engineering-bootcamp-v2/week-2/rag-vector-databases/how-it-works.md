@@ -35,9 +35,10 @@ Everything is env-var driven, so behavior differs between **local** (full featur
 ## 1. FastAPI service (`main.py`)
 
 The backbone. On startup (`lifespan`) it:
-- Rebuilds the **BM25 keyword index** from existing Pinecone vectors (so keyword search
-  works on a fresh server that never ran a local ingest).
-- Optionally warms up the cross-encoder reranker (skipped on Render).
+- Loads the **BM25 keyword index** from Postgres (`bm25_chunks`). If the table is empty,
+  a one-time Pinecone metadata backfill (`include_values=false`) fills Postgres, then
+  future boots never re-download the index.
+- Optionally warms up the cross-encoder reranker (background thread).
 
 Endpoints:
 - `GET /health` — smoke test / wake Render.
@@ -64,9 +65,11 @@ Largest module. Full-ingest flow:
 2. **Chunk** with LangChain `RecursiveCharacterTextSplitter` (default 500 chars / 80
    overlap on Render). Small PDF pages are kept whole.
 3. **Embed** with OpenAI `text-embedding-3-small`, **upsert** to Pinecone in batches of
-   100. Chunk IDs are deterministic: `{document_id}__chunk_{index}` (index is
-   per-document) — this is what makes neighbor lookups possible later.
-4. **Sync BM25** — the same chunks are pushed into the in-process BM25 index.
+   100. Metadata is slim (`document_id`, `chunk_index`, `source`, `title`, `source_url`)
+   — not the chunk body. Chunk IDs are deterministic: `{document_id}__chunk_{index}`
+   (index is per-document) — this is what makes neighbor lookups possible later.
+4. **Sync BM25** — the same chunks (including full text) are written to Postgres
+   `bm25_chunks` and the in-process BM25 index.
 
 `clear_index=True` (default) wipes Pinecone + BM25 first. Pasted single docs replace only
 their own `document_id`.
@@ -79,7 +82,8 @@ A multi-stage funnel assembled in `retrieve_context()` (`main.py`), using buildi
 from `ingest.py`, `bm25_index.py`, and `rerank.py`.
 
 1. **Hybrid candidate fetch** (`retrieve_chunks_hybrid`)
-   - **Dense**: embed the question, query Pinecone top-k.
+   - **Dense**: embed the question, query Pinecone top-k with `include_values=false`, then
+     hydrate chunk text from BM25/Postgres (legacy Pinecone `text` metadata is fallback).
    - **Sparse**: `BM25Okapi` keyword search over the in-process index (`bm25_index.py`) —
      helps exact-term queries (`POL-101`, `09:00`, `director`) that embeddings blur.
    - **Fuse** with **Reciprocal Rank Fusion** (`reciprocal_rank_fusion`, RRF constant 60):
@@ -196,7 +200,8 @@ Recurring theme: **local = full power, Render = slim.**
 
 ## End-to-end data flow
 
-- **Ingest (one-time):** `documents/` → load → chunk → embed → Pinecone + BM25.
+- **Ingest (one-time):** `documents/` → load → chunk → embed → Pinecone (vectors + slim
+  metadata) + Postgres `bm25_chunks` + in-memory BM25.
 - **`/ask`:** question → classify type → hybrid retrieve (dense + BM25 + RRF) → diversity
   cap → *(local: rerank → neighbor expand → relevance filter)* → type-specific prompt →
   OpenAI structured answer → `{answer, sources, chunk_ids, cost, latency, question_type}`.
@@ -212,8 +217,9 @@ Recurring theme: **local = full power, Render = slim.**
 - **Shared retriever**: `/ask` and the agent's `search_zearn_doc` use the same
   `retrieve_context()`. The agent inherits whatever retrieval config is active (e.g. no
   rerank on Render).
-- **BM25 is per-process, in-memory**: multiple Render workers would each rebuild their own
-  copy at startup. Fine for a single worker.
+- **BM25 is per-process RAM, durable in Postgres**: startup loads `bm25_chunks` instead of
+  fetching the whole Pinecone index. Multiple Render workers each load their own RAM copy.
+  Fine for a single worker.
 - **Defaults differ between code and `render.yaml`**: e.g. `RERANK_ENABLED` defaults `True`
   in `rerank.py` but is forced `false` on Render; `MAX_CHUNKS_PER_DOCUMENT` defaults 2 in
   code, 1 on Render. Easy source of "works locally, differs in prod" confusion — check the

@@ -517,8 +517,8 @@ def reset_clients() -> None:
 
 
 def _chunk_to_metadata(chunk: Document, chunk_index: int) -> dict[str, str | int]:
+    """Slim Pinecone metadata — chunk body lives in Postgres/BM25, not here."""
     metadata: dict[str, str | int] = {
-        METADATA_TEXT_KEY: chunk.page_content[:35000],
         "document_id": str(chunk.metadata.get("document_id", "")),
         "chunk_index": chunk_index,
         "source": str(chunk.metadata.get("source", "")),
@@ -710,6 +710,7 @@ def retrieve_chunks(
         "vector": query_vector,
         "top_k": k,
         "include_metadata": True,
+        "include_values": False,
     }
     metadata_filter = _pinecone_document_filter(document_ids, exclude_document_ids)
     if metadata_filter:
@@ -717,7 +718,10 @@ def retrieve_chunks(
 
     results = index.query(**query_kwargs)
 
-    return [_match_to_retrieved_chunk(match) for match in results.get("matches", [])]
+    return [
+        _hydrate_from_bm25(_match_to_retrieved_chunk(match))
+        for match in results.get("matches", [])
+    ]
 
 
 def _retrieved_chunk_from_metadata(metadata: dict, *, chunk_id: str) -> RetrievedChunk:
@@ -732,6 +736,27 @@ def _retrieved_chunk_from_metadata(metadata: dict, *, chunk_id: str) -> Retrieve
         source=str(metadata.get("source", "")),
         chunk_id=chunk_id,
         chunk_index=chunk_index,
+    )
+
+
+def _hydrate_from_bm25(chunk: RetrievedChunk) -> RetrievedChunk:
+    """Fill chunk.text from Postgres-backed BM25; keep Pinecone metadata as fallback."""
+    if not chunk.chunk_id:
+        return chunk
+    record = get_bm25_index().get_record(chunk.chunk_id)
+    if record is None or not str(record.text or "").strip():
+        return chunk
+    return RetrievedChunk(
+        text=record.text,
+        document_id=chunk.document_id or record.document_id,
+        title=display_title_for_chunk(
+            chunk.document_id or record.document_id,
+            record.title or chunk.title,
+        ),
+        source_url=chunk.source_url or record.source_url,
+        source=chunk.source or record.source,
+        chunk_id=chunk.chunk_id,
+        chunk_index=chunk.chunk_index if chunk.chunk_index >= 0 else record.chunk_index,
     )
 
 
@@ -833,13 +858,13 @@ def lookup_chunk_by_id(chunk_id: str) -> RetrievedChunk | None:
         return _record_to_retrieved_chunk(record)
 
     index = _pinecone_index()
-    fetched = index.fetch(ids=[chunk_id])
+    fetched = index.fetch(ids=[chunk_id], include_values=False)
     vector = (fetched.vectors or {}).get(chunk_id)
     if vector is None:
         return None
 
     metadata = vector.metadata or {}
-    return _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
+    return _hydrate_from_bm25(_retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id))
 
 
 def lookup_chunks_by_ids(chunk_ids: list[str]) -> dict[str, RetrievedChunk]:
@@ -862,10 +887,12 @@ def lookup_chunks_by_ids(chunk_ids: list[str]) -> dict[str, RetrievedChunk]:
         index = _pinecone_index()
         for start in range(0, len(misses), UPSERT_BATCH_SIZE):
             batch = misses[start : start + UPSERT_BATCH_SIZE]
-            fetched = index.fetch(ids=batch)
+            fetched = index.fetch(ids=batch, include_values=False)
             for chunk_id, vector in (fetched.vectors or {}).items():
                 metadata = vector.metadata or {}
-                resolved[chunk_id] = _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
+                resolved[chunk_id] = _hydrate_from_bm25(
+                    _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
+                )
 
     return resolved
 
@@ -1073,6 +1100,7 @@ def debug_retrieve(
         "vector": query_vector,
         "top_k": k,
         "include_metadata": True,
+        "include_values": False,
     }
     metadata_filter = _pinecone_document_filter(None, exclude_document_ids)
     if metadata_filter:
@@ -1086,14 +1114,18 @@ def debug_retrieve(
         chunk_index = metadata.get("chunk_index", -1)
         document_id = str(metadata.get("document_id", ""))
         chunk_index_int = int(chunk_index) if chunk_index is not None else -1
+        chunk_id = str(match.get("id") or _chunk_id(document_id, chunk_index_int))
+        hydrated = _hydrate_from_bm25(
+            _retrieved_chunk_from_metadata(metadata, chunk_id=chunk_id)
+        )
         chunks.append(
             DebugRetrievedChunk(
                 score=float(match.get("score", 0.0)),
-                document_id=document_id,
-                chunk_index=chunk_index_int,
-                source=str(metadata.get("source", "")),
-                text=str(metadata.get(METADATA_TEXT_KEY, "")),
-                chunk_id=str(match.get("id") or _chunk_id(document_id, chunk_index_int)),
+                document_id=hydrated.document_id,
+                chunk_index=hydrated.chunk_index,
+                source=hydrated.source,
+                text=hydrated.text,
+                chunk_id=hydrated.chunk_id,
                 rank=rank,
             )
         )

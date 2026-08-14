@@ -1,11 +1,11 @@
-"""In-process BM25 index — synced on ingest and rebuilt from Pinecone on startup."""
+"""In-process BM25 index — synced on ingest and loaded from Postgres on startup."""
 
 from __future__ import annotations
 
 import logging
 import re
 import threading
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Callable
 
 from langchain_core.documents import Document
@@ -30,6 +30,10 @@ class ChunkRecord:
     source_url: str = ""
 
 
+def _record_to_row(record: ChunkRecord) -> dict:
+    return asdict(record)
+
+
 class BM25Index:
     def __init__(self) -> None:
         self._records: dict[str, ChunkRecord] = {}
@@ -50,6 +54,9 @@ class BM25Index:
         with self._lock:
             self._records.clear()
             self._rebuild_bm25()
+        import db
+
+        db.clear_bm25_chunks()
 
     def delete_document(self, document_id: str) -> None:
         with self._lock:
@@ -62,6 +69,9 @@ class BM25Index:
                 del self._records[chunk_id]
             if to_remove:
                 self._rebuild_bm25()
+        import db
+
+        db.delete_document_chunks(document_id)
 
     def upsert_chunks(
         self,
@@ -71,12 +81,19 @@ class BM25Index:
         if not chunks:
             return
 
+        document_ids: set[str]
         with self._lock:
             document_ids = {
                 str(chunk.metadata.get("document_id", "unknown")) for chunk in chunks
             }
             for document_id in document_ids:
-                self.delete_document(document_id)
+                to_remove = [
+                    chunk_id
+                    for chunk_id, record in self._records.items()
+                    if record.document_id == document_id
+                ]
+                for chunk_id in to_remove:
+                    del self._records[chunk_id]
 
             by_document: dict[str, list[Document]] = {}
             for chunk in chunks:
@@ -97,6 +114,17 @@ class BM25Index:
                     )
 
             self._rebuild_bm25()
+            snapshot = dict(self._records)
+
+        import db
+
+        for document_id in document_ids:
+            rows = [
+                _record_to_row(record)
+                for record in snapshot.values()
+                if record.document_id == document_id
+            ]
+            db.replace_document_chunks(document_id, rows)
 
     def search(
         self,
@@ -148,9 +176,38 @@ class BM25Index:
         with self._lock:
             return self._records.get(chunk_id)
 
-    def rebuild_from_pinecone(self) -> int:
-        """Load all chunk metadata from Pinecone and rebuild the BM25 corpus."""
+    def load_from_postgres(self) -> int:
+        """Load the durable BM25 corpus into RAM. Returns the row count loaded."""
+        import db
 
+        rows = db.load_all_bm25_chunks()
+        records = {
+            str(row["chunk_id"]): ChunkRecord(
+                chunk_id=str(row["chunk_id"]),
+                document_id=str(row.get("document_id") or ""),
+                source=str(row.get("source") or ""),
+                text=str(row.get("text") or ""),
+                chunk_index=int(row.get("chunk_index") if row.get("chunk_index") is not None else -1),
+                title=str(row.get("title") or ""),
+                source_url=str(row.get("source_url") or ""),
+            )
+            for row in rows
+            if row.get("chunk_id")
+        }
+        with self._lock:
+            self._records = records
+            self._rebuild_bm25()
+            count = len(self._records)
+        if count:
+            logger.info("BM25 index loaded from Postgres with %d chunks", count)
+        return count
+
+    def rebuild_from_pinecone(self) -> int:
+        """One-time backfill: copy metadata text from Pinecone into RAM + Postgres.
+
+        Uses ``include_values=False`` so embedding vectors are not downloaded.
+        Call only when the Postgres table is empty (first deploy after this change).
+        """
         from ingest import _pinecone_index
 
         index = _pinecone_index()
@@ -177,7 +234,10 @@ class BM25Index:
             if not batch_ids:
                 continue
 
-            fetched = index.fetch(ids=batch_ids)
+            try:
+                fetched = index.fetch(ids=batch_ids, include_values=False)
+            except TypeError:
+                fetched = index.fetch(ids=batch_ids)
             for chunk_id, vector in fetched.vectors.items():
                 metadata = vector.metadata or {}
                 text = str(metadata.get(METADATA_TEXT_KEY, "")).strip()
@@ -198,13 +258,19 @@ class BM25Index:
                     source_url=str(metadata.get("source_url", "")),
                 )
 
-        # Swap in the freshly built corpus under the lock so concurrent searches
-        # never observe a half-cleared index.
         with self._lock:
             self._records = records
             self._rebuild_bm25()
-            logger.info("BM25 index rebuilt from Pinecone with %d chunks", len(self._records))
-            return len(self._records)
+            snapshot = list(self._records.values())
+            logger.info(
+                "BM25 index backfilled from Pinecone with %d chunks", len(self._records)
+            )
+            count = len(self._records)
+
+        import db
+
+        db.replace_all_bm25_chunks([_record_to_row(record) for record in snapshot])
+        return count
 
     def _rebuild_bm25(self) -> None:
         self._chunk_ids = list(self._records.keys())
@@ -234,11 +300,23 @@ def get_bm25_index() -> BM25Index:
 
 
 def ensure_bm25_ready() -> BM25Index:
-    """Rebuild from Pinecone when the in-process index is empty."""
-
+    """Load BM25 from Postgres when RAM is empty. Pinecone only if the table is empty."""
     from env_utils import bool_env
 
     index = get_bm25_index()
-    if index.is_empty() and bool_env("HYBRID_SEARCH", True):
-        index.rebuild_from_pinecone()
+    if not index.is_empty():
+        return index
+
+    loaded = index.load_from_postgres()
+    if loaded:
+        return index
+
+    if bool_env("HYBRID_SEARCH", True):
+        logger.warning(
+            "BM25 Postgres table is empty — one-time Pinecone metadata backfill"
+        )
+        try:
+            index.rebuild_from_pinecone()
+        except Exception as exc:
+            logger.warning("BM25 Pinecone backfill failed: %s", exc)
     return index

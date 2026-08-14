@@ -8,9 +8,11 @@ module degrades to no-ops so /ask and a basic /agent still work locally.
 Schema:
   sessions(id, install_id, title, token_count, status, ended_reason, created_at, updated_at)
   messages(id, session_id, role, content, steps, error, prompt_tokens, total_tokens, created_at)
+  bm25_chunks(chunk_id, document_id, chunk_index, source, title, source_url, text)
 
 Sessions are scoped by ``install_id`` (the extension's anonymous per-install
-UUID) — there is no user login.
+UUID) — there is no user login. ``bm25_chunks`` is the durable keyword-index
+corpus so API boots do not re-download Pinecone.
 """
 
 from __future__ import annotations
@@ -95,6 +97,38 @@ def ping() -> None:
         conn.execute(text("SELECT 1"))
 
 
+def sum_assistant_tokens_since(since: datetime) -> dict[str, int]:
+    """Sum Gemini token counts from assistant messages on/after ``since``."""
+    if not database_enabled():
+        return {"prompt_tokens": 0, "total_tokens": 0, "turns": 0}
+    from sqlalchemy import func
+
+    with _session_scope() as session:
+        prompt = session.scalar(
+            select(func.coalesce(func.sum(ChatMessage.prompt_tokens), 0)).where(
+                ChatMessage.role == "assistant",
+                ChatMessage.created_at >= since,
+            )
+        )
+        total = session.scalar(
+            select(func.coalesce(func.sum(ChatMessage.total_tokens), 0)).where(
+                ChatMessage.role == "assistant",
+                ChatMessage.created_at >= since,
+            )
+        )
+        turns = session.scalar(
+            select(func.count()).select_from(ChatMessage).where(
+                ChatMessage.role == "assistant",
+                ChatMessage.created_at >= since,
+            )
+        )
+    return {
+        "prompt_tokens": int(prompt or 0),
+        "total_tokens": int(total or 0),
+        "turns": int(turns or 0),
+    }
+
+
 class Base(DeclarativeBase):
     pass
 
@@ -144,6 +178,20 @@ class ChatMessage(Base):
     session: Mapped[ChatSession] = relationship(back_populates="messages")
 
 
+class Bm25Chunk(Base):
+    """Durable BM25 corpus row — chunk text lives here, not in Pinecone metadata."""
+
+    __tablename__ = "bm25_chunks"
+
+    chunk_id: Mapped[str] = mapped_column(String(256), primary_key=True)
+    document_id: Mapped[str] = mapped_column(String(256), index=True, default="")
+    chunk_index: Mapped[int] = mapped_column(Integer, default=-1)
+    source: Mapped[str] = mapped_column(Text, default="")
+    title: Mapped[str] = mapped_column(Text, default="")
+    source_url: Mapped[str] = mapped_column(Text, default="")
+    text: Mapped[str] = mapped_column(Text, default="")
+
+
 def init_db() -> None:
     """Create tables if they do not exist. No-op when the DB is not configured."""
     if _engine is None:
@@ -151,7 +199,7 @@ def init_db() -> None:
         return
     try:
         Base.metadata.create_all(_engine)
-        logger.info("Chat history tables ready.")
+        logger.info("Chat history and BM25 tables ready.")
     except Exception as exc:  # pragma: no cover - startup connectivity
         logger.warning("Chat history table creation failed: %s", exc)
 
@@ -293,3 +341,80 @@ def delete_session(session_id: str, install_id: str) -> bool:
             return False
         db.execute(delete(ChatSession).where(ChatSession.id == session_id))
         return True
+
+
+def _chunk_row(row: dict[str, Any]) -> Bm25Chunk:
+    return Bm25Chunk(
+        chunk_id=str(row.get("chunk_id") or ""),
+        document_id=str(row.get("document_id") or ""),
+        chunk_index=int(row.get("chunk_index") if row.get("chunk_index") is not None else -1),
+        source=str(row.get("source") or ""),
+        title=str(row.get("title") or ""),
+        source_url=str(row.get("source_url") or ""),
+        text=str(row.get("text") or ""),
+    )
+
+
+def _chunk_to_dict(row: Bm25Chunk) -> dict[str, Any]:
+    return {
+        "chunk_id": row.chunk_id,
+        "document_id": row.document_id or "",
+        "chunk_index": row.chunk_index if row.chunk_index is not None else -1,
+        "source": row.source or "",
+        "title": row.title or "",
+        "source_url": row.source_url or "",
+        "text": row.text or "",
+    }
+
+
+def replace_document_chunks(document_id: str, rows: list[dict[str, Any]]) -> None:
+    """Replace all BM25 rows for one document_id. No-op without DATABASE_URL."""
+    if not database_enabled():
+        return
+    with _session_scope() as session:
+        session.execute(delete(Bm25Chunk).where(Bm25Chunk.document_id == document_id))
+        session.add_all([_chunk_row(row) for row in rows if row.get("chunk_id")])
+
+
+def delete_document_chunks(document_id: str) -> None:
+    """Delete BM25 rows for one document_id. No-op without DATABASE_URL."""
+    if not database_enabled():
+        return
+    with _session_scope() as session:
+        session.execute(delete(Bm25Chunk).where(Bm25Chunk.document_id == document_id))
+
+
+def clear_bm25_chunks() -> None:
+    """Truncate the BM25 corpus table. No-op without DATABASE_URL."""
+    if not database_enabled():
+        return
+    with _session_scope() as session:
+        session.execute(delete(Bm25Chunk))
+
+
+def replace_all_bm25_chunks(rows: list[dict[str, Any]]) -> None:
+    """Replace the entire BM25 corpus table. No-op without DATABASE_URL."""
+    if not database_enabled():
+        return
+    with _session_scope() as session:
+        session.execute(delete(Bm25Chunk))
+        session.add_all([_chunk_row(row) for row in rows if row.get("chunk_id")])
+
+
+def load_all_bm25_chunks() -> list[dict[str, Any]]:
+    """Return every BM25 corpus row, or [] when the DB is unset/unavailable."""
+    if not database_enabled():
+        return []
+    with _session_scope() as session:
+        rows = session.execute(select(Bm25Chunk)).scalars().all()
+        return [_chunk_to_dict(row) for row in rows]
+
+
+def count_bm25_chunks() -> int:
+    """Row count in bm25_chunks, or 0 when the DB is unset."""
+    if not database_enabled():
+        return 0
+    from sqlalchemy import func
+
+    with _session_scope() as session:
+        return int(session.scalar(select(func.count()).select_from(Bm25Chunk)) or 0)

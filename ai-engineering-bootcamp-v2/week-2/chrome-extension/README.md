@@ -90,7 +90,7 @@ selectors in `overlay.js`.
 | Ask | Answer above the question box + disclaimer (default tab on every expand) |
 | TAO | Think → Act → Observe steps for the last answer |
 | Trace | Placeholder — coming soon |
-| Health | API + Pinecone / embeddings / Gemini / BM25 / History DB |
+| Health | API + Pinecone / embeddings / Gemini / BM25 / History DB, plus usage meters |
 
 ---
 
@@ -98,8 +98,17 @@ selectors in `overlay.js`.
 
 | Control | Purpose |
 |---------|---------|
-| Check now | `GET /health` — API liveness plus Pinecone, embeddings, Gemini, BM25, and History DB |
+| Check now | `GET /health` — API liveness, dependency checks, and usage/quota meters |
 | Privacy policy link | On the Ask tab — opens `privacy-policy.html` |
+
+Usage meters come from the API (not the extension). Remaining prepaid credits are not exposed by most vendors:
+
+| Vendor | What Health can show | Remaining $ / tokens |
+|--------|----------------------|----------------------|
+| Render | Workspace outbound bandwidth this month vs `RENDER_INCLUDED_BANDWIDTH_GB` (default 5 GB), Postgres disk vs disk size | Account credits: dashboard only. Set `RENDER_API_KEY` on the API service. |
+| Pinecone | Vector count + estimated storage vs `PINECONE_PLAN` (starter 2 GB / builder 10 GB) | Monthly egress remaining is not in the API; Health already flags when the quota is exhausted. |
+| OpenAI | Spend this month if `OPENAI_ADMIN_KEY` has `api.usage.read`. Optional cap via `OPENAI_MONTHLY_BUDGET_USD`. | Prepaid credit balance: dashboard only. |
+| Gemini | Estimated Flash $ for Ask Z-Bot this month vs `GEMINI_MONTHLY_BUDGET_USD` (default $250 Tier 1 cap) | Project billed spend / prepaid credits: [AI Studio Usage](https://aistudio.google.com/usage) only. |
 
 ---
 
