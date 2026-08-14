@@ -109,16 +109,20 @@
                             placeholder="Ask a Zearn support question..." autocomplete="off"></textarea>
                   <div class="zbot-composer__interact">
                     <label class="zbot-retrieval-mode">
+                      <span class="zbot-retrieval-mode__tooltip" role="tooltip">Answer retrieval</span>
+                      <span class="zbot-retrieval-mode__face" aria-hidden="true">
+                        <span class="zbot-retrieval-mode__label" data-el="retrieval-mode-label">Fast</span>
+                        <svg class="zbot-retrieval-mode__chevron" width="9" height="8" viewBox="0 0 9 12"
+                             aria-hidden="true" focusable="false">
+                          <path d="M1.5 4.5 4.5 8.25 7.5 4.5" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
                       <select class="zbot-retrieval-mode__select" data-el="retrieval-mode"
-                              aria-label="Retrieval speed">
+                              aria-label="Answer retrieval">
                         <option value="fast" selected>Fast</option>
                         <option value="slow">Slow</option>
                       </select>
-                      <svg class="zbot-retrieval-mode__chevron" width="9" height="12" viewBox="0 0 9 12"
-                           aria-hidden="true" focusable="false">
-                        <path d="M1.5 4.5 4.5 8.25 7.5 4.5" fill="none" stroke="currentColor"
-                              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
                     </label>
                     <button class="zbot-btn zbot-btn--ask" data-el="ask" type="submit">Ask</button>
                   </div>
@@ -432,6 +436,7 @@
         composer: this.shadow.querySelector('[data-el="composer"]'),
         question: this.shadow.querySelector('[data-el="question"]'),
         retrievalMode: this.shadow.querySelector('[data-el="retrieval-mode"]'),
+        retrievalModeLabel: this.shadow.querySelector('[data-el="retrieval-mode-label"]'),
         ask: this.shadow.querySelector('[data-el="ask"]'),
         status: this.shadow.querySelector('[data-el="status"]'),
         output: this.shadow.querySelector('[data-el="output"]'),
@@ -1027,10 +1032,7 @@
       this.thread.push({ question: question, pending: true, generation: generation });
       this.renderThread();
       this.els.tao.innerHTML = "";
-      this.setStatus(
-        "Running agent… first request may take up to a minute while the API wakes up.",
-        true
-      );
+      this.setStatus("");
 
       const resp = await sendMessage({
         type: "ask",
@@ -1271,6 +1273,9 @@
       this.retrievalMode = normalized;
       if (this.els.retrievalMode) {
         this.els.retrievalMode.value = normalized;
+      }
+      if (this.els.retrievalModeLabel) {
+        this.els.retrievalModeLabel.textContent = normalized === "fast" ? "Fast" : "Slow";
       }
     }
 
