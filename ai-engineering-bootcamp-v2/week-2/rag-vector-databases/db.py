@@ -85,6 +85,16 @@ def database_enabled() -> bool:
     return _SessionFactory is not None
 
 
+def ping() -> None:
+    """Run a cheap connectivity check. Raises if the database is down."""
+    if _engine is None:
+        raise RuntimeError("DATABASE_URL is not set")
+    from sqlalchemy import text
+
+    with _engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+
+
 class Base(DeclarativeBase):
     pass
 

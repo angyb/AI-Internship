@@ -107,8 +107,7 @@ When docked and expanded, the overlay **insets the host page** instead of coveri
 | **Ask** | Markdown answer above the question box; pinned disclaimer; **Ask** → **Stop** while agent runs |
 | **TAO** | Think → Act → Observe steps for the last answer |
 | **Trace** | Placeholder |
-| **Memory** | Placeholder |
-| **Settings** | API health check + shortcuts/timeouts (no in-panel API URL or privacy cards) |
+| **Health** | API liveness plus Pinecone / embeddings / Gemini / BM25 / History DB |
 
 Privacy policy link lives on the **Ask** tab footer (`privacy-policy.html`).
 

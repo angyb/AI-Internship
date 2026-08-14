@@ -204,7 +204,7 @@
 }
 
 .zbot-body {
-  padding: 14px;
+  padding: 14px 0 14px 14px;
   overflow: hidden;
   flex: 1 1 auto;
   background: var(--zbot-warm);
@@ -216,6 +216,7 @@
 .zbot-tabpanel:not(.zbot-tabpanel--ask) {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-right: 14px;
 }
 
 .zbot-tabpanel {
@@ -367,7 +368,8 @@
 
 .zbot-ask-footer {
   flex: 0 0 auto;
-  padding-top: 11px;
+  padding-top: 8px;
+  padding-right: 14px;
   margin-top: 4px;
   border-top: 1px solid var(--zbot-line);
   display: flex;
@@ -376,10 +378,53 @@
   background: var(--zbot-warm);
 }
 
+.zbot-ask-footer .zbot-form {
+  margin-top: 0;
+}
+
+.zbot-ask-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+
 .zbot-disclaimer {
   margin: 0;
   font-size: 12px;
   color: var(--zbot-muted);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.zbot-newchat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--zbot-btn);
+  cursor: pointer;
+}
+
+.zbot-newchat-link__icon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.zbot-newchat-link__label {
+  text-decoration: none;
+}
+
+.zbot-newchat-link:hover .zbot-newchat-link__label {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .zbot-disclaimer a {
@@ -393,7 +438,13 @@
 .zbot-form {
   display: flex;
   gap: 8px;
-  align-items: flex-end;
+  align-items: center;
+}
+
+.zbot-form .zbot-btn {
+  flex: 0 0 auto;
+  margin: 0;
+  align-self: center;
 }
 
 .zbot-input {
@@ -409,7 +460,11 @@
 
 .zbot-input--question {
   resize: none;
-  min-height: 42px;
+  box-sizing: border-box;
+  min-height: 40px;
+  height: 40px;
+  padding-top: 7px;
+  padding-bottom: 7px;
   max-height: var(--zbot-question-max-height, 50%);
   line-height: 1.5;
   overflow-wrap: break-word;
@@ -761,26 +816,66 @@
   font-weight: 600;
 }
 
+.zbot-health--warn {
+  color: var(--zbot-amber);
+  font-weight: 600;
+}
+
 .zbot-health--bad {
   color: var(--zbot-danger);
   font-weight: 600;
 }
 
-/* --- Ask toolbar (New chat + context usage) --- */
-
-.zbot-ask-toolbar {
-  flex: 0 0 auto;
+.zbot-health-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding-bottom: 8px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--zbot-line);
+  flex-direction: column;
+  gap: 10px;
 }
 
+.zbot-health-list__empty {
+  font-size: 13px;
+  color: var(--zbot-muted);
+}
+
+.zbot-health-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 12px;
+  border-left: 3px solid var(--zbot-line);
+}
+
+.zbot-health-item--ok {
+  border-left-color: var(--zbot-teal);
+}
+
+.zbot-health-item--bad {
+  border-left-color: var(--zbot-danger);
+}
+
+.zbot-health-item__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--zbot-navy);
+}
+
+.zbot-health-item__detail {
+  font-size: 13px;
+  color: var(--zbot-ink);
+  word-break: break-word;
+}
+
+.zbot-health-item--bad .zbot-health-item__detail {
+  color: var(--zbot-danger);
+}
+
+/* --- Ask footer token count --- */
+
 .zbot-context-note {
-  flex: 1 1 auto;
+  display: block;
   min-height: 16px;
   font-size: 12px;
   color: var(--zbot-muted);
@@ -795,12 +890,6 @@
 .zbot-context-note--block {
   color: var(--zbot-danger);
   font-weight: 700;
-}
-
-.zbot-newchat {
-  flex: 0 0 auto;
-  padding: 6px 12px;
-  font-size: 13px;
 }
 
 /* --- History tab --- */
@@ -856,21 +945,69 @@
   white-space: nowrap;
 }
 
-.zbot-history-item__delete {
+.zbot-history-item__menu-wrap {
+  position: relative;
   flex: 0 0 auto;
+  display: flex;
+  align-items: stretch;
+}
+
+.zbot-history-item__menu-btn {
   border: none;
   border-left: 1px solid var(--zbot-line);
   background: transparent;
   color: var(--zbot-muted);
   width: 36px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1;
+  padding: 0;
+  font-family: inherit;
 }
 
-.zbot-history-item__delete:hover {
-  background: var(--zbot-danger-soft);
+.zbot-history-item__menu-btn:hover,
+.zbot-history-item__menu-btn[aria-expanded="true"] {
+  background: var(--zbot-warm);
+  color: var(--zbot-navy);
+}
+
+.zbot-history-item__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 140px;
+  background: #fff;
+  border: 1px solid var(--zbot-line);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  z-index: 20;
+  padding: 4px;
+}
+
+.zbot-history-item__menu-action {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-family: inherit;
+  color: var(--zbot-ink);
+}
+
+.zbot-history-item__menu-action:hover {
+  background: var(--zbot-warm);
+}
+
+.zbot-history-item__menu-action[data-action="delete"] {
   color: var(--zbot-danger);
+}
+
+.zbot-history-item__menu-action[data-action="delete"]:hover {
+  background: var(--zbot-danger-soft);
 }
 
 .zbot-history-detail-title {

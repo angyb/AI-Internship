@@ -14,11 +14,18 @@
     { id: "history", label: "History" },
     { id: "tao", label: "TAO" },
     { id: "trace", label: "Trace" },
-    { id: "memory", label: "Memory" },
-    { id: "settings", label: "Settings" },
+    { id: "health", label: "Health" },
   ];
 
   const DEFAULT_TAB = "ask";
+
+  const HEALTH_CHECK_LABELS = {
+    pinecone: "Pinecone (vector search)",
+    embeddings: "OpenAI embeddings",
+    gemini: "Gemini (agent)",
+    bm25: "Keyword search (BM25)",
+    database: "Chat history database",
+  };
 
   // Layout toggle icons: a window frame holding either a small floating card
   // (overlay) or a filled right third (right panel). Each one shows the layout
@@ -81,34 +88,37 @@
         <div class="zbot-body">
           <section class="zbot-tabpanel zbot-tabpanel--ask" role="tabpanel" data-tabpanel="ask"
                    id="zbot-panel-ask" aria-labelledby="zbot-tab-ask">
-            <div class="zbot-ask-toolbar">
-              <span class="zbot-context-note" data-el="context-note"></span>
-              <button class="zbot-btn zbot-btn--ghost zbot-newchat" data-el="new-chat" type="button">New chat</button>
-            </div>
             <div class="zbot-ask-scroll">
               <div class="zbot-thread" data-el="output"></div>
               <div class="zbot-status" data-el="status"></div>
             </div>
             <div class="zbot-ask-footer">
+              <span class="zbot-context-note" data-el="context-note"></span>
               <form class="zbot-form" data-el="form">
                 <textarea class="zbot-input zbot-input--question" data-el="question" rows="1"
                           placeholder="Ask a Zearn support question..." autocomplete="off"></textarea>
                 <button class="zbot-btn" data-el="ask" type="submit">Ask</button>
               </form>
-              <p class="zbot-disclaimer">
-                AI can make mistakes. See
-                <a data-el="privacy-link" href="#" target="_blank" rel="noopener noreferrer">privacy policy</a>.
-              </p>
+              <div class="zbot-ask-footer-bar">
+                <p class="zbot-disclaimer">
+                  AI can make mistakes. See
+                  <a data-el="privacy-link" href="#" target="_blank" rel="noopener noreferrer">privacy policy</a>.
+                </p>
+                <button class="zbot-newchat-link" data-el="new-chat" type="button">
+                  <svg class="zbot-newchat-link__icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.375 2.625a1 1 0 0 1 1.414 0l2.586 2.586a1 1 0 0 1 0 1.414L12.5 16.5l-4 1 1-4Z"/>
+                  </svg>
+                  <span class="zbot-newchat-link__label">New chat</span>
+                </button>
+              </div>
             </div>
           </section>
 
           <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="history"
                    id="zbot-panel-history" aria-labelledby="zbot-tab-history">
             <div class="zbot-history-list-view" data-el="history-list-view">
-              <div class="zbot-settings__row zbot-settings__row--actions">
-                <div class="zbot-section-title">Saved chats</div>
-                <button class="zbot-btn zbot-btn--ghost" data-el="history-refresh" type="button">Refresh</button>
-              </div>
+              <div class="zbot-section-title">Saved chats</div>
               <div class="zbot-status" data-el="history-status"></div>
               <div class="zbot-history-list" data-el="history-list"></div>
             </div>
@@ -143,32 +153,18 @@
             <div data-el="trace-output"></div>
           </section>
 
-          <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="memory"
-                   id="zbot-panel-memory" aria-labelledby="zbot-tab-memory">
-            <div class="zbot-section-title">Memory</div>
-            <div class="zbot-empty">Coming soon.</div>
-          </section>
-
-          <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="settings"
-                   id="zbot-panel-settings" aria-labelledby="zbot-tab-settings">
+          <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="health"
+                   id="zbot-panel-health" aria-labelledby="zbot-tab-health">
             <div class="zbot-settings__section">
-              <div class="zbot-settings__label">API health</div>
+              <div class="zbot-settings__label">API</div>
               <div class="zbot-settings__row zbot-settings__row--actions">
                 <span class="zbot-health" data-el="health">Not checked yet</span>
                 <button class="zbot-btn zbot-btn--ghost" data-el="health-check" type="button">Check now</button>
               </div>
             </div>
-
             <div class="zbot-settings__section">
-              <div class="zbot-settings__label">Shortcuts &amp; timeouts</div>
-              <ul class="zbot-settings__meta">
-                <li><kbd>Alt</kbd>+<kbd>Z</kbd> — toggle Ask Z-Bot</li>
-                <li data-el="timeouts"></li>
-                <li data-el="version"></li>
-              </ul>
-              <div class="zbot-settings__hint">
-                If Alt+Z does nothing, open <code>chrome://extensions/shortcuts</code> and assign it.
-              </div>
+              <div class="zbot-settings__label">Dependencies</div>
+              <ul class="zbot-health-list" data-el="health-checks"></ul>
             </div>
           </section>
         </div>
@@ -371,7 +367,7 @@
       this.tokenCount = 0;
       this.contextLimit = CONFIG.CONTEXT_TOKEN_LIMIT;
       this.contextWarn = CONFIG.CONTEXT_TOKEN_WARN;
-      this.historyLoaded = false;
+      this.activeHistoryMenu = null;
       this.openHistoryData = null;
     }
 
@@ -413,11 +409,10 @@
         iconPanel: this.shadow.querySelector('[data-el="icon-panel"]'),
         health: this.shadow.querySelector('[data-el="health"]'),
         healthCheck: this.shadow.querySelector('[data-el="health-check"]'),
+        healthChecks: this.shadow.querySelector('[data-el="health-checks"]'),
         traceRun: this.shadow.querySelector('[data-el="trace-run"]'),
         traceStatus: this.shadow.querySelector('[data-el="trace-status"]'),
         traceOutput: this.shadow.querySelector('[data-el="trace-output"]'),
-        timeouts: this.shadow.querySelector('[data-el="timeouts"]'),
-        version: this.shadow.querySelector('[data-el="version"]'),
         privacyLink: this.shadow.querySelector('[data-el="privacy-link"]'),
         newChat: this.shadow.querySelector('[data-el="new-chat"]'),
         contextNote: this.shadow.querySelector('[data-el="context-note"]'),
@@ -427,7 +422,6 @@
         historyStatus: this.shadow.querySelector('[data-el="history-status"]'),
         historyDetail: this.shadow.querySelector('[data-el="history-detail"]'),
         historyDetailTitle: this.shadow.querySelector('[data-el="history-detail-title"]'),
-        historyRefresh: this.shadow.querySelector('[data-el="history-refresh"]'),
         historyBack: this.shadow.querySelector('[data-el="history-back"]'),
         historyContinue: this.shadow.querySelector('[data-el="history-continue"]'),
       };
@@ -464,11 +458,15 @@
       this.els.healthCheck.addEventListener("click", () => this.checkHealth(true));
       this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
       this.els.newChat.addEventListener("click", () => this.startNewChat());
-      this.els.historyRefresh.addEventListener("click", () => this.loadHistory(true));
       this.els.historyBack.addEventListener("click", () => this.showHistoryList());
       this.els.historyContinue.addEventListener("click", () =>
         this.continueHistorySession()
       );
+      this.shadow.addEventListener("click", (e) => {
+        if (!e.target.closest(".zbot-history-item__menu-wrap")) {
+          this.closeHistoryMenu();
+        }
+      });
 
       window.addEventListener("resize", () => {
         if (this.layoutMode === "panel" && this.expanded) this.applyPageShift();
@@ -540,12 +538,13 @@
       const el = this.els.question;
       if (!el || !this.panel) return;
 
+      const minHeight = 40;
       const maxHeight = Math.floor(this.panel.clientHeight * 0.5);
       this.panel.style.setProperty("--zbot-question-max-height", maxHeight + "px");
 
       el.style.height = "auto";
       const scrollHeight = el.scrollHeight;
-      const nextHeight = Math.min(scrollHeight, maxHeight);
+      const nextHeight = Math.max(minHeight, Math.min(scrollHeight, maxHeight));
       el.style.height = nextHeight + "px";
       el.style.overflowY = scrollHeight > maxHeight ? "auto" : "hidden";
     }
@@ -625,7 +624,9 @@
 
       if (id === "history") {
         this.showHistoryList();
-        this.loadHistory(!this.historyLoaded);
+        this.loadHistory();
+      } else {
+        this.closeHistoryMenu();
       }
     }
 
@@ -665,8 +666,15 @@
       const resp = await sendMessage({ type: "wake" });
       this.applyHealthResult(resp);
       if (this.loading) return;
-      if (resp && resp.ok) this.setStatus("");
-      else
+      if (resp && resp.ok) {
+        const pinecone =
+          resp.health && resp.health.checks && resp.health.checks.pinecone;
+        if (pinecone && pinecone.ok === false) {
+          this.setStatus("Vector search unavailable: " + (pinecone.detail || "Pinecone error"));
+        } else {
+          this.setStatus("");
+        }
+      } else
         this.setStatus(
           "API is still waking up — your first question may take up to a minute."
         );
@@ -682,18 +690,65 @@
     setHealthPending() {
       this.els.health.className = "zbot-health zbot-health--pending";
       this.els.health.textContent = "Checking…";
+      this.renderHealthChecks(null, "Checking…");
     }
 
     applyHealthResult(resp) {
       if (resp && resp.ok) {
-        this.els.health.className = "zbot-health zbot-health--ok";
-        this.els.health.textContent = "Reachable · " + (resp.base || "");
+        const health = (resp && resp.health) || {};
+        const degraded = health.status === "degraded";
+        this.els.health.className =
+          "zbot-health " + (degraded ? "zbot-health--warn" : "zbot-health--ok");
+        this.els.health.textContent =
+          (degraded ? "Reachable, but a dependency is failing · " : "Reachable · ") +
+          (resp.base || "");
+        const checks = health.checks || {};
+        this.renderHealthChecks(
+          checks,
+          "This API build does not report dependency checks yet. Redeploy week-2-rag-api."
+        );
       } else {
         this.els.health.className = "zbot-health zbot-health--bad";
         const detail =
           (resp && (resp.error || "HTTP " + resp.status)) || "unreachable";
         this.els.health.textContent = "Unreachable · " + detail;
+        this.renderHealthChecks(null, "Skipped — API unreachable");
       }
+    }
+
+    renderHealthChecks(checks, emptyMessage) {
+      const list = this.els.healthChecks;
+      if (!list) return;
+      list.innerHTML = "";
+      if (!checks || !Object.keys(checks).length) {
+        const li = document.createElement("li");
+        li.className = "zbot-health-list__empty";
+        li.textContent = emptyMessage || "Not checked yet";
+        list.appendChild(li);
+        return;
+      }
+      const names = Object.keys(HEALTH_CHECK_LABELS).filter((name) =>
+        Object.prototype.hasOwnProperty.call(checks, name)
+      );
+      Object.keys(checks).forEach((name) => {
+        if (names.indexOf(name) === -1) names.push(name);
+      });
+      names.forEach((name) => {
+        const check = checks[name] || {};
+        const li = document.createElement("li");
+        li.className =
+          "zbot-health-item " +
+          (check.ok ? "zbot-health-item--ok" : "zbot-health-item--bad");
+        const label = document.createElement("span");
+        label.className = "zbot-health-item__label";
+        label.textContent = HEALTH_CHECK_LABELS[name] || name;
+        const detail = document.createElement("span");
+        detail.className = "zbot-health-item__detail";
+        detail.textContent = check.detail || (check.ok ? "ok" : "failing");
+        li.appendChild(label);
+        li.appendChild(detail);
+        list.appendChild(li);
+      });
     }
 
     async runTraceChecks() {
@@ -1184,13 +1239,12 @@
 
       if (used >= warn) {
         note.textContent =
-          "Approaching context limit (" + kUsed + "k / " + kLimit +
-          "k). Consider starting a new chat.";
+          kUsed + "k / " + kLimit + "k tokens — consider a new chat";
         note.classList.add("zbot-context-note--warn");
         return;
       }
 
-      note.textContent = used > 0 ? kUsed + "k / " + kLimit + "k tokens" : "";
+      note.textContent = kUsed + "k / " + kLimit + "k tokens";
     }
 
     currentSessionSnapshot() {
@@ -1264,6 +1318,7 @@
     }
 
     showHistoryList() {
+      this.closeHistoryMenu();
       this.els.historyDetailView.classList.add("zbot-hidden");
       this.els.historyListView.classList.remove("zbot-hidden");
     }
@@ -1273,18 +1328,38 @@
       this.els.historyDetailView.classList.remove("zbot-hidden");
     }
 
-    async loadHistory(force) {
-      if (this.historyLoaded && !force) return;
+    async loadHistory() {
+      this.closeHistoryMenu();
       this.els.historyStatus.textContent = "Loading saved chats…";
       this.els.historyList.innerHTML = "";
       const resp = await sendMessage({ type: "getHistoryList" });
-      this.historyLoaded = true;
       if (!resp || resp.error) {
         this.els.historyStatus.textContent =
           "Could not load history: " + ((resp && resp.error) || "unknown error");
         return;
       }
       this.renderHistoryList(resp.sessions || []);
+    }
+
+    closeHistoryMenu() {
+      if (!this.activeHistoryMenu) return;
+      this.activeHistoryMenu.classList.add("zbot-hidden");
+      const btn = this.activeHistoryMenu.parentElement?.querySelector(
+        ".zbot-history-item__menu-btn"
+      );
+      if (btn) btn.setAttribute("aria-expanded", "false");
+      this.activeHistoryMenu = null;
+    }
+
+    toggleHistoryMenu(menuEl, menuBtn) {
+      if (this.activeHistoryMenu === menuEl) {
+        this.closeHistoryMenu();
+        return;
+      }
+      this.closeHistoryMenu();
+      menuEl.classList.remove("zbot-hidden");
+      menuBtn.setAttribute("aria-expanded", "true");
+      this.activeHistoryMenu = menuEl;
     }
 
     renderHistoryList(sessions) {
@@ -1300,12 +1375,16 @@
         const item = document.createElement("div");
         item.className = "zbot-history-item";
 
+        const displayTitle = session.title || "Untitled chat";
+
         const main = document.createElement("button");
         main.type = "button";
         main.className = "zbot-history-item__main";
+        main.title = displayTitle;
         const title = document.createElement("div");
         title.className = "zbot-history-item__title";
-        title.textContent = session.title || "Untitled chat";
+        title.textContent = displayTitle;
+        title.title = displayTitle;
         const meta = document.createElement("div");
         meta.className = "zbot-history-item__meta";
         meta.textContent = this.formatHistoryMeta(session);
@@ -1313,19 +1392,57 @@
         main.appendChild(meta);
         main.addEventListener("click", () => this.openHistorySession(session.id));
 
-        const del = document.createElement("button");
-        del.type = "button";
-        del.className = "zbot-history-item__delete";
-        del.setAttribute("aria-label", "Delete chat");
-        del.title = "Delete chat";
-        del.textContent = "\u2715";
-        del.addEventListener("click", (e) => {
+        const menuWrap = document.createElement("div");
+        menuWrap.className = "zbot-history-item__menu-wrap";
+
+        const menuBtn = document.createElement("button");
+        menuBtn.type = "button";
+        menuBtn.className = "zbot-history-item__menu-btn";
+        menuBtn.setAttribute("aria-label", "Chat options");
+        menuBtn.setAttribute("aria-haspopup", "menu");
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.textContent = "\u22EE";
+
+        const menu = document.createElement("div");
+        menu.className = "zbot-history-item__menu zbot-hidden";
+        menu.setAttribute("role", "menu");
+
+        const renameBtn = document.createElement("button");
+        renameBtn.type = "button";
+        renameBtn.className = "zbot-history-item__menu-action";
+        renameBtn.dataset.action = "rename";
+        renameBtn.setAttribute("role", "menuitem");
+        renameBtn.textContent = "Rename";
+        renameBtn.addEventListener("click", (e) => {
           e.stopPropagation();
+          this.closeHistoryMenu();
+          this.renameHistorySession(session.id, displayTitle);
+        });
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "zbot-history-item__menu-action";
+        deleteBtn.dataset.action = "delete";
+        deleteBtn.setAttribute("role", "menuitem");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.closeHistoryMenu();
           this.deleteHistorySession(session.id);
         });
 
+        menu.appendChild(renameBtn);
+        menu.appendChild(deleteBtn);
+        menuBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.toggleHistoryMenu(menu, menuBtn);
+        });
+
+        menuWrap.appendChild(menuBtn);
+        menuWrap.appendChild(menu);
+
         item.appendChild(main);
-        item.appendChild(del);
+        item.appendChild(menuWrap);
         list.appendChild(item);
       });
     }
@@ -1443,6 +1560,35 @@
       });
     }
 
+    async renameHistorySession(sessionId, currentTitle) {
+      const next = window.prompt("Rename chat", currentTitle || "Untitled chat");
+      if (next === null) return;
+      const title = next.trim();
+      if (!title) {
+        this.els.historyStatus.textContent = "Title cannot be empty.";
+        return;
+      }
+      const resp = await sendMessage({
+        type: "renameHistorySession",
+        sessionId,
+        title,
+      });
+      if (!resp || resp.error) {
+        this.els.historyStatus.textContent =
+          "Rename failed: " + ((resp && resp.error) || "unknown error");
+        return;
+      }
+      if (sessionId === this.sessionId) {
+        this.sessionTitle = title;
+        this.saveCurrentSession();
+      }
+      if (this.openHistoryData && this.openHistoryData.id === sessionId) {
+        this.openHistoryData.title = title;
+        this.els.historyDetailTitle.textContent = title;
+      }
+      this.loadHistory();
+    }
+
     async deleteHistorySession(sessionId) {
       const resp = await sendMessage({ type: "deleteHistorySession", sessionId });
       if (!resp || resp.error) {
@@ -1459,7 +1605,7 @@
         this.renderThread();
         this.updateContextNote();
       }
-      this.loadHistory(true);
+      this.loadHistory();
     }
 
     async loadSettings() {
@@ -1469,17 +1615,6 @@
         this.layoutMode = resp.layoutMode;
         this.applyLayout();
       }
-      const agentSec = Math.round(
-        ((resp && resp.agentTimeoutMs) || CONFIG.AGENT_TIMEOUT_MS) / 1000
-      );
-      const healthSec = Math.round(
-        ((resp && resp.healthTimeoutMs) || CONFIG.HEALTH_TIMEOUT_MS) / 1000
-      );
-      this.els.timeouts.textContent =
-        "Timeouts: agent " + agentSec + "s · health " + healthSec + "s";
-      this.els.version.textContent =
-        "Version " +
-        ((resp && resp.extensionVersion) || CONFIG.EXTENSION_VERSION);
     }
   }
 

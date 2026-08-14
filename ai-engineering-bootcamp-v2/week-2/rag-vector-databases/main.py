@@ -400,8 +400,15 @@ class EvalAgentResponse(BaseModel):
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+def health() -> dict[str, Any]:
+    """Liveness plus dependency checks (Pinecone, embeddings, Gemini, BM25, DB).
+
+    Always HTTP 200 when this process is up. ``status`` is ``ok`` or ``degraded``
+    so the extension Health tab can show per-check errors (e.g. Pinecone egress).
+    """
+    from health_checks import collect_health
+
+    return collect_health()
 
 
 @app.post("/ingest")

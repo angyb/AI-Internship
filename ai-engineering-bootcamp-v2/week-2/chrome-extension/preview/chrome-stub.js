@@ -75,7 +75,21 @@
         }
 
         if (msg.type === "wake") {
-          respond(cb, { ok: true, status: 200, base: settings.base });
+          respond(cb, {
+            ok: true,
+            status: 200,
+            base: settings.base,
+            health: {
+              status: "ok",
+              checks: {
+                pinecone: { ok: true, detail: "index reachable (preview stub)" },
+                embeddings: { ok: true, detail: "OPENAI_API_KEY set" },
+                gemini: { ok: true, detail: "GOOGLE_API_KEY set" },
+                bm25: { ok: true, detail: "preview stub" },
+                database: { ok: true, detail: "preview stub" },
+              },
+            },
+          });
           return;
         }
 

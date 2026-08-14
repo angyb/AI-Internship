@@ -90,16 +90,15 @@ selectors in `overlay.js`.
 | Ask | Answer above the question box + disclaimer (default tab on every expand) |
 | TAO | Think → Act → Observe steps for the last answer |
 | Trace | Placeholder — coming soon |
-| Memory | Placeholder — coming soon |
-| Settings | API health + shortcuts |
+| Health | API + Pinecone / embeddings / Gemini / BM25 / History DB |
 
 ---
 
-## Settings
+## Health
 
 | Control | Purpose |
 |---------|---------|
-| Check now | `GET /health` |
+| Check now | `GET /health` — API liveness plus Pinecone, embeddings, Gemini, BM25, and History DB |
 | Privacy policy link | On the Ask tab — opens `privacy-policy.html` |
 
 ---

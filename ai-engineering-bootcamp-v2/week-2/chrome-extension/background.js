@@ -153,7 +153,13 @@ async function handleWake() {
       { method: "GET", headers: { "X-Install-Id": headers["X-Install-Id"] } },
       CONFIG.HEALTH_TIMEOUT_MS
     );
-    return { ok: resp.ok, status: resp.status, base: settings.base };
+    let health = null;
+    try {
+      health = await resp.json();
+    } catch (_e) {
+      health = null;
+    }
+    return { ok: resp.ok, status: resp.status, base: settings.base, health };
   } catch (e) {
     const timedOut = e && e.name === "AbortError";
     return {
@@ -361,6 +367,34 @@ async function handleHistoryDelete(sessionId) {
   }
 }
 
+async function handleHistoryRename(sessionId, title) {
+  if (!sessionId) return { error: "sessionId required" };
+  const trimmed = String(title || "").trim();
+  if (!trimmed) return { error: "title required" };
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const resp = await fetchWithTimeout(
+      settings.base + "/history/sessions/" + encodeURIComponent(sessionId),
+      {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({
+          install_id: installId,
+          title: trimmed,
+        }),
+      },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    return await resp.json();
+  } catch (e) {
+    return { error: String(e) };
+  }
+}
+
 async function handleEndSession(sessionId, reason) {
   if (!sessionId) return { status: "skipped" };
   const { headers, settings, installId } = await authHeaders();
@@ -422,6 +456,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
   if (msg.type === "deleteHistorySession") {
     handleHistoryDelete(String(msg.sessionId || "")).then(sendResponse);
+    return true;
+  }
+  if (msg.type === "renameHistorySession") {
+    handleHistoryRename(String(msg.sessionId || ""), msg.title).then(sendResponse);
     return true;
   }
   if (msg.type === "endSession") {
