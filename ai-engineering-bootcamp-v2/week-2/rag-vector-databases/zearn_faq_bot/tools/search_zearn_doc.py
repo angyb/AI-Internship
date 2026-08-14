@@ -143,11 +143,11 @@ def search_zearn_doc(question: str) -> dict:
     span_name = f"search_zearn_doc_{call_count + 1}"
 
     try:
-        from env_utils import bool_env
+        from agent_retrieval import retrieval_lite_enabled
         from main import retrieve_context
         from timing import timed_span
 
-        lite = bool_env("AGENT_LITE_RETRIEVAL", False)
+        lite = retrieval_lite_enabled()
         with timed_span(span_name):
             chunks, _context, _chunk_ids, _sources = retrieve_context(question, lite=lite)
     except KeyError as exc:

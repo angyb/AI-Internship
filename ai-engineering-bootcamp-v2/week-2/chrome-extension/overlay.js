@@ -103,10 +103,26 @@
             </div>
             <div class="zbot-ask-footer">
               <span class="zbot-context-note" data-el="context-note"></span>
-              <form class="zbot-form" data-el="form">
-                <textarea class="zbot-input zbot-input--question" data-el="question" rows="1"
-                          placeholder="Ask a Zearn support question..." autocomplete="off"></textarea>
-                <button class="zbot-btn" data-el="ask" type="submit">Ask</button>
+              <form class="zbot-form zbot-form--ask" data-el="form">
+                <div class="zbot-composer" data-el="composer">
+                  <textarea class="zbot-input zbot-input--question" data-el="question" rows="1"
+                            placeholder="Ask a Zearn support question..." autocomplete="off"></textarea>
+                  <div class="zbot-composer__interact">
+                    <label class="zbot-retrieval-mode">
+                      <select class="zbot-retrieval-mode__select" data-el="retrieval-mode"
+                              aria-label="Retrieval speed">
+                        <option value="fast" selected>Fast</option>
+                        <option value="slow">Slow</option>
+                      </select>
+                      <svg class="zbot-retrieval-mode__chevron" width="9" height="12" viewBox="0 0 9 12"
+                           aria-hidden="true" focusable="false">
+                        <path d="M1.5 4.5 4.5 8.25 7.5 4.5" fill="none" stroke="currentColor"
+                              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </label>
+                    <button class="zbot-btn zbot-btn--ask" data-el="ask" type="submit">Ask</button>
+                  </div>
+                </div>
               </form>
               <div class="zbot-ask-footer-bar">
                 <p class="zbot-disclaimer">
@@ -114,7 +130,7 @@
                   <a data-el="privacy-link" href="#" target="_blank" rel="noopener noreferrer">privacy policy</a>.
                 </p>
                 <button class="zbot-newchat-link" data-el="new-chat" type="button">
-                  <svg class="zbot-newchat-link__icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="zbot-newchat-link__icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                     <path d="M18.375 2.625a1 1 0 0 1 1.414 0l2.586 2.586a1 1 0 0 1 0 1.414L12.5 16.5l-4 1 1-4Z"/>
                   </svg>
@@ -380,6 +396,7 @@
       this.tokenCount = 0;
       this.contextLimit = CONFIG.CONTEXT_TOKEN_LIMIT;
       this.contextWarn = CONFIG.CONTEXT_TOKEN_WARN;
+      this.retrievalMode = "fast";
       this.activeHistoryMenu = null;
       this.openHistoryData = null;
     }
@@ -412,7 +429,9 @@
       this.tabPanels = Array.from(this.shadow.querySelectorAll(".zbot-tabpanel"));
       this.els = {
         form: this.shadow.querySelector('[data-el="form"]'),
+        composer: this.shadow.querySelector('[data-el="composer"]'),
         question: this.shadow.querySelector('[data-el="question"]'),
+        retrievalMode: this.shadow.querySelector('[data-el="retrieval-mode"]'),
         ask: this.shadow.querySelector('[data-el="ask"]'),
         status: this.shadow.querySelector('[data-el="status"]'),
         output: this.shadow.querySelector('[data-el="output"]'),
@@ -462,6 +481,11 @@
         else this.ask();
       });
       this.els.question.addEventListener("input", () => this.resizeQuestionInput());
+      if (this.els.retrievalMode) {
+        this.els.retrievalMode.addEventListener("change", () =>
+          this.saveRetrievalMode(this.els.retrievalMode.value)
+        );
+      }
       this.els.question.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
@@ -557,15 +581,22 @@
       const el = this.els.question;
       if (!el || !this.panel) return;
 
-      const minHeight = 40;
+      const minHeight = 24;
       const maxHeight = Math.floor(this.panel.clientHeight * 0.5);
       this.panel.style.setProperty("--zbot-question-max-height", maxHeight + "px");
 
       el.style.height = "auto";
       const scrollHeight = el.scrollHeight;
-      const nextHeight = Math.max(minHeight, Math.min(scrollHeight, maxHeight));
+      const nextHeight = Math.max(minHeight, Math.min(scrollHeight, maxHeight - 12));
       el.style.height = nextHeight + "px";
       el.style.overflowY = scrollHeight > maxHeight ? "auto" : "hidden";
+
+      if (this.els.composer) {
+        this.els.composer.classList.toggle(
+          "zbot-composer--multiline",
+          nextHeight > minHeight + 2
+        );
+      }
     }
 
     /**
@@ -1006,6 +1037,7 @@
         question,
         sessionId: this.sessionId,
         history,
+        retrievalMode: this.getRetrievalMode(),
       });
       if (generation !== this.askGeneration) {
         this.removePendingTurn(generation);
@@ -1228,11 +1260,34 @@
       });
     }
 
+    getRetrievalMode() {
+      const select = this.els.retrievalMode;
+      const value = select && select.value === "fast" ? "fast" : "slow";
+      return value;
+    }
+
+    applyRetrievalMode(mode) {
+      const normalized = mode === "fast" ? "fast" : "slow";
+      this.retrievalMode = normalized;
+      if (this.els.retrievalMode) {
+        this.els.retrievalMode.value = normalized;
+      }
+    }
+
+    saveRetrievalMode(mode) {
+      const normalized = mode === "fast" ? "fast" : "slow";
+      this.applyRetrievalMode(normalized);
+      sendMessage({ type: "saveSettings", retrievalMode: normalized });
+    }
+
     setAskButtonMode(mode) {
       const stop = mode === "stop";
       this.els.ask.textContent = stop ? "Stop" : "Ask";
       this.els.ask.classList.toggle("zbot-btn--stop", stop);
       this.els.ask.setAttribute("aria-label", stop ? "Stop" : "Ask");
+      if (this.els.retrievalMode) {
+        this.els.retrievalMode.disabled = stop;
+      }
     }
 
     setStatus(text, withSpinner) {
@@ -1827,6 +1882,11 @@
       if (resp && resp.layoutMode && resp.layoutMode !== this.layoutMode) {
         this.layoutMode = resp.layoutMode;
         this.applyLayout();
+      }
+      if (resp && resp.retrievalMode) {
+        this.applyRetrievalMode(resp.retrievalMode);
+      } else {
+        this.applyRetrievalMode("fast");
       }
     }
   }

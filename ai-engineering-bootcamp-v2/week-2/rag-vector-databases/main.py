@@ -8,7 +8,7 @@ import threading
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
@@ -253,6 +253,13 @@ class AgentRequest(BaseModel):
     history: list[HistoryTurn] = Field(
         default_factory=list,
         description="Prior conversation turns (chronological, excluding this question).",
+    )
+    retrieval_mode: Literal["fast", "slow"] = Field(
+        default="slow",
+        description=(
+            "Retrieval speed for search_zearn_doc: fast skips cross-encoder rerank/filter; "
+            "slow uses the full pipeline."
+        ),
     )
 
 
@@ -760,9 +767,15 @@ def agent_run(body: AgentRequest) -> AgentResponse:
             detail="GOOGLE_API_KEY is not set — required for POST /agent",
         )
 
+    from agent_retrieval import reset_retrieval_mode, set_retrieval_mode
     from timing import get_timings, reset_timings, timed_span
 
     reset_timings()
+    reset_retrieval_mode()
+    mode = (body.retrieval_mode or "slow").strip().lower()
+    if mode not in ("fast", "slow"):
+        mode = "slow"
+    set_retrieval_mode(mode)
     history = [{"role": turn.role, "content": turn.content} for turn in body.history]
 
     try:

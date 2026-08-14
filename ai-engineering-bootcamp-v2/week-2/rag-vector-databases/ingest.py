@@ -15,7 +15,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pinecone import Pinecone
 from pypdf import PdfReader
 
-from bm25_index import ensure_bm25_ready, get_bm25_index
+from bm25_index import ensure_bm25_ready, fetch_vectors_by_ids, get_bm25_index
 from model_config import embedding_model
 from retrieval_config import chunk_overlap as configured_chunk_overlap
 from retrieval_config import chunk_size as configured_chunk_size
@@ -876,7 +876,7 @@ def lookup_chunk_by_id(chunk_id: str) -> RetrievedChunk | None:
         return _record_to_retrieved_chunk(record)
 
     index = _pinecone_index()
-    fetched = index.fetch(ids=[chunk_id], include_values=False)
+    fetched = fetch_vectors_by_ids(index, [chunk_id])
     vector = (fetched.vectors or {}).get(chunk_id)
     if vector is None:
         return None
@@ -905,7 +905,7 @@ def lookup_chunks_by_ids(chunk_ids: list[str]) -> dict[str, RetrievedChunk]:
         index = _pinecone_index()
         for start in range(0, len(misses), UPSERT_BATCH_SIZE):
             batch = misses[start : start + UPSERT_BATCH_SIZE]
-            fetched = index.fetch(ids=batch, include_values=False)
+            fetched = fetch_vectors_by_ids(index, batch)
             for chunk_id, vector in (fetched.vectors or {}).items():
                 metadata = vector.metadata or {}
                 resolved[chunk_id] = _hydrate_from_bm25(

@@ -49,6 +49,12 @@ def main() -> int:
     parser.add_argument("--base-url", default=DEFAULT_BASE, help="RAG API base URL")
     parser.add_argument("--limit", type=int, default=5, help="Number of golden questions")
     parser.add_argument("--timeout", type=float, default=180.0, help="Request timeout seconds")
+    parser.add_argument(
+        "--retrieval-mode",
+        choices=("fast", "slow"),
+        default="fast",
+        help="Retrieval speed sent as retrieval_mode on POST /agent",
+    )
     args = parser.parse_args()
 
     if not GOLDEN_PATH.is_file():
@@ -71,6 +77,7 @@ def main() -> int:
                 "session_id": str(uuid.uuid4()),
                 "install_id": headers["X-Install-Id"],
                 "history": [],
+                "retrieval_mode": args.retrieval_mode,
             }
             try:
                 resp = client.post(f"{base}/agent", headers=headers, json=payload)

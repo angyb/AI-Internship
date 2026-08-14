@@ -14,6 +14,7 @@
     TELEMETRY_STORAGE_KEY: "telemetryOptIn",
     INSTALL_ID_STORAGE_KEY: "installId",
     LAYOUT_STORAGE_KEY: "layoutMode",
+    RETRIEVAL_MODE_STORAGE_KEY: "retrievalMode",
 
     // Local cache of the in-progress chat so a refresh/reopen resumes the
     // same session (completed turns are also persisted server-side).

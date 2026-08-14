@@ -5,7 +5,7 @@ from __future__ import annotations
 from langchain_core.documents import Document
 
 from bm25_index import BM25Index, ChunkRecord, ensure_bm25_ready
-from ingest import _chunk_to_metadata, retrieve_chunks
+from ingest import RetrievedChunk, _chunk_to_metadata, lookup_chunks_by_ids, retrieve_chunks
 
 
 def test_chunk_metadata_omits_text() -> None:
@@ -78,3 +78,55 @@ def test_ensure_bm25_ready_uses_postgres_not_pinecone(monkeypatch) -> None:
     assert ready.record_count() == 1
     assert calls["postgres"] == 1
     assert calls["pinecone"] == 0
+
+
+def test_lookup_chunks_by_ids_fetch_without_include_values(monkeypatch) -> None:
+    """Pinecone SDK v9 fetch() rejects include_values — neighbor lookup must still work."""
+
+    record = ChunkRecord(
+        chunk_id="boosts__chunk_1",
+        document_id="boosts",
+        source="zendesk/md/boosts.md",
+        text="Boosts provide scaffolded support in the Tower of Power.",
+        chunk_index=1,
+        title="Boosts",
+    )
+
+    class FakeVector:
+        metadata = {
+            "document_id": "boosts",
+            "chunk_index": 1,
+            "title": "Boosts",
+            "source": "zendesk/md/boosts.md",
+        }
+
+    class FakeFetchResponse:
+        vectors = {"boosts__chunk_99": FakeVector()}
+
+    class FakeIndex:
+        def fetch(self, *, ids, **kwargs):
+            if "include_values" in kwargs:
+                raise TypeError(
+                    "Index.fetch() got an unexpected keyword argument 'include_values'"
+                )
+            assert ids == ["boosts__chunk_99"]
+            return FakeFetchResponse()
+
+    monkeypatch.setattr("ingest.get_bm25_index", lambda: BM25Index())
+    monkeypatch.setattr("ingest._pinecone_index", lambda: FakeIndex())
+    monkeypatch.setattr(
+        "ingest._hydrate_from_bm25",
+        lambda chunk: RetrievedChunk(
+            text=record.text,
+            document_id=chunk.document_id,
+            title=chunk.title,
+            source_url="",
+            source=chunk.source,
+            chunk_id=chunk.chunk_id,
+            chunk_index=chunk.chunk_index,
+        ),
+    )
+
+    resolved = lookup_chunks_by_ids(["boosts__chunk_99"])
+    assert "boosts__chunk_99" in resolved
+    assert resolved["boosts__chunk_99"].document_id == "boosts"

@@ -28,6 +28,10 @@ function normalizeLayoutMode(mode) {
     : CONFIG.DEFAULT_LAYOUT_MODE;
 }
 
+function normalizeRetrievalMode(mode) {
+  return mode === "fast" || mode === "slow" ? mode : "fast";
+}
+
 async function ensureInstallId() {
   const key = CONFIG.INSTALL_ID_STORAGE_KEY;
   try {
@@ -50,6 +54,7 @@ async function loadSettings() {
     CONFIG.API_KEY_STORAGE_KEY,
     CONFIG.TELEMETRY_STORAGE_KEY,
     CONFIG.LAYOUT_STORAGE_KEY,
+    CONFIG.RETRIEVAL_MODE_STORAGE_KEY,
   ]);
   return {
     base: normalizeBase(sync[CONFIG.STORAGE_KEY]),
@@ -57,6 +62,7 @@ async function loadSettings() {
     apiKey: (sync[CONFIG.API_KEY_STORAGE_KEY] || "").trim(),
     telemetryOptIn: Boolean(sync[CONFIG.TELEMETRY_STORAGE_KEY]),
     layoutMode: normalizeLayoutMode(sync[CONFIG.LAYOUT_STORAGE_KEY]),
+    retrievalMode: normalizeRetrievalMode(sync[CONFIG.RETRIEVAL_MODE_STORAGE_KEY]),
     agentTimeoutMs: CONFIG.AGENT_TIMEOUT_MS,
     healthTimeoutMs: CONFIG.HEALTH_TIMEOUT_MS,
     extensionVersion: CONFIG.EXTENSION_VERSION,
@@ -77,6 +83,11 @@ async function saveSettings(partial) {
   }
   if (Object.prototype.hasOwnProperty.call(partial, "layoutMode")) {
     toSync[CONFIG.LAYOUT_STORAGE_KEY] = normalizeLayoutMode(partial.layoutMode);
+  }
+  if (Object.prototype.hasOwnProperty.call(partial, "retrievalMode")) {
+    toSync[CONFIG.RETRIEVAL_MODE_STORAGE_KEY] = normalizeRetrievalMode(
+      partial.retrievalMode
+    );
   }
   if (Object.keys(toSync).length) {
     await chrome.storage.sync.set(toSync);
@@ -178,6 +189,7 @@ async function handleAsk(msg) {
   const question = String((msg && msg.question) || "");
   const sessionId = (msg && msg.sessionId) || null;
   const history = Array.isArray(msg && msg.history) ? msg.history : [];
+  const retrievalMode = normalizeRetrievalMode(msg && msg.retrievalMode);
   try {
     const resp = await fetchWithTimeout(
       settings.base + "/agent",
@@ -189,6 +201,7 @@ async function handleAsk(msg) {
           session_id: sessionId,
           install_id: installId,
           history,
+          retrieval_mode: retrievalMode,
         }),
         signal: entry.controller.signal,
       },

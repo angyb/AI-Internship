@@ -19,6 +19,19 @@ LIST_PAGE_SIZE = 100
 METADATA_TEXT_KEY = "text"
 
 
+def fetch_vectors_by_ids(index, ids: list[str]):
+    """Fetch vectors by id without downloading embedding values when supported.
+
+    Pinecone SDK v9+ ``fetch()`` no longer accepts ``include_values``; older SDKs do.
+    """
+    if not ids:
+        return index.fetch(ids=[])
+    try:
+        return index.fetch(ids=ids, include_values=False)
+    except TypeError:
+        return index.fetch(ids=ids)
+
+
 @dataclass
 class ChunkRecord:
     chunk_id: str
@@ -234,10 +247,7 @@ class BM25Index:
             if not batch_ids:
                 continue
 
-            try:
-                fetched = index.fetch(ids=batch_ids, include_values=False)
-            except TypeError:
-                fetched = index.fetch(ids=batch_ids)
+            fetched = fetch_vectors_by_ids(index, batch_ids)
             for chunk_id, vector in fetched.vectors.items():
                 metadata = vector.metadata or {}
                 text = str(metadata.get(METADATA_TEXT_KEY, "")).strip()
