@@ -17,3 +17,11 @@ def test_pinecone_egress_limit_message() -> None:
 def test_pinecone_generic_error_passthrough() -> None:
     detail = pinecone_error_detail(RuntimeError("connection timed out"))
     assert detail == "connection timed out"
+
+
+def test_pinecone_generic_error_redacts_secrets() -> None:
+    detail = pinecone_error_detail(
+        RuntimeError("auth failed for Bearer sk-proj-abcdefghijklmnop")
+    )
+    assert "sk-proj-abcdefghijklmnop" not in detail
+    assert "Bearer …" in detail or "sk-…" in detail

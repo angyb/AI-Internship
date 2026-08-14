@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from secret_redaction import read_env_secret, redact_secrets, safe_error_message
 from usage_checks import (
     _format_of,
     _level_from_pct,
@@ -51,6 +52,62 @@ def test_level_from_pct() -> None:
 
 def test_format_of_usd() -> None:
     assert _format_of(1.234, 10.0, "USD") == "$1.23 of $10.00"
+
+
+def test_redact_secrets_in_errors() -> None:
+    raw = (
+        "Illegal header value b'Bearer sk-admin-abcdefghijklmnop"
+        "\\nPINECONE_API_KEY=pcsk_abcdefghijklmnop'"
+    )
+    redacted = redact_secrets(raw)
+    assert "sk-admin-abcdefghijklmnop" not in redacted
+    assert "pcsk_abcdefghijklmnop" not in redacted
+    assert "Invalid API key format" in redacted
+
+
+def test_safe_usage_error_never_leaks_keys() -> None:
+    exc = ValueError("Illegal header value b'Bearer sk-admin-secretkey'")
+    detail = safe_error_message(exc, prefix="Could not fetch usage")
+    assert "secretkey" not in detail
+    assert "Invalid API key format" in detail
+
+
+def test_read_env_secret_uses_first_line_only(monkeypatch) -> None:
+    monkeypatch.setenv(
+        "OPENAI_ADMIN_KEY",
+        "sk-admin-good\nPINECONE_API_KEY=pcsk_bad",
+    )
+    value, warning = read_env_secret("OPENAI_ADMIN_KEY")
+    assert value == "sk-admin-good"
+    assert warning is not None
+    assert "multiple lines" in warning
+
+
+def test_openai_multiline_admin_key_shows_safe_message(monkeypatch) -> None:
+    monkeypatch.setenv(
+        "OPENAI_ADMIN_KEY",
+        "sk-admin-test\nPINECONE_API_KEY=pcsk_leak",
+    )
+
+    result = usage_openai()
+    assert result["ok"] is True
+    assert "multiple lines" in result["detail"]
+    assert "pcsk_" not in result["detail"]
+    assert "sk-admin-test" not in result["detail"]
+
+
+def test_health_payload_is_sanitized(monkeypatch) -> None:
+    monkeypatch.setenv(
+        "OPENAI_ADMIN_KEY",
+        "sk-admin-test\nPINECONE_API_KEY=pcsk_leak",
+    )
+
+    from health_checks import collect_health
+
+    payload = collect_health()
+    dumped = str(payload)
+    assert "pcsk_leak" not in dumped
+    assert "sk-admin-test" not in dumped
 
 
 def test_openai_missing_admin_scope(monkeypatch) -> None:

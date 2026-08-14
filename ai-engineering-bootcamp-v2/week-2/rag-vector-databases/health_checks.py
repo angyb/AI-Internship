@@ -7,6 +7,7 @@ import time
 from typing import Any, Callable
 
 from env_utils import bool_env
+from secret_redaction import redact_secrets, safe_error_message, sanitize_for_client
 
 _PINECONE_CACHE_TTL_S = 20.0
 _pinecone_cache: tuple[float, dict[str, Any]] | None = None
@@ -18,7 +19,7 @@ def _check(ok: bool, detail: str) -> dict[str, Any]:
 
 def pinecone_error_detail(exc: BaseException) -> str:
     """Turn a Pinecone SDK/HTTP error into a short Health-tab message."""
-    text = str(exc)
+    text = redact_secrets(str(exc))
     lower = text.lower()
     if "egress limit" in lower:
         return (
@@ -88,7 +89,7 @@ def check_bm25() -> dict[str, Any]:
             )
         return _check(True, f"{count:,} chunks indexed")
     except Exception as exc:
-        return _check(False, str(exc)[:400])
+        return _check(False, safe_error_message(exc))
 
 
 def check_database() -> dict[str, Any]:
@@ -100,7 +101,7 @@ def check_database() -> dict[str, Any]:
         db.ping()
         return _check(True, "Connected")
     except Exception as exc:
-        return _check(False, str(exc)[:400])
+        return _check(False, safe_error_message(exc))
 
 
 _CHECKS: tuple[tuple[str, Callable[[], dict[str, Any]]], ...] = (
@@ -128,9 +129,11 @@ def collect_health() -> dict[str, Any]:
     status = "ok" if all_ok else "degraded"
     if all_ok and level == "over":
         status = "degraded"
-    return {
-        "status": status,
-        "usage_level": level,
-        "checks": checks,
-        "usage": usage,
-    }
+    return sanitize_for_client(
+        {
+            "status": status,
+            "usage_level": level,
+            "checks": checks,
+            "usage": usage,
+        }
+    )

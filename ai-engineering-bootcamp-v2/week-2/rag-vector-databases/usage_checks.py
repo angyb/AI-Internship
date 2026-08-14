@@ -14,6 +14,7 @@ from typing import Any
 from urllib.parse import quote
 
 from env_utils import float_env
+from secret_redaction import read_env_secret, redact_secrets, safe_error_message
 
 _USAGE_CACHE_TTL_S = 60.0
 _HTTP_TIMEOUT_S = 8.0
@@ -111,12 +112,17 @@ def usage_level(usage: dict[str, Any]) -> str:
 def _http_get(url: str, headers: dict[str, str] | None = None) -> tuple[int, Any]:
     import httpx
 
+    safe_headers = headers or {}
+    for name, value in safe_headers.items():
+        if "\n" in value or "\r" in value:
+            raise ValueError(f"{name} contains invalid characters")
+
     with httpx.Client(timeout=_HTTP_TIMEOUT_S) as client:
-        resp = client.get(url, headers=headers or {})
+        resp = client.get(url, headers=safe_headers)
         try:
             data = resp.json()
         except Exception:
-            text = (resp.text or "")[:300]
+            text = redact_secrets((resp.text or "")[:300])
             data = {"error": text} if text else None
         return resp.status_code, data
 
@@ -125,13 +131,13 @@ def _error_message(body: Any) -> str:
     if isinstance(body, dict):
         err = body.get("error")
         if isinstance(err, dict):
-            return str(err.get("message") or err)[:280]
+            return redact_secrets(str(err.get("message") or err))[:280]
         if isinstance(err, str) and err:
-            return err[:280]
+            return redact_secrets(err)[:280]
         if body.get("message"):
-            return str(body["message"])[:280]
+            return redact_secrets(str(body["message"]))[:280]
     if isinstance(body, str) and body:
-        return body[:280]
+        return redact_secrets(body)[:280]
     return "request failed"
 
 
@@ -205,10 +211,18 @@ def pinecone_storage_gb(vector_count: int, dimension: int) -> float:
 
 
 def usage_openai() -> dict[str, Any]:
-    admin_key = os.getenv("OPENAI_ADMIN_KEY", "").strip()
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    admin_key, admin_warn = read_env_secret("OPENAI_ADMIN_KEY")
+    api_key, api_warn = read_env_secret("OPENAI_API_KEY")
     key = admin_key or api_key
+    env_warn = admin_warn or api_warn
     dashboard = DASHBOARDS["openai"]
+    if env_warn:
+        return _item(
+            ok=True,
+            level="info",
+            detail=env_warn,
+            dashboard=dashboard,
+        )
     if not key:
         return _item(
             ok=False,
@@ -348,8 +362,15 @@ def _gemini_month_tokens() -> dict[str, int]:
 
 
 def usage_gemini() -> dict[str, Any]:
-    key = (os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or "").strip()
+    key, env_warn = read_env_secret("GOOGLE_API_KEY", "GEMINI_API_KEY")
     dashboard = DASHBOARDS["gemini"]
+    if env_warn:
+        return _item(
+            ok=True,
+            level="info",
+            detail=env_warn,
+            dashboard=dashboard,
+        )
     if not key:
         return _item(
             ok=False,
@@ -412,8 +433,15 @@ def usage_gemini() -> dict[str, Any]:
 
 
 def usage_render() -> dict[str, Any]:
-    api_key = os.getenv("RENDER_API_KEY", "").strip()
+    api_key, env_warn = read_env_secret("RENDER_API_KEY")
     dashboard = DASHBOARDS["render"]
+    if env_warn:
+        return _item(
+            ok=True,
+            level="info",
+            detail=env_warn,
+            dashboard=dashboard,
+        )
     if not api_key:
         return _item(
             ok=True,
@@ -567,7 +595,7 @@ def collect_usage(*, force: bool = False) -> dict[str, Any]:
                 usage[name] = _item(
                     ok=True,
                     level="info",
-                    detail=f"Could not fetch usage: {exc}"[:280],
+                    detail=safe_error_message(exc, prefix="Could not fetch usage")[:280],
                     dashboard=DASHBOARDS.get(name, ""),
                 )
     _usage_cache = (now, usage)

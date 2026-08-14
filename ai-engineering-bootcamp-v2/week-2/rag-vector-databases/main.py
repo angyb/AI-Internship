@@ -22,6 +22,7 @@ from agent_security import (
 )
 import db
 from env_utils import bool_env
+from secret_redaction import redact_secrets, safe_error_message
 
 from ingest import (
     RetrievedChunk,
@@ -451,14 +452,14 @@ def ingest(
                 clear_index_first=clear_index,
             )
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        raise HTTPException(status_code=400, detail=safe_error_message(exc)) from exc
     except KeyError as exc:
         raise HTTPException(
             status_code=500,
             detail=f"Missing required environment variable: {exc.args[0]}",
         ) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Ingest failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="Ingest failed")) from exc
 
     return IngestResponse(
         document_id=result.document_id,
@@ -631,7 +632,7 @@ def retrieve(body: RetrieveRequest) -> RetrieveResponse:
             detail=f"Missing required environment variable: {exc.args[0]}",
         ) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="Retrieval failed")) from exc
 
     return RetrieveResponse(
         chunks=[
@@ -752,12 +753,12 @@ def agent_run(body: AgentRequest) -> AgentResponse:
                 db.ensure_session(body.session_id, body.install_id)
                 db.add_message(body.session_id, "user", content=body.question)
                 db.add_message(
-                    body.session_id, "assistant", content="", error=str(exc)
+                    body.session_id, "assistant", content="", error=redact_secrets(str(exc))
                 )
                 db.update_session(body.session_id, status="error", ended_reason="error")
             except Exception as persist_exc:
                 logger.warning("Failed to persist errored turn: %s", persist_exc)
-        raise HTTPException(status_code=500, detail=f"Agent run failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="Agent run failed")) from exc
 
     title, token_count = _persist_agent_turn(body, answer, steps, usage)
 
@@ -786,7 +787,7 @@ def history_list(install_id: str) -> HistoryListResponse:
     try:
         rows = db.list_sessions(install_id)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"History lookup failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="History lookup failed")) from exc
     return HistoryListResponse(
         sessions=[HistorySessionSummary(**row) for row in rows]
     )
@@ -802,7 +803,7 @@ def history_get(session_id: str, install_id: str) -> HistorySessionDetail:
     try:
         row = db.get_session(session_id, install_id)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"History lookup failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="History lookup failed")) from exc
     if row is None:
         raise HTTPException(status_code=404, detail="Session not found")
     return HistorySessionDetail(**row)
@@ -826,7 +827,7 @@ def history_patch(session_id: str, body: HistoryPatchRequest) -> HistorySessionS
             ended_reason=body.ended_reason,
         )
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"History update failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="History update failed")) from exc
     return HistorySessionSummary(**updated)
 
 
@@ -840,7 +841,7 @@ def history_delete(session_id: str, install_id: str) -> dict[str, Any]:
     try:
         removed = db.delete_session(session_id, install_id)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"History delete failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="History delete failed")) from exc
     if not removed:
         raise HTTPException(status_code=404, detail="Session not found")
     return {"status": "deleted", "id": session_id}
@@ -1059,7 +1060,7 @@ def ask(body: AskRequest) -> AskResponse:
             detail=f"Missing required environment variable: {exc.args[0]}",
         ) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="Retrieval failed")) from exc
 
     for attempt in range(2):
         try:
@@ -1096,12 +1097,12 @@ def ask(body: AskRequest) -> AskResponse:
                 question_type=route,
             )
         except (ValidationError, ValueError) as exc:
-            last_error = str(exc)
+            last_error = redact_secrets(str(exc))
             continue
         except APIError as exc:
             raise HTTPException(
                 status_code=502,
-                detail=f"OpenAI API error: {exc.message}",
+                detail=safe_error_message(exc, prefix="OpenAI API error"),
             ) from exc
 
     raise HTTPException(
@@ -1135,13 +1136,13 @@ def run_agent_eval_endpoint(body: EvalAgentRequest | None = None) -> EvalAgentRe
         except Exception as exc:
             raise HTTPException(
                 status_code=500,
-                detail=f"Trace capture failed: {exc}",
+                detail=safe_error_message(exc, prefix="Trace capture failed"),
             ) from exc
 
     try:
         result = run_agent_eval(traces_path=DEFAULT_TRACES)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Agent eval failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="Agent eval failed")) from exc
 
     summary = result["summary"]
     return EvalAgentResponse(
@@ -1192,9 +1193,9 @@ def run_golden_eval(body: EvalRequest | None = None) -> EvalResponse:
             detail=f"Missing required environment variable: {exc.args[0]}",
         ) from exc
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        raise HTTPException(status_code=400, detail=safe_error_message(exc)) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Evaluation failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="Evaluation failed")) from exc
 
     averages = result["averages"]
     config = result.get("config", {})

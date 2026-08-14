@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from zearn_faq_bot.constants import CHUNK_TEXT_LIMIT, MAX_SEARCH_ZEARN_DOC_CALLS
+from secret_redaction import safe_error_message
 
 DOCS_DIR = Path(__file__).resolve().parents[3] / "documents"
 _search_call_count: ContextVar[int] = ContextVar("search_zearn_doc_call_count", default=0)
@@ -148,7 +149,7 @@ def search_zearn_doc(question: str) -> dict:
         }
     except Exception as exc:
         return {
-            "error": f"Retrieval failed: {exc}",
+            "error": safe_error_message(exc, prefix="Retrieval failed"),
             "chunks": [],
             "chunk_count": 0,
         }
