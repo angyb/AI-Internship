@@ -17,25 +17,32 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-AGENT_API_URL = os.getenv("AGENT_API_URL", "").rstrip("/")
+# Render UI service uses requirements-streamlit.txt (no google-adk). Always call the API.
+DEFAULT_PRODUCTION_AGENT_API_URL = "https://ai-internship-i3lw.onrender.com"
+
+AGENT_API_URL = os.getenv("AGENT_API_URL", "").strip().rstrip("/")
+if not AGENT_API_URL and os.getenv("RENDER"):
+    AGENT_API_URL = DEFAULT_PRODUCTION_AGENT_API_URL
+
 REMOTE_MODE = bool(AGENT_API_URL)
 HEALTH_TIMEOUT = float(os.getenv("API_HEALTH_TIMEOUT", "60"))
 AGENT_TIMEOUT = float(os.getenv("API_AGENT_TIMEOUT", "120"))
 LOCAL_API_URL = os.getenv("RAG_API_URL", "http://127.0.0.1:8000").rstrip("/")
 
-if not REMOTE_MODE:
-    from zearn_support_agent import FALLBACK_PREFIX, REFUSAL_MESSAGE, run_zearn_agent
+REFUSAL_MESSAGE = (
+    "I couldn't find that in the Zearn documentation corpus. "
+    "Try rephrasing your question, or contact Zearn support for help."
+)
+FALLBACK_PREFIX = "This wasn't found in Zearn documentation; sourced from the web."
 
-    RAG_API_URL = LOCAL_API_URL
-else:
-    RAG_API_URL = AGENT_API_URL
-    REFUSAL_MESSAGE = (
-        "I couldn't find that in the Zearn documentation corpus. "
-        "Try rephrasing your question, or contact Zearn support for help."
-    )
-    FALLBACK_PREFIX = (
-        "This wasn't found in Zearn documentation; sourced from the web."
-    )
+RAG_API_URL = AGENT_API_URL if REMOTE_MODE else LOCAL_API_URL
+
+
+def run_agent_local(question: str) -> tuple[str, list[dict], dict]:
+    """In-process ADK agent — only for local dev (requires google-adk in venv)."""
+    from zearn_support_agent import run_zearn_agent
+
+    return run_zearn_agent(question)
 
 st.set_page_config(page_title="Zearn Support Agent", layout="wide")
 st.markdown("<style>.block-container{padding-top:1.5rem;}</style>", unsafe_allow_html=True)
@@ -286,7 +293,7 @@ if run_clicked and question.strip():
                     history=st.session_state.agent_history,
                 )
             else:
-                answer, steps, _usage = run_zearn_agent(question.strip())
+                answer, steps, _usage = run_agent_local(question.strip())
         except httpx.HTTPStatusError as exc:
             st.error(f"API error {exc.response.status_code}: {exc.response.text[:500]}")
             st.stop()
