@@ -287,6 +287,28 @@ class AgentResponse(BaseModel):
     )
 
 
+class MemoryWriteRequest(BaseModel):
+    """Durable user preference memory write request (Week 5 Path A)."""
+
+    install_id: str = Field(description="Anonymous per-install UUID")
+    role: str = Field(description="User role preference (e.g. teacher)")
+    grade_band: str = Field(description="Grade band preference (e.g. Grade 3)")
+    confirmed_write: bool = Field(
+        default=False,
+        description=(
+            "Write gate: must be true to persist memory. Set by the UI button "
+            "the user clicks."
+        ),
+    )
+
+
+class MemoryRecord(BaseModel):
+    install_id: str
+    role: str | None = None
+    grade_band: str | None = None
+    updated_at: str | None = None
+
+
 class HistorySessionSummary(BaseModel):
     id: str
     title: str = ""
@@ -780,9 +802,19 @@ def agent_run(body: AgentRequest) -> AgentResponse:
 
     try:
         from zearn_support_agent import run_zearn_agent
+        memory_context: str | None = None
+        if body.install_id:
+            mem = db.get_user_memory(body.install_id)
+            if mem and mem.get("role") and mem.get("grade_band"):
+                memory_context = (
+                    "User preference (durable memory): "
+                    f"role={mem['role']}; grade_band={mem['grade_band']}."
+                )
 
         with timed_span("agent_total"):
-            answer, steps, usage = run_zearn_agent(body.question, history)
+            answer, steps, usage = run_zearn_agent(
+                body.question, history=history, memory=memory_context
+            )
     except HTTPException:
         raise
     except Exception as exc:
@@ -826,6 +858,47 @@ def agent_run(body: AgentRequest) -> AgentResponse:
         timings_ms=timings,
         search_call_count=search_call_count,
     )
+
+
+@app.get("/memory", dependencies=[Depends(require_agent_access)])
+def memory_get(install_id: str) -> MemoryRecord:
+    """Retrieve durable preference memory for this install_id."""
+    if not install_id:
+        raise HTTPException(status_code=400, detail="install_id is required")
+    mem = db.get_user_memory(install_id)
+    if not mem:
+        return MemoryRecord(install_id=install_id)
+    return MemoryRecord(**mem)
+
+
+@app.post("/memory", dependencies=[Depends(require_agent_access)])
+def memory_write(body: MemoryWriteRequest) -> MemoryRecord:
+    """Persist durable user preference memory (write-gated)."""
+    if not body.confirmed_write:
+        raise HTTPException(
+            status_code=400,
+            detail="Write gate rejected: confirmed_write must be true.",
+        )
+    role = (body.role or "").strip().lower()
+    grade_band = (body.grade_band or "").strip()
+    if not role or not grade_band:
+        raise HTTPException(status_code=400, detail="role and grade_band are required")
+    if len(role) > 32 or len(grade_band) > 64:
+        raise HTTPException(
+            status_code=400, detail="role/grade_band are too long (max 32/64 chars)"
+        )
+
+    mem = db.replace_user_memory(body.install_id, role=role, grade_band=grade_band)
+    return MemoryRecord(**mem)
+
+
+@app.delete("/memory", dependencies=[Depends(require_agent_access)])
+def memory_delete(install_id: str) -> dict[str, Any]:
+    """Delete preference memory for this install_id."""
+    if not install_id:
+        raise HTTPException(status_code=400, detail="install_id is required")
+    removed = db.delete_user_memory(install_id)
+    return {"status": "deleted" if removed else "not_found", "install_id": install_id}
 
 
 @app.get("/history/sessions", dependencies=[Depends(require_agent_access)])

@@ -56,7 +56,12 @@ AGENT_INSTRUCTION = (
     "and end with a **Sources:** bullet list that includes at least one markdown link "
     "to a URL from the web search results. "
     "Use lookup_state_standard, search_zearn_doc, or google_search_agent as appropriate; "
-    "do not answer from memory. "
+    "durable user preference memory may be provided only to tailor response style. "
+    "If such preference memory is present, include one short, non-factual sentence "
+    "near the start of your response reflecting the grade_band/role (e.g. "
+    "'Tailored for Grade 3 learners.'). "
+    "Do not treat it as factual source content; rely on retrieved Zearn docs or "
+    "web fallback when answering factual questions. "
     f"If both fail, respond with exactly: \"{REFUSAL_MESSAGE}\" "
     "Always end with a clear, complete user-facing answer."
 )

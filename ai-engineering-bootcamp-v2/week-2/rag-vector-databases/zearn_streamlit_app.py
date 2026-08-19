@@ -9,6 +9,7 @@ Run against remote API (Render UI service):
 """
 
 import os
+import uuid
 
 import httpx
 import streamlit as st
@@ -51,20 +52,78 @@ def check_api_health(base_url: str, timeout: float = HEALTH_TIMEOUT) -> tuple[bo
         return False, str(exc)
 
 
-def run_agent_remote(question: str) -> tuple[str, list[dict]]:
+def api_headers() -> dict[str, str]:
     headers = {"Content-Type": "application/json"}
     api_key = os.getenv("AGENT_API_KEY", "").strip()
     if api_key:
         headers["X-API-Key"] = api_key
+    return headers
+
+
+def run_agent_remote(
+    question: str,
+    *,
+    session_id: str,
+    install_id: str,
+    history: list[dict[str, str]],
+) -> tuple[str, list[dict]]:
     with httpx.Client(timeout=AGENT_TIMEOUT) as client:
         response = client.post(
             f"{AGENT_API_URL}/agent",
-            json={"question": question},
-            headers=headers,
+            json={
+                "question": question,
+                "session_id": session_id,
+                "install_id": install_id,
+                "history": history,
+            },
+            headers=api_headers(),
         )
         response.raise_for_status()
         data = response.json()
     return data["answer"], data.get("steps", [])
+
+
+def memory_get_remote(install_id: str) -> dict:
+    with httpx.Client(timeout=30) as client:
+        response = client.get(
+            f"{AGENT_API_URL}/memory",
+            params={"install_id": install_id},
+            headers=api_headers(),
+        )
+        if response.status_code == 404:
+            return {"install_id": install_id}
+        response.raise_for_status()
+        data = response.json()
+    return data if isinstance(data, dict) else {"install_id": install_id}
+
+
+def memory_save_remote(install_id: str, *, role: str, grade_band: str) -> dict:
+    with httpx.Client(timeout=30) as client:
+        response = client.post(
+            f"{AGENT_API_URL}/memory",
+            json={
+                "install_id": install_id,
+                "role": role,
+                "grade_band": grade_band,
+                "confirmed_write": True,
+            },
+            headers=api_headers(),
+        )
+        response.raise_for_status()
+        data = response.json()
+    return data if isinstance(data, dict) else {"install_id": install_id}
+
+
+def memory_delete_remote(install_id: str) -> dict:
+    with httpx.Client(timeout=30) as client:
+        response = client.delete(
+            f"{AGENT_API_URL}/memory",
+            params={"install_id": install_id},
+            headers=api_headers(),
+        )
+        response.raise_for_status()
+        data = response.json()
+    return data if isinstance(data, dict) else {"install_id": install_id}
 
 
 def used_web_fallback(steps: list[dict]) -> bool:
@@ -133,6 +192,61 @@ with st.sidebar:
                 "Start: `uvicorn main:app --host 127.0.0.1 --port 8000` in this folder"
             )
 
+    if REMOTE_MODE:
+        st.divider()
+        st.subheader("Week 5 Memory demo (Path A)")
+
+        if "install_id" not in st.session_state:
+            st.session_state.install_id = uuid.uuid4().hex
+        if "session_id" not in st.session_state:
+            st.session_state.session_id = uuid.uuid4().hex
+        if "agent_history" not in st.session_state:
+            st.session_state.agent_history = []
+        if "memory_record" not in st.session_state:
+            st.session_state.memory_record = None
+
+        role = st.selectbox(
+            "Role",
+            options=["teacher", "student"],
+            index=0,
+            key="memory_role",
+        )
+        grade_band = st.text_input("Grade band", value="Grade 3", key="memory_grade_band")
+
+        if st.button("Save preference", type="primary", use_container_width=True):
+            with st.spinner("Saving durable memory…"):
+                st.session_state.memory_record = memory_save_remote(
+                    st.session_state.install_id,
+                    role=role,
+                    grade_band=grade_band,
+                )
+            st.success("Preference saved.")
+
+        if st.button("New session (recall)", use_container_width=True):
+            st.session_state.session_id = uuid.uuid4().hex
+            st.session_state.agent_history = []
+            with st.spinner("Reloading memory and starting new session…"):
+                st.session_state.memory_record = memory_get_remote(st.session_state.install_id)
+
+        if st.button("Forget preference", use_container_width=True):
+            with st.spinner("Deleting durable memory…"):
+                memory_delete_remote(st.session_state.install_id)
+                st.session_state.memory_record = {"install_id": st.session_state.install_id}
+
+        st.caption(f"install_id: `{st.session_state.install_id}`")
+        st.caption(f"session_id: `{st.session_state.session_id}`")
+
+        # Best-effort load on first render.
+        if st.session_state.memory_record is None:
+            with st.spinner("Loading saved memory…"):
+                try:
+                    st.session_state.memory_record = memory_get_remote(st.session_state.install_id)
+                except Exception:
+                    st.session_state.memory_record = {"install_id": st.session_state.install_id}
+
+        st.markdown("**Retrieved memory**")
+        st.json(st.session_state.memory_record)
+
 # --- Main ---
 
 st.header("Zearn Support Agent")
@@ -165,7 +279,12 @@ if run_clicked and question.strip():
     with st.spinner(spinner_msg):
         try:
             if REMOTE_MODE:
-                answer, steps = run_agent_remote(question.strip())
+                answer, steps = run_agent_remote(
+                    question.strip(),
+                    session_id=st.session_state.session_id,
+                    install_id=st.session_state.install_id,
+                    history=st.session_state.agent_history,
+                )
             else:
                 answer, steps, _usage = run_zearn_agent(question.strip())
         except httpx.HTTPStatusError as exc:
@@ -174,6 +293,15 @@ if run_clicked and question.strip():
         except Exception as exc:
             st.error(f"Agent error: {exc}")
             st.stop()
+
+    # Update local in-session history so the agent can use conversational context.
+    if REMOTE_MODE:
+        st.session_state.agent_history.append(
+            {"role": "user", "content": question.strip()}
+        )
+        st.session_state.agent_history.append(
+            {"role": "assistant", "content": answer.strip()}
+        )
 
     st.markdown("---")
     st.subheader("Think → Act → Observe")

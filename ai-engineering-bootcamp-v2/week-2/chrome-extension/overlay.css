@@ -584,6 +584,9 @@
 
 .zbot-retrieval-mode__chevron {
   flex: 0 0 auto;
+  display: block;
+  width: 8.622px;
+  height: 7.875px;
   color: #8e8e8e;
 }
 

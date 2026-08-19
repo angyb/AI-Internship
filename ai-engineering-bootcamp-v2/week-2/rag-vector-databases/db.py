@@ -1,4 +1,4 @@
-"""Postgres persistence for Ask Z-Bot chat history.
+"""Postgres (and local fallback) persistence for Ask Z-Bot chat history + memory.
 
 Stores chat sessions and their messages so the extension's History tab can list
 past conversations and resume the current one after a refresh, error, or tab
@@ -8,6 +8,7 @@ module degrades to no-ops so /ask and a basic /agent still work locally.
 Schema:
   sessions(id, install_id, title, token_count, status, ended_reason, created_at, updated_at)
   messages(id, session_id, role, content, steps, error, prompt_tokens, total_tokens, created_at)
+  user_memory(install_id, role, grade_band, created_at, updated_at)
   bm25_chunks(chunk_id, document_id, chunk_index, source, title, source_url, text)
 
 Sessions are scoped by ``install_id`` (the extension's anonymous per-install
@@ -17,8 +18,10 @@ corpus so API boots do not re-download Pinecone.
 
 from __future__ import annotations
 
+import json
 import logging
 import os
+from pathlib import Path
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from typing import Any, Iterator
@@ -44,6 +47,10 @@ from sqlalchemy.orm import (
 from sqlalchemy.types import DateTime
 
 logger = logging.getLogger(__name__)
+
+USER_MEMORY_FALLBACK_PATH = (
+    Path(__file__).resolve().parent / "user_memory_store.json"
+)
 
 
 def _normalize_database_url(url: str) -> str:
@@ -176,6 +183,28 @@ class ChatMessage(Base):
     )
 
     session: Mapped[ChatSession] = relationship(back_populates="messages")
+
+
+class UserMemory(Base):
+    """Durable preference memory — survives process restart.
+
+    Scoped by ``install_id`` (anonymous per-install UUID). For Path A, we store a
+    single stable preference pair: ``role`` + ``grade_band``.
+    """
+
+    __tablename__ = "user_memory"
+
+    install_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    role: Mapped[str] = mapped_column(String(32), default="")
+    grade_band: Mapped[str] = mapped_column(String(64), default="")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
 
 
 class Bm25Chunk(Base):
@@ -340,6 +369,120 @@ def delete_session(session_id: str, install_id: str) -> bool:
         if row is None or row.install_id != install_id:
             return False
         db.execute(delete(ChatSession).where(ChatSession.id == session_id))
+        return True
+
+
+def _fallback_load_user_memory() -> dict[str, Any]:
+    if not USER_MEMORY_FALLBACK_PATH.exists():
+        return {}
+    try:
+        data = json.loads(USER_MEMORY_FALLBACK_PATH.read_text(encoding="utf-8"))
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        return {}
+    return {}
+
+
+def _fallback_save_user_memory(data: dict[str, Any]) -> None:
+    USER_MEMORY_FALLBACK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    USER_MEMORY_FALLBACK_PATH.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def get_user_memory(install_id: str) -> dict[str, Any] | None:
+    """Get durable preference memory for this install_id."""
+    if not install_id:
+        return None
+
+    if not database_enabled():
+        data = _fallback_load_user_memory()
+        row = data.get(install_id)
+        if not isinstance(row, dict):
+            return None
+        if not (row.get("role") and row.get("grade_band")):
+            return None
+        return {
+            "install_id": install_id,
+            "role": str(row.get("role") or ""),
+            "grade_band": str(row.get("grade_band") or ""),
+            "updated_at": row.get("updated_at"),
+        }
+
+    with _session_scope() as db:
+        row = db.get(UserMemory, install_id)
+        if row is None:
+            return None
+        role = (row.role or "").strip()
+        grade_band = (row.grade_band or "").strip()
+        if not role or not grade_band:
+            return None
+        return {
+            "install_id": row.install_id,
+            "role": row.role,
+            "grade_band": row.grade_band,
+            "updated_at": row.updated_at.isoformat() if row.updated_at else None,
+        }
+
+
+def replace_user_memory(
+    install_id: str,
+    *,
+    role: str,
+    grade_band: str,
+) -> dict[str, Any]:
+    """Replace (upsert) durable preference memory for this install_id."""
+    now = datetime.now(timezone.utc).isoformat()
+    role = (role or "").strip()
+    grade_band = (grade_band or "").strip()
+
+    if not install_id:
+        raise ValueError("install_id is required")
+    if not role or not grade_band:
+        raise ValueError("role and grade_band are required")
+
+    if not database_enabled():
+        data = _fallback_load_user_memory()
+        data[install_id] = {"role": role, "grade_band": grade_band, "updated_at": now}
+        _fallback_save_user_memory(data)
+        return {"install_id": install_id, "role": role, "grade_band": grade_band, "updated_at": now}
+
+    with _session_scope() as db:
+        row = db.get(UserMemory, install_id)
+        if row is None:
+            row = UserMemory(install_id=install_id)
+            db.add(row)
+        row.role = role
+        row.grade_band = grade_band
+        db.flush()
+        return {
+            "install_id": row.install_id,
+            "role": row.role,
+            "grade_band": row.grade_band,
+            "updated_at": row.updated_at.isoformat() if row.updated_at else now,
+        }
+
+
+def delete_user_memory(install_id: str) -> bool:
+    """Delete preference memory for this install_id."""
+    if not install_id:
+        return False
+
+    if not database_enabled():
+        data = _fallback_load_user_memory()
+        if install_id in data:
+            data.pop(install_id, None)
+            _fallback_save_user_memory(data)
+            return True
+        return False
+
+    with _session_scope() as db:
+        row = db.get(UserMemory, install_id)
+        if row is None:
+            return False
+        db.delete(row)
         return True
 
 

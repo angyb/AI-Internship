@@ -247,6 +247,10 @@ AGENT_API_URL=https://ai-internship-i3lw.onrender.com streamlit run zearn_stream
 
 Hosted UI: `https://zearn-faq-bot.onrender.com`
 
+## Week 5 — Agentic Memory (Path A)
+
+This capstone stores 1 durable user preference pair per anonymous `install_id` (a `role` like `teacher` plus a `grade_band` like `Grade 3`): writes happen only when the UI user clicks **Save preference**, which sends `confirmed_write: true` to `POST /memory` (no chat/tool dumps are stored); the data lives in the API’s Postgres `user_memory` table on Render (or a local fallback JSON file during offline dev); every `POST /agent` call loads the stored preference for that `install_id` and seeds it into the agent so Session B can recall it without restating; forgetting is done via `DELETE /memory` (the UI **Forget preference** button) which removes the saved preference.
+
 ## Golden-set evaluation
 
 Like Part 7 of `rag_vector_databases_live_session.ipynb`, but against your Pinecone pipeline and the **Zearn corpus** (~16k chunks after full ingest).

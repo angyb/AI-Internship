@@ -89,6 +89,7 @@ async def _seed_history(
     service: InMemorySessionService,
     session: Session,
     history: list[dict[str, Any]] | None,
+    memory: str | None = None,
 ) -> None:
     """Replay prior turns into the ADK session so the agent has conversation memory.
 
@@ -97,7 +98,18 @@ async def _seed_history(
     role ``user``; assistant turns with role ``model`` authored by the agent.
     """
     if not history:
-        return
+        history = []
+
+    if memory:
+        event = Event(
+            invocation_id=uuid.uuid4().hex,
+            author="user",
+            content=types.Content(
+                role="user", parts=[types.Part(text=memory)]
+            ),
+        )
+        await service.append_event(session, event)
+
     for turn in history:
         role = str((turn or {}).get("role") or "").lower()
         content_text = str((turn or {}).get("content") or "").strip()
@@ -148,6 +160,7 @@ def _google_search_author(author: str | None) -> bool:
 async def run_zearn_agent_async(
     question: str,
     history: list[dict[str, Any]] | None = None,
+    memory: str | None = None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, int]]:
     from timing import record_event
     from zearn_faq_bot.tools.search_zearn_doc import reset_search_call_count
@@ -156,7 +169,7 @@ async def run_zearn_agent_async(
     service = InMemorySessionService()
     runner = Runner(agent=zearn_agent, app_name="zearn_support", session_service=service)
     session = await service.create_session(app_name="zearn_support", user_id="user1")
-    await _seed_history(service, session, history)
+    await _seed_history(service, session, history, memory=memory)
     content = types.Content(role="user", parts=[types.Part(text=question)])
     run_config = RunConfig(max_llm_calls=MAX_LLM_CALLS)
 
@@ -218,5 +231,6 @@ async def run_zearn_agent_async(
 def run_zearn_agent(
     question: str,
     history: list[dict[str, Any]] | None = None,
+    memory: str | None = None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, int]]:
-    return asyncio.run(run_zearn_agent_async(question, history))
+    return asyncio.run(run_zearn_agent_async(question, history, memory=memory))

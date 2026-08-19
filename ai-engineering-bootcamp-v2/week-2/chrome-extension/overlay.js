@@ -112,9 +112,9 @@
                       <span class="zbot-retrieval-mode__tooltip" role="tooltip">Answer retrieval</span>
                       <span class="zbot-retrieval-mode__face" aria-hidden="true">
                         <span class="zbot-retrieval-mode__label" data-el="retrieval-mode-label">Fast</span>
-                        <svg class="zbot-retrieval-mode__chevron" width="9" height="8" viewBox="0 0 9 12"
+                        <svg class="zbot-retrieval-mode__chevron" viewBox="0 0 9 9"
                              aria-hidden="true" focusable="false">
-                          <path d="M1.5 4.5 4.5 8.25 7.5 4.5" fill="none" stroke="currentColor"
+                          <path d="M1.5 2.75 4.5 6.5 7.5 2.75" fill="none" stroke="currentColor"
                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                       </span>
