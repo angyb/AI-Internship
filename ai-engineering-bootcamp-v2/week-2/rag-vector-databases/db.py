@@ -189,14 +189,14 @@ class UserMemory(Base):
     """Durable preference memory — survives process restart.
 
     Scoped by ``install_id`` (anonymous per-install UUID). For Path A, we store a
-    single stable preference pair: ``role`` + ``grade_band``.
+    single stable preference: ``role`` + one or more ``grade_band`` values (JSON list in DB).
     """
 
     __tablename__ = "user_memory"
 
     install_id: Mapped[str] = mapped_column(String(128), primary_key=True)
     role: Mapped[str] = mapped_column(String(32), default="")
-    grade_band: Mapped[str] = mapped_column(String(64), default="")
+    grade_band: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -228,9 +228,55 @@ def init_db() -> None:
         return
     try:
         Base.metadata.create_all(_engine)
+        _ensure_user_memory_grade_band_column()
         logger.info("Chat history and BM25 tables ready.")
     except Exception as exc:  # pragma: no cover - startup connectivity
         logger.warning("Chat history table creation failed: %s", exc)
+
+
+def _ensure_user_memory_grade_band_column() -> None:
+    """Widen grade_band to TEXT and allow JSON-encoded grade lists (best-effort)."""
+    if _engine is None:
+        return
+    from sqlalchemy import text
+
+    try:
+        with _engine.connect() as conn:
+            conn.execute(
+                text("ALTER TABLE user_memory ALTER COLUMN grade_band TYPE TEXT")
+            )
+            conn.commit()
+    except Exception as exc:  # pragma: no cover - idempotent migration
+        logger.debug("user_memory grade_band migration skipped: %s", exc)
+
+
+def _serialize_grade_bands(grade_bands: list[str]) -> str:
+    return json.dumps(grade_bands, ensure_ascii=False)
+
+
+def _parse_grade_bands(raw: str | None) -> list[str]:
+    text_value = (raw or "").strip()
+    if not text_value:
+        return []
+    if text_value.startswith("["):
+        try:
+            parsed = json.loads(text_value)
+        except json.JSONDecodeError:
+            return [text_value]
+        if isinstance(parsed, list):
+            return [str(item).strip() for item in parsed if str(item).strip()]
+    return [text_value]
+
+
+def _memory_to_dict(install_id: str, role: str, grade_band_raw: str, updated_at: Any) -> dict[str, Any]:
+    grade_bands = _parse_grade_bands(grade_band_raw)
+    updated = updated_at.isoformat() if hasattr(updated_at, "isoformat") else updated_at
+    return {
+        "install_id": install_id,
+        "role": role,
+        "grade_bands": grade_bands,
+        "updated_at": updated,
+    }
 
 
 @contextmanager
@@ -402,12 +448,19 @@ def get_user_memory(install_id: str) -> dict[str, Any] | None:
         row = data.get(install_id)
         if not isinstance(row, dict):
             return None
-        if not (row.get("role") and row.get("grade_band")):
+        if not (row.get("role") and (row.get("grade_bands") or row.get("grade_band"))):
+            return None
+        grade_bands = row.get("grade_bands")
+        if isinstance(grade_bands, list):
+            bands = [str(item).strip() for item in grade_bands if str(item).strip()]
+        else:
+            bands = _parse_grade_bands(str(row.get("grade_band") or ""))
+        if not bands:
             return None
         return {
             "install_id": install_id,
             "role": str(row.get("role") or ""),
-            "grade_band": str(row.get("grade_band") or ""),
+            "grade_bands": bands,
             "updated_at": row.get("updated_at"),
         }
 
@@ -416,38 +469,44 @@ def get_user_memory(install_id: str) -> dict[str, Any] | None:
         if row is None:
             return None
         role = (row.role or "").strip()
-        grade_band = (row.grade_band or "").strip()
-        if not role or not grade_band:
+        grade_bands = _parse_grade_bands(row.grade_band)
+        if not role or not grade_bands:
             return None
-        return {
-            "install_id": row.install_id,
-            "role": row.role,
-            "grade_band": row.grade_band,
-            "updated_at": row.updated_at.isoformat() if row.updated_at else None,
-        }
+        return _memory_to_dict(row.install_id, row.role, row.grade_band, row.updated_at)
 
 
 def replace_user_memory(
     install_id: str,
     *,
     role: str,
-    grade_band: str,
+    grade_bands: list[str],
 ) -> dict[str, Any]:
     """Replace (upsert) durable preference memory for this install_id."""
     now = datetime.now(timezone.utc).isoformat()
     role = (role or "").strip()
-    grade_band = (grade_band or "").strip()
+    grade_bands = [str(item).strip() for item in grade_bands if str(item).strip()]
 
     if not install_id:
         raise ValueError("install_id is required")
-    if not role or not grade_band:
-        raise ValueError("role and grade_band are required")
+    if not role or not grade_bands:
+        raise ValueError("role and grade_bands are required")
+
+    serialized = _serialize_grade_bands(grade_bands)
 
     if not database_enabled():
         data = _fallback_load_user_memory()
-        data[install_id] = {"role": role, "grade_band": grade_band, "updated_at": now}
+        data[install_id] = {
+            "role": role,
+            "grade_bands": grade_bands,
+            "updated_at": now,
+        }
         _fallback_save_user_memory(data)
-        return {"install_id": install_id, "role": role, "grade_band": grade_band, "updated_at": now}
+        return {
+            "install_id": install_id,
+            "role": role,
+            "grade_bands": grade_bands,
+            "updated_at": now,
+        }
 
     with _session_scope() as db:
         row = db.get(UserMemory, install_id)
@@ -455,14 +514,9 @@ def replace_user_memory(
             row = UserMemory(install_id=install_id)
             db.add(row)
         row.role = role
-        row.grade_band = grade_band
+        row.grade_band = serialized
         db.flush()
-        return {
-            "install_id": row.install_id,
-            "role": row.role,
-            "grade_band": row.grade_band,
-            "updated_at": row.updated_at.isoformat() if row.updated_at else now,
-        }
+        return _memory_to_dict(row.install_id, row.role, row.grade_band, row.updated_at)
 
 
 def delete_user_memory(install_id: str) -> bool:

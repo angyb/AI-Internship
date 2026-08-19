@@ -292,8 +292,9 @@ class MemoryWriteRequest(BaseModel):
 
     install_id: str = Field(description="Anonymous per-install UUID")
     role: str = Field(description="User role preference: student, teacher, or admin")
-    grade_band: str = Field(
-        description="Grade band preference: Kindergarten through Grade 8"
+    grade_bands: list[str] = Field(
+        min_length=1,
+        description="One or more grade bands: Kindergarten through Grade 8",
     )
     confirmed_write: bool = Field(
         default=False,
@@ -307,7 +308,7 @@ class MemoryWriteRequest(BaseModel):
 class MemoryRecord(BaseModel):
     install_id: str
     role: str | None = None
-    grade_band: str | None = None
+    grade_bands: list[str] = Field(default_factory=list)
     updated_at: str | None = None
 
 
@@ -807,10 +808,11 @@ def agent_run(body: AgentRequest) -> AgentResponse:
         memory_context: str | None = None
         if body.install_id:
             mem = db.get_user_memory(body.install_id)
-            if mem and mem.get("role") and mem.get("grade_band"):
+            if mem and mem.get("role") and mem.get("grade_bands"):
+                bands = ", ".join(mem["grade_bands"])
                 memory_context = (
                     "User preference (durable memory): "
-                    f"role={mem['role']}; grade_band={mem['grade_band']}."
+                    f"role={mem['role']}; grade_bands={bands}."
                 )
 
         with timed_span("agent_total"):
@@ -876,21 +878,30 @@ def memory_get(install_id: str) -> MemoryRecord:
 @app.post("/memory", dependencies=[Depends(require_agent_access)])
 def memory_write(body: MemoryWriteRequest) -> MemoryRecord:
     """Persist durable user preference memory (write-gated)."""
+    from memory_preferences import MEMORY_GRADE_BAND_OPTIONS, MEMORY_ROLE_OPTIONS
+
     if not body.confirmed_write:
         raise HTTPException(
             status_code=400,
             detail="Write gate rejected: confirmed_write must be true.",
         )
     role = (body.role or "").strip().lower()
-    grade_band = (body.grade_band or "").strip()
-    if not role or not grade_band:
-        raise HTTPException(status_code=400, detail="role and grade_band are required")
-    if len(role) > 32 or len(grade_band) > 64:
+    grade_bands = [str(item).strip() for item in body.grade_bands if str(item).strip()]
+    if not role or not grade_bands:
+        raise HTTPException(status_code=400, detail="role and grade_bands are required")
+    if role not in MEMORY_ROLE_OPTIONS:
         raise HTTPException(
-            status_code=400, detail="role/grade_band are too long (max 32/64 chars)"
+            status_code=400,
+            detail=f"role must be one of: {', '.join(MEMORY_ROLE_OPTIONS)}",
+        )
+    invalid = [band for band in grade_bands if band not in MEMORY_GRADE_BAND_OPTIONS]
+    if invalid:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid grade_bands: {', '.join(invalid)}",
         )
 
-    mem = db.replace_user_memory(body.install_id, role=role, grade_band=grade_band)
+    mem = db.replace_user_memory(body.install_id, role=role, grade_bands=grade_bands)
     return MemoryRecord(**mem)
 
 

@@ -15,23 +15,12 @@ import httpx
 import streamlit as st
 from dotenv import load_dotenv
 
+from memory_preferences import MEMORY_GRADE_BAND_OPTIONS, MEMORY_ROLE_OPTIONS
+
 load_dotenv()
 
 # Render UI service uses requirements-streamlit.txt (no google-adk). Always call the API.
 DEFAULT_PRODUCTION_AGENT_API_URL = "https://ai-internship-i3lw.onrender.com"
-
-MEMORY_ROLE_OPTIONS = ["student", "teacher", "admin"]
-MEMORY_GRADE_BAND_OPTIONS = [
-    "Kindergarten",
-    "Grade 1",
-    "Grade 2",
-    "Grade 3",
-    "Grade 4",
-    "Grade 5",
-    "Grade 6",
-    "Grade 7",
-    "Grade 8",
-]
 
 AGENT_API_URL = os.getenv("AGENT_API_URL", "").strip().rstrip("/")
 if not AGENT_API_URL and os.getenv("RENDER"):
@@ -117,14 +106,14 @@ def memory_get_remote(install_id: str) -> dict:
     return data if isinstance(data, dict) else {"install_id": install_id}
 
 
-def memory_save_remote(install_id: str, *, role: str, grade_band: str) -> dict:
+def memory_save_remote(install_id: str, *, role: str, grade_bands: list[str]) -> dict:
     with httpx.Client(timeout=30) as client:
         response = client.post(
             f"{AGENT_API_URL}/memory",
             json={
                 "install_id": install_id,
                 "role": role,
-                "grade_band": grade_band,
+                "grade_bands": grade_bands,
                 "confirmed_write": True,
             },
             headers=api_headers(),
@@ -231,21 +220,24 @@ with st.sidebar:
             index=MEMORY_ROLE_OPTIONS.index("teacher"),
             key="memory_role",
         )
-        grade_band = st.selectbox(
-            "Grade band",
+        grade_bands = st.multiselect(
+            "Grade bands",
             options=MEMORY_GRADE_BAND_OPTIONS,
-            index=MEMORY_GRADE_BAND_OPTIONS.index("Grade 3"),
-            key="memory_grade_band",
+            default=["Grade 3"],
+            key="memory_grade_bands",
         )
 
         if st.button("Save preference", type="primary", use_container_width=True):
-            with st.spinner("Saving durable memory…"):
-                st.session_state.memory_record = memory_save_remote(
-                    st.session_state.install_id,
-                    role=role,
-                    grade_band=grade_band,
-                )
-            st.success("Preference saved.")
+            if not grade_bands:
+                st.warning("Select at least one grade band before saving.")
+            else:
+                with st.spinner("Saving durable memory…"):
+                    st.session_state.memory_record = memory_save_remote(
+                        st.session_state.install_id,
+                        role=role,
+                        grade_bands=grade_bands,
+                    )
+                st.success("Preference saved.")
 
         if st.button("New session (recall)", use_container_width=True):
             st.session_state.session_id = uuid.uuid4().hex

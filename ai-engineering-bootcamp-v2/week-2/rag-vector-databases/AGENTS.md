@@ -2,7 +2,7 @@
 
 ### Durable memory: what we store
 - A single per-user preference record scoped by anonymous `install_id`.
-- Stored fields (nothing else): `role` (`student`, `teacher`, or `admin`) and `grade_band` (`Kindergarten` through `Grade 8`).
+- Stored fields (nothing else): `role` (`student`, `teacher`, or `admin`) and `grade_bands` (one or more of `Kindergarten` through `Grade 8`).
 
 ### Write gate (when we store)
 - Memory is persisted only when the UI user clicks **Save preference**.
@@ -11,7 +11,7 @@
 
 ### Retrieval (when we read)
 - Every `POST /agent` request loads memory for the same `install_id` and seeds it into the agent context as:
-  `"User preference (durable memory): role=<role>; grade_band=<grade_band>."`
+  `"User preference (durable memory): role=<role>; grade_bands=<comma-separated list>."`
 
 ### How the agent should use memory
 - Memory is allowed only to tailor response style (tone/reading level).
