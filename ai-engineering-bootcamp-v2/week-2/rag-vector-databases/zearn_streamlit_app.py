@@ -50,6 +50,9 @@ def run_agent_local(question: str) -> tuple[str, list[dict], dict]:
 st.set_page_config(page_title="Zearn Support Agent", layout="wide")
 st.markdown("<style>.block-container{padding-top:1.5rem;}</style>", unsafe_allow_html=True)
 
+if "hide_enter_hint" not in st.session_state:
+    st.session_state.hide_enter_hint = False
+
 
 def check_api_health(base_url: str, timeout: float = HEALTH_TIMEOUT) -> tuple[bool, str]:
     try:
@@ -105,6 +108,119 @@ def _suppress_empty_multiselect_dropdown() -> None:
   doc.addEventListener("click", hideEmptyPopovers, true);
   hideEmptyPopovers();
 })();
+</script>
+        """,
+        height=0,
+        width=0,
+    )
+
+
+def _hide_role_selectbox_clear_button() -> None:
+    """Hide the clear (X) control on the memory demo Role selectbox."""
+    st.markdown(
+        """
+<style>
+section[data-testid="stSidebar"] [data-testid="stSelectbox"] [aria-label="Clear all"],
+section[data-testid="stSidebar"] [data-testid="stSelectbox"] [aria-label="Clear"],
+section[data-testid="stSidebar"] [data-testid="stSelectbox"] button[title="Clear all"],
+section[data-testid="stSidebar"] [data-testid="stSelectbox"] button[title="Clear"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+</style>
+        """,
+        unsafe_allow_html=True,
+    )
+    components.html(
+        """
+<div></div>
+<script>
+(function () {
+  const doc = window.parent.document;
+  function hideRoleClear() {
+    doc.querySelectorAll('[data-testid="stSelectbox"]').forEach((box) => {
+      const label = box.querySelector("label");
+      if (!label || label.textContent.trim() !== "Role") {
+        return;
+      }
+      box.querySelectorAll("button").forEach((btn) => {
+        const hint = (
+          (btn.getAttribute("aria-label") || "") + " " + (btn.getAttribute("title") || "")
+        ).toLowerCase();
+        if (hint.includes("clear")) {
+          btn.style.setProperty("display", "none", "important");
+          btn.style.setProperty("pointer-events", "none", "important");
+        }
+      });
+    });
+  }
+  hideRoleClear();
+  if (!window.__zearnHideRoleClear) {
+    window.__zearnHideRoleClear = true;
+    new MutationObserver(hideRoleClear).observe(doc.body, {
+      childList: true,
+      subtree: true,
+    });
+  }
+})();
+</script>
+        """,
+        height=0,
+        width=0,
+    )
+
+
+def _sync_enter_hint_visibility() -> None:
+    """Hide 'Press Enter to submit form' while typing or after first submit."""
+    hide_after_submit = bool(st.session_state.get("hide_enter_hint"))
+    if hide_after_submit:
+        st.markdown(
+            """
+<style>
+[data-testid="InputInstructions"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+</style>
+            """,
+            unsafe_allow_html=True,
+        )
+    components.html(
+        f"""
+<div></div>
+<script>
+(function () {{
+  const doc = window.parent.document;
+  const hideAfterSubmit = {str(hide_after_submit).lower()};
+  function syncEnterHint() {{
+    doc.querySelectorAll('[data-testid="stForm"] [data-testid="stTextInput"] input').forEach((input) => {{
+      const instructions = input
+        .closest('[data-testid="stForm"]')
+        ?.querySelector('[data-testid="InputInstructions"]');
+      if (!instructions) {{
+        return;
+      }}
+      const hide = hideAfterSubmit || input.value.trim().length > 0;
+      instructions.style.setProperty("display", hide ? "none" : "important");
+      instructions.style.setProperty("visibility", hide ? "hidden" : "visible");
+    }});
+  }}
+  syncEnterHint();
+  if (!window.__zearnEnterHintSync) {{
+    window.__zearnEnterHintSync = true;
+    doc.addEventListener("input", syncEnterHint, true);
+    doc.addEventListener("keydown", (event) => {{
+      if (event.key === "Enter") {{
+        setTimeout(syncEnterHint, 0);
+      }}
+    }}, true);
+    new MutationObserver(syncEnterHint).observe(doc.body, {{
+      childList: true,
+      subtree: true,
+    }});
+  }}
+}})();
 </script>
         """,
         height=0,
@@ -257,6 +373,7 @@ with st.sidebar:
         if "memory_record" not in st.session_state:
             st.session_state.memory_record = None
 
+        _hide_role_selectbox_clear_button()
         role = st.selectbox(
             "Role",
             options=MEMORY_ROLE_OPTIONS,
@@ -327,6 +444,8 @@ st.markdown(
 if not REMOTE_MODE and not os.getenv("GOOGLE_API_KEY"):
     st.stop()
 
+_sync_enter_hint_visibility()
+
 with st.form("question_form", clear_on_submit=False):
     col1, col2 = st.columns([3, 1])
     with col1:
@@ -339,6 +458,7 @@ with st.form("question_form", clear_on_submit=False):
         run_clicked = st.form_submit_button("Run agent", type="primary", use_container_width=True)
 
 if run_clicked and question.strip():
+    st.session_state.hide_enter_hint = True
     spinner_msg = (
         "Running agent… first request may take up to a minute while the API wakes up."
         if REMOTE_MODE
