@@ -20,6 +20,19 @@ load_dotenv()
 # Render UI service uses requirements-streamlit.txt (no google-adk). Always call the API.
 DEFAULT_PRODUCTION_AGENT_API_URL = "https://ai-internship-i3lw.onrender.com"
 
+MEMORY_ROLE_OPTIONS = ["student", "teacher", "admin"]
+MEMORY_GRADE_BAND_OPTIONS = [
+    "Kindergarten",
+    "Grade 1",
+    "Grade 2",
+    "Grade 3",
+    "Grade 4",
+    "Grade 5",
+    "Grade 6",
+    "Grade 7",
+    "Grade 8",
+]
+
 AGENT_API_URL = os.getenv("AGENT_API_URL", "").strip().rstrip("/")
 if not AGENT_API_URL and os.getenv("RENDER"):
     AGENT_API_URL = DEFAULT_PRODUCTION_AGENT_API_URL
@@ -214,11 +227,16 @@ with st.sidebar:
 
         role = st.selectbox(
             "Role",
-            options=["teacher", "student"],
-            index=0,
+            options=MEMORY_ROLE_OPTIONS,
+            index=MEMORY_ROLE_OPTIONS.index("teacher"),
             key="memory_role",
         )
-        grade_band = st.text_input("Grade band", value="Grade 3", key="memory_grade_band")
+        grade_band = st.selectbox(
+            "Grade band",
+            options=MEMORY_GRADE_BAND_OPTIONS,
+            index=MEMORY_GRADE_BAND_OPTIONS.index("Grade 3"),
+            key="memory_grade_band",
+        )
 
         if st.button("Save preference", type="primary", use_container_width=True):
             with st.spinner("Saving durable memory…"):

@@ -291,8 +291,10 @@ class MemoryWriteRequest(BaseModel):
     """Durable user preference memory write request (Week 5 Path A)."""
 
     install_id: str = Field(description="Anonymous per-install UUID")
-    role: str = Field(description="User role preference (e.g. teacher)")
-    grade_band: str = Field(description="Grade band preference (e.g. Grade 3)")
+    role: str = Field(description="User role preference: student, teacher, or admin")
+    grade_band: str = Field(
+        description="Grade band preference: Kindergarten through Grade 8"
+    )
     confirmed_write: bool = Field(
         default=False,
         description=(

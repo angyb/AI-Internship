@@ -2,7 +2,7 @@
 
 ### Durable memory: what we store
 - A single per-user preference record scoped by anonymous `install_id`.
-- Stored fields (nothing else): `role` (e.g. `teacher`) and `grade_band` (e.g. `Grade 3`).
+- Stored fields (nothing else): `role` (`student`, `teacher`, or `admin`) and `grade_band` (`Kindergarten` through `Grade 8`).
 
 ### Write gate (when we store)
 - Memory is persisted only when the UI user clicks **Save preference**.
