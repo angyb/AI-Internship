@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from contextvars import ContextVar
 from functools import lru_cache
 from pathlib import Path
@@ -13,11 +14,42 @@ from secret_redaction import safe_error_message
 
 DOCS_DIR = Path(__file__).resolve().parents[3] / "documents"
 _search_call_count: ContextVar[int] = ContextVar("search_zearn_doc_call_count", default=0)
+_role_search_phrase: ContextVar[str | None] = ContextVar(
+    "memory_role_search_phrase", default=None
+)
+
+_ROLE_QUERY_NOISE = re.compile(
+    r"\b("
+    r"teachers?|administrators?|admins?|parents?|students?|"
+    r"school\s+districts?|school\s+admins?|group\s+admins?"
+    r")\b",
+    re.IGNORECASE,
+)
 
 
 def reset_search_call_count() -> None:
     """Reset per-question search_zearn_doc call count (called at start of each agent run)."""
     _search_call_count.set(0)
+    _role_search_phrase.set(None)
+
+
+def set_role_search_phrase(phrase: str | None) -> None:
+    """Set the role phrase enforced on search_zearn_doc queries for this agent run."""
+    _role_search_phrase.set(phrase)
+
+
+def scope_search_query(question: str, role_phrase: str | None) -> str:
+    """Strip cross-role terms and append the single allowed role phrase."""
+    text = (question or "").strip()
+    if not role_phrase:
+        return text
+    cleaned = _ROLE_QUERY_NOISE.sub(" ", text)
+    cleaned = " ".join(cleaned.split())
+    if not cleaned:
+        cleaned = text
+    if role_phrase.lower() in cleaned.lower():
+        return cleaned
+    return f"{cleaned} {role_phrase}".strip()
 
 
 def get_search_call_count() -> int:
@@ -141,6 +173,8 @@ def search_zearn_doc(question: str) -> dict:
         }
     _search_call_count.set(call_count + 1)
     span_name = f"search_zearn_doc_{call_count + 1}"
+    role_phrase = _role_search_phrase.get()
+    query_used = scope_search_query(question, role_phrase)
 
     try:
         from agent_retrieval import retrieval_lite_enabled
@@ -149,7 +183,7 @@ def search_zearn_doc(question: str) -> dict:
 
         lite = retrieval_lite_enabled()
         with timed_span(span_name):
-            chunks, _context, _chunk_ids, _sources = retrieve_context(question, lite=lite)
+            chunks, _context, _chunk_ids, _sources = retrieve_context(query_used, lite=lite)
     except KeyError as exc:
         return {
             "error": f"Missing required environment variable: {exc.args[0]}",
@@ -164,6 +198,12 @@ def search_zearn_doc(question: str) -> dict:
         }
 
     if not chunks:
-        return {"chunk_count": 0, "chunks": []}
+        payload: dict = {"chunk_count": 0, "chunks": []}
+        if query_used != question.strip():
+            payload["query_used"] = query_used
+        return payload
 
-    return _format_chunks_from_retrieved(chunks)
+    result = _format_chunks_from_retrieved(chunks)
+    if query_used != question.strip():
+        result["query_used"] = query_used
+    return result

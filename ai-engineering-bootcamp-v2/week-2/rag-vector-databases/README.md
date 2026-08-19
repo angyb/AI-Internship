@@ -249,7 +249,7 @@ Hosted UI: `https://zearn-faq-bot.onrender.com`
 
 ## Week 5 — Agentic Memory (Path A)
 
-This capstone stores 1 durable user preference per anonymous `install_id` (a `role` of `student`, `teacher`, or `admin` plus one or more `grade_bands` from `Kindergarten` through `Grade 8`): writes happen only when the UI user clicks **Save preference**, which sends `confirmed_write: true` to `POST /memory` (no chat/tool dumps are stored); the data lives in the API’s Postgres `user_memory` table on Render (or a local fallback JSON file during offline dev); every `POST /agent` call loads the stored preference for that `install_id` and seeds it into the agent so Session B can recall it without restating; forgetting is done via `DELETE /memory` (the UI **Forget preference** button) which removes the saved preference.
+This capstone stores 1 durable user preference per anonymous `install_id` (a `role` of `student`, `teacher`, `parent`, or `admin` plus one or more `grade_bands` from `Kindergarten` through `Grade 8`): writes happen only when the UI user clicks **Save preference**, which sends `confirmed_write: true` to `POST /memory` (no chat/tool dumps are stored); the data lives in the API’s Postgres `user_memory` table on Render (or a local fallback JSON file during offline dev); every `POST /agent` call loads the stored preference for that `install_id` and seeds it into the agent so Session B can recall it without restating; forgetting is done via `DELETE /memory` (the UI **Forget preference** button) which removes the saved preference.
 
 ## Golden-set evaluation
 

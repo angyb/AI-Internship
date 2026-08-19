@@ -222,13 +222,15 @@ with st.sidebar:
             filter_mode=None,
             key="memory_role",
         )
-        grade_bands = st.multiselect(
-            "Grade bands",
-            options=MEMORY_GRADE_BAND_OPTIONS,
-            placeholder="Choose grade(s)",
-            filter_mode=None,
-            key="memory_grade_bands",
-        )
+        st.markdown("**Grade bands**")
+        grade_bands: list[str] = []
+        grade_cols = st.columns(2)
+        for index, grade in enumerate(MEMORY_GRADE_BAND_OPTIONS):
+            with grade_cols[index % 2]:
+                if st.checkbox(grade, key=f"memory_grade_{grade.replace(' ', '_')}"):
+                    grade_bands.append(grade)
+        if not grade_bands:
+            st.caption("Choose grade(s)")
 
         save_ready = bool(role) and bool(grade_bands)
 

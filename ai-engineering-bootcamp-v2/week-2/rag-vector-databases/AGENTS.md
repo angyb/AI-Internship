@@ -2,7 +2,7 @@
 
 ### Durable memory: what we store
 - A single per-user preference record scoped by anonymous `install_id`.
-- Stored fields (nothing else): `role` (`student`, `teacher`, or `admin`) and `grade_bands` (one or more of `Kindergarten` through `Grade 8`).
+- Stored fields (nothing else): `role` (`student`, `teacher`, `parent`, or `admin`) and `grade_bands` (one or more of `Kindergarten` through `Grade 8`).
 
 ### Write gate (when we store)
 - Memory is persisted only when the UI user clicks **Save preference**.
@@ -14,7 +14,7 @@
 
 ### How the agent should use memory
 - Memory may tailor response style (tone/reading level) and scope `search_zearn_doc` queries.
-- Role → query terms: `admin` → **administrators** (never "school administrators"), `teacher` → teachers, `student` → students. Include grade bands in queries when relevant.
+- Role → query phrase (append only one): `admin` → **for administrator**, `teacher` → for teacher, `parent` → for parent, `student` → for student. The tool strips other role terms from the query. Never include teacher, parent, student, or school district in the same query.
 - Memory must not be treated as a factual source: Zearn facts still come from `search_zearn_doc` and/or `google_search_agent`.
 - When preference memory is present, the agent includes one short, non-factual sentence near the start reflecting the grade band / role (to make recall obvious in the demo).
 

@@ -291,7 +291,9 @@ class MemoryWriteRequest(BaseModel):
     """Durable user preference memory write request (Week 5 Path A)."""
 
     install_id: str = Field(description="Anonymous per-install UUID")
-    role: str = Field(description="User role preference: student, teacher, or admin")
+    role: str = Field(
+        description="User role preference: student, teacher, parent, or admin"
+    )
     grade_bands: list[str] = Field(
         min_length=1,
         description="One or more grade bands: Kindergarten through Grade 8",
@@ -806,18 +808,23 @@ def agent_run(body: AgentRequest) -> AgentResponse:
     try:
         from zearn_support_agent import run_zearn_agent
         memory_context: str | None = None
+        role_phrase: str | None = None
         if body.install_id:
             mem = db.get_user_memory(body.install_id)
             if mem and mem.get("role") and mem.get("grade_bands"):
-                from memory_preferences import format_memory_context
+                from memory_preferences import format_memory_context, role_search_phrase
 
                 memory_context = format_memory_context(
                     mem["role"], mem["grade_bands"]
                 )
+                role_phrase = role_search_phrase(mem["role"])
 
         with timed_span("agent_total"):
             answer, steps, usage = run_zearn_agent(
-                body.question, history=history, memory=memory_context
+                body.question,
+                history=history,
+                memory=memory_context,
+                role_search_phrase=role_phrase,
             )
     except HTTPException:
         raise

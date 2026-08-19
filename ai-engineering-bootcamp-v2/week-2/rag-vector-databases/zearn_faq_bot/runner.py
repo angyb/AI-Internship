@@ -71,6 +71,8 @@ def _classify_step(part: Any, author: str) -> dict[str, Any] | None:
                 "sources": sources,
                 "error": result.get("error"),
             }
+            if result.get("query_used"):
+                summary["query_used"] = result["query_used"]
             display = json.dumps(summary, indent=2)
         else:
             display = str(result)[:800] if result else ""
@@ -161,11 +163,16 @@ async def run_zearn_agent_async(
     question: str,
     history: list[dict[str, Any]] | None = None,
     memory: str | None = None,
+    role_search_phrase: str | None = None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, int]]:
     from timing import record_event
-    from zearn_faq_bot.tools.search_zearn_doc import reset_search_call_count
+    from zearn_faq_bot.tools.search_zearn_doc import (
+        reset_search_call_count,
+        set_role_search_phrase,
+    )
 
     reset_search_call_count()
+    set_role_search_phrase(role_search_phrase)
     service = InMemorySessionService()
     runner = Runner(agent=zearn_agent, app_name="zearn_support", session_service=service)
     session = await service.create_session(app_name="zearn_support", user_id="user1")
@@ -232,5 +239,10 @@ def run_zearn_agent(
     question: str,
     history: list[dict[str, Any]] | None = None,
     memory: str | None = None,
+    role_search_phrase: str | None = None,
 ) -> tuple[str, list[dict[str, Any]], dict[str, int]]:
-    return asyncio.run(run_zearn_agent_async(question, history, memory=memory))
+    return asyncio.run(
+        run_zearn_agent_async(
+            question, history, memory=memory, role_search_phrase=role_search_phrase
+        )
+    )
