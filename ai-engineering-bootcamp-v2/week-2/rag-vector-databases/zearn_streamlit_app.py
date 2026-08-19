@@ -13,6 +13,7 @@ import uuid
 
 import httpx
 import streamlit as st
+import streamlit.components.v1 as components
 from dotenv import load_dotenv
 
 from memory_preferences import MEMORY_GRADE_BAND_OPTIONS, MEMORY_ROLE_OPTIONS
@@ -67,6 +68,48 @@ def api_headers() -> dict[str, str]:
     if api_key:
         headers["X-API-Key"] = api_key
     return headers
+
+
+def _suppress_empty_multiselect_dropdown() -> None:
+    """Hide Streamlit multiselect popovers that only show 'No results'."""
+    components.html(
+        """
+<div></div>
+<script>
+(function () {
+  const doc = window.parent.document;
+  const EMPTY_LABELS = new Set(["No results", "No options to select."]);
+  function hideEmptyPopovers() {
+    doc.querySelectorAll('[data-baseweb="popover"]').forEach((popover) => {
+      const text = popover.innerText.trim();
+      if (!EMPTY_LABELS.has(text)) {
+        return;
+      }
+      popover.style.setProperty("display", "none", "important");
+      popover.style.setProperty("visibility", "hidden", "important");
+      popover.style.setProperty("height", "0", "important");
+      popover.style.setProperty("overflow", "hidden", "important");
+      popover.style.setProperty("pointer-events", "none", "important");
+    });
+  }
+  if (window.__zearnHideEmptyMultiselect) {
+    hideEmptyPopovers();
+    return;
+  }
+  window.__zearnHideEmptyMultiselect = true;
+  new MutationObserver(hideEmptyPopovers).observe(doc.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+  doc.addEventListener("click", hideEmptyPopovers, true);
+  hideEmptyPopovers();
+})();
+</script>
+        """,
+        height=0,
+        width=0,
+    )
 
 
 def run_agent_remote(
@@ -222,15 +265,14 @@ with st.sidebar:
             filter_mode=None,
             key="memory_role",
         )
-        st.markdown("**Grade bands**")
-        grade_bands: list[str] = []
-        grade_cols = st.columns(2)
-        for index, grade in enumerate(MEMORY_GRADE_BAND_OPTIONS):
-            with grade_cols[index % 2]:
-                if st.checkbox(grade, key=f"memory_grade_{grade.replace(' ', '_')}"):
-                    grade_bands.append(grade)
-        if not grade_bands:
-            st.caption("Choose grade(s)")
+        _suppress_empty_multiselect_dropdown()
+        grade_bands = st.multiselect(
+            "Grade bands",
+            options=MEMORY_GRADE_BAND_OPTIONS,
+            placeholder="Choose grade(s)",
+            filter_mode=None,
+            key="memory_grade_bands",
+        )
 
         save_ready = bool(role) and bool(grade_bands)
 
