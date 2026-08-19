@@ -217,18 +217,21 @@ with st.sidebar:
         role = st.selectbox(
             "Role",
             options=MEMORY_ROLE_OPTIONS,
-            index=MEMORY_ROLE_OPTIONS.index("teacher"),
+            index=None,
+            placeholder="Choose your role",
             key="memory_role",
         )
         grade_bands = st.multiselect(
             "Grade bands",
             options=MEMORY_GRADE_BAND_OPTIONS,
-            default=["Grade 3"],
+            placeholder="Choose grade(s)",
             key="memory_grade_bands",
         )
 
         if st.button("Save preference", type="primary", use_container_width=True):
-            if not grade_bands:
+            if not role:
+                st.warning("Choose your role before saving.")
+            elif not grade_bands:
                 st.warning("Select at least one grade band before saving.")
             else:
                 with st.spinner("Saving durable memory…"):
