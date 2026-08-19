@@ -228,19 +228,21 @@ with st.sidebar:
             key="memory_grade_bands",
         )
 
-        if st.button("Save preference", type="primary", use_container_width=True):
-            if not role:
-                st.warning("Choose your role before saving.")
-            elif not grade_bands:
-                st.warning("Select at least one grade band before saving.")
-            else:
-                with st.spinner("Saving durable memory…"):
-                    st.session_state.memory_record = memory_save_remote(
-                        st.session_state.install_id,
-                        role=role,
-                        grade_bands=grade_bands,
-                    )
-                st.success("Preference saved.")
+        save_ready = bool(role) and bool(grade_bands)
+
+        if st.button(
+            "Save preference",
+            type="primary",
+            use_container_width=True,
+            disabled=not save_ready,
+        ):
+            with st.spinner("Saving durable memory…"):
+                st.session_state.memory_record = memory_save_remote(
+                    st.session_state.install_id,
+                    role=role,
+                    grade_bands=grade_bands,
+                )
+            st.success("Preference saved.")
 
         if st.button("New session (recall)", use_container_width=True):
             st.session_state.session_id = uuid.uuid4().hex
