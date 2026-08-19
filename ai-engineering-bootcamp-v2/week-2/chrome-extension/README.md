@@ -7,7 +7,7 @@ MV3, vanilla JS, no build step. Fetches go through the background service worker
 (so no CORS). Answers render markdown with a `Sources:` section on the **Ask** tab;
 the agent's Think → Act → Observe steps live on the **TAO** tab.
 
-**Version:** 1.0.0 (Phase 1–2 UX + Phase 3 hardening + Phase 4 packaging + Phase 5 publish prep)
+**Version:** 1.1.0 (Profile tab — Week 5 durable memory; Trace tab — Week 4 agent checks)
 
 See the build plan in
 [`../rag-vector-databases/chrome-extension-plan.md`](../rag-vector-databases/chrome-extension-plan.md).
@@ -88,8 +88,9 @@ selectors in `overlay.js`.
 | Tab | Contents |
 |-----|----------|
 | Ask | Answer above the question box + disclaimer (default tab on every expand) |
+| Profile | Role + grade bands; save, recall across sessions, and forget durable memory (Week 5 demo) |
 | TAO | Think → Act → Observe steps for the last answer |
-| Trace | Placeholder — coming soon |
+| Trace | Run agent checks (`POST /eval-agent`); pass rates and `citation_present` before/after (Week 4 demo) |
 | Health | API + Pinecone / embeddings / Gemini / BM25 / History DB, plus usage meters |
 
 ---
@@ -134,7 +135,7 @@ Remote Streamlit: set the same `AGENT_API_KEY` in the environment when calling t
 
 ```bash
 ./scripts/package.sh
-# → dist/ask-zbot-1.0.0.zip
+# → dist/ask-zbot-1.1.0.zip
 ```
 
 Follow [`PUBLISH_CHECKLIST.md`](PUBLISH_CHECKLIST.md) and [`store-listing.md`](store-listing.md).

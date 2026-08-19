@@ -34,7 +34,21 @@
     HEALTH_TIMEOUT_MS: 60000,
 
     // Extension version — keep in sync with manifest.json
-    EXTENSION_VERSION: "1.0.0",
+    EXTENSION_VERSION: "1.1.0",
+
+    // Week 5 durable memory options — keep in sync with memory_preferences.py
+    MEMORY_ROLE_OPTIONS: ["student", "teacher", "parent", "admin"],
+    MEMORY_GRADE_BAND_OPTIONS: [
+      "Kindergarten",
+      "Grade 1",
+      "Grade 2",
+      "Grade 3",
+      "Grade 4",
+      "Grade 5",
+      "Grade 6",
+      "Grade 7",
+      "Grade 8",
+    ],
 
     // Mirror zearn_faq_bot/constants.py so banner detection matches the agent.
     FALLBACK_PREFIX: "This wasn't found in Zearn documentation; sourced from the web.",

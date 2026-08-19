@@ -16,7 +16,7 @@
     layoutMode: "panel",
     agentTimeoutMs: 120000,
     healthTimeoutMs: 60000,
-    extensionVersion: "1.0.0",
+    extensionVersion: "1.1.0",
   };
 
   // Mutable so preview.html can override via ?layout= before mount.
@@ -24,6 +24,8 @@
 
   let askPending = null;
   const ASK_DELAY_MS = 1800;
+  let previewMemory = null;
+  const previewInstallId = "preview-install-id";
 
   function respond(cb, payload) {
     setTimeout(function () {
@@ -267,6 +269,37 @@
                 },
               },
             },
+          });
+          return;
+        }
+
+        if (msg.type === "getMemory") {
+          respond(cb, {
+            install_id: previewInstallId,
+            memory: previewMemory || { install_id: previewInstallId },
+          });
+          return;
+        }
+
+        if (msg.type === "saveMemory") {
+          previewMemory = {
+            install_id: previewInstallId,
+            role: String(msg.role || "").trim(),
+            grade_bands: Array.isArray(msg.gradeBands) ? msg.gradeBands.slice() : [],
+            updated_at: new Date().toISOString(),
+          };
+          respond(cb, {
+            install_id: previewInstallId,
+            memory: previewMemory,
+          });
+          return;
+        }
+
+        if (msg.type === "deleteMemory") {
+          previewMemory = null;
+          respond(cb, {
+            install_id: previewInstallId,
+            memory: { install_id: previewInstallId, deleted: true },
           });
           return;
         }

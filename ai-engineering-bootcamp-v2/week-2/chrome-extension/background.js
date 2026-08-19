@@ -11,6 +11,9 @@
  *   - { type: "cancelAsk" } -> abort in-flight /agent request
  *   - { type: "getSettings" } / { type: "saveSettings", ... }
  *   - { type: "reportError", message } -> optional POST /telemetry
+ *   - { type: "getMemory" } -> GET /memory
+ *   - { type: "saveMemory", role, gradeBands } -> POST /memory
+ *   - { type: "deleteMemory" } -> DELETE /memory
  *   - chrome.commands "toggle-zbot" (Alt+Z)
  */
 
@@ -441,6 +444,87 @@ async function handleEndSession(sessionId, reason) {
   }
 }
 
+async function handleGetMemory() {
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const url =
+      settings.base +
+      "/memory?install_id=" +
+      encodeURIComponent(installId);
+    const resp = await fetchWithTimeout(
+      url,
+      { method: "GET", headers },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    const data = await resp.json();
+    return { install_id: installId, memory: data };
+  } catch (e) {
+    return { error: String(e) };
+  }
+}
+
+async function handleSaveMemory(role, gradeBands) {
+  const trimmedRole = String(role || "").trim().toLowerCase();
+  const bands = Array.isArray(gradeBands)
+    ? gradeBands.map((item) => String(item || "").trim()).filter(Boolean)
+    : [];
+  if (!trimmedRole || !bands.length) {
+    return { error: "role and grade_bands are required" };
+  }
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const resp = await fetchWithTimeout(
+      settings.base + "/memory",
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          install_id: installId,
+          role: trimmedRole,
+          grade_bands: bands,
+          confirmed_write: true,
+        }),
+      },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    const data = await resp.json();
+    return { install_id: installId, memory: data };
+  } catch (e) {
+    return { error: String(e) };
+  }
+}
+
+async function handleDeleteMemory() {
+  const { headers, settings, installId } = await authHeaders();
+  try {
+    const url =
+      settings.base +
+      "/memory?install_id=" +
+      encodeURIComponent(installId);
+    const resp = await fetchWithTimeout(
+      url,
+      { method: "DELETE", headers },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    if (!resp.ok) {
+      const detail = await extractDetail(resp);
+      return { error: detail || "HTTP " + resp.status, status: resp.status };
+    }
+    const data = await resp.json();
+    return { install_id: installId, memory: data };
+  } catch (e) {
+    return { error: String(e) };
+  }
+}
+
 async function toggleActiveTab() {
   try {
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -493,6 +577,18 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
   if (msg.type === "evalAgent") {
     handleEvalAgent().then(sendResponse);
+    return true;
+  }
+  if (msg.type === "getMemory") {
+    handleGetMemory().then(sendResponse);
+    return true;
+  }
+  if (msg.type === "saveMemory") {
+    handleSaveMemory(msg.role, msg.gradeBands).then(sendResponse);
+    return true;
+  }
+  if (msg.type === "deleteMemory") {
+    handleDeleteMemory().then(sendResponse);
     return true;
   }
   if (msg.type === "getSettings" || msg.type === "getApiBase") {

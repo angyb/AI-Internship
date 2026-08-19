@@ -63,7 +63,7 @@
 | Golden-set eval | **6 questions** | [`golden_set.json`](golden_set.json) + [`eval_golden.py`](eval_golden.py) |
 | Render API | Live | `https://ai-internship-i3lw.onrender.com` (`week-2-rag-api` in [`render.yaml`](render.yaml)) |
 | Render UI | Live | `https://zearn-faq-bot.onrender.com` (`zearn-agent-ui`; `AGENT_API_URL` → API above) |
-| **Chrome extension** | **Phases 1–5 done (v1.0.0)** | [`../chrome-extension/`](../chrome-extension/) — auth-ready overlay, packaging, privacy policy, Store listing draft |
+| **Chrome extension** | **v1.1.0 — Profile tab (Week 5 memory)** | [`../chrome-extension/`](../chrome-extension/) — Profile save/recall/forget via `/memory`; Trace tab runs `/eval-agent` |
 
 ### Not used by the extension or agent
 

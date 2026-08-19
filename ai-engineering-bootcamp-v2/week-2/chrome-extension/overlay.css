@@ -1143,6 +1143,73 @@
   background: var(--zbot-danger);
 }
 
+/* Profile tab — Week 5 durable memory demo */
+.zbot-profile-intro {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--zbot-muted);
+  line-height: 1.45;
+}
+
+.zbot-profile-role {
+  width: 100%;
+}
+
+.zbot-profile-grades {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin-top: 4px;
+}
+
+.zbot-profile-grade {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--zbot-ink);
+  cursor: pointer;
+  line-height: 1.3;
+}
+
+.zbot-profile-grade__input {
+  margin: 2px 0 0;
+  flex-shrink: 0;
+}
+
+.zbot-profile-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.zbot-profile-actions .zbot-btn {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+
+.zbot-profile-memory {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.45;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: var(--zbot-surface);
+  border: 1px solid var(--zbot-line);
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 180px;
+  overflow: auto;
+}
+
+.zbot-profile-install-id {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--zbot-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  word-break: break-all;
+}
+
 /* --- Ask footer token count --- */
 
 .zbot-context-note {

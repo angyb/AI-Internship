@@ -11,11 +11,23 @@
 
   const TABS = [
     { id: "ask", label: "Ask" },
+    { id: "profile", label: "Profile" },
     { id: "history", label: "History" },
     { id: "tao", label: "TAO" },
     { id: "trace", label: "Trace" },
     { id: "health", label: "Health" },
   ];
+
+  const PROFILE_ROLE_OPTIONS_HTML = CONFIG.MEMORY_ROLE_OPTIONS.map(
+    (role) => `<option value="${role}">${role}</option>`
+  ).join("");
+
+  const PROFILE_GRADE_CHECKBOXES_HTML = CONFIG.MEMORY_GRADE_BAND_OPTIONS.map(
+    (grade) =>
+      `<label class="zbot-profile-grade">` +
+      `<input type="checkbox" class="zbot-profile-grade__input" data-grade="${grade}" />` +
+      `<span>${grade}</span></label>`
+  ).join("");
 
   const DEFAULT_TAB = "ask";
 
@@ -142,6 +154,45 @@
                 </button>
               </div>
             </div>
+          </section>
+
+          <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="profile"
+                   id="zbot-panel-profile" aria-labelledby="zbot-tab-profile">
+            <div class="zbot-section-title">Week 5 Memory (Path A)</div>
+            <p class="zbot-profile-intro">
+              Save role and grade preferences once; the agent recalls them in new sessions
+              for this browser install.
+            </p>
+            <div class="zbot-settings__section">
+              <label class="zbot-settings__label" for="zbot-profile-role">Role</label>
+              <select class="zbot-input zbot-profile-role" data-el="profile-role" id="zbot-profile-role">
+                <option value="">Choose your role</option>
+                ${PROFILE_ROLE_OPTIONS_HTML}
+              </select>
+            </div>
+            <div class="zbot-settings__section">
+              <div class="zbot-settings__label">Grade bands</div>
+              <div class="zbot-profile-grades" data-el="profile-grades">
+                ${PROFILE_GRADE_CHECKBOXES_HTML}
+              </div>
+            </div>
+            <div class="zbot-settings__row zbot-settings__row--actions zbot-profile-actions">
+              <button class="zbot-btn" data-el="profile-save" type="button" disabled>
+                Save preference
+              </button>
+              <button class="zbot-btn zbot-btn--ghost" data-el="profile-recall" type="button">
+                New session (recall)
+              </button>
+              <button class="zbot-btn zbot-btn--ghost" data-el="profile-forget" type="button">
+                Forget preference
+              </button>
+            </div>
+            <div class="zbot-status" data-el="profile-status"></div>
+            <div class="zbot-settings__section">
+              <div class="zbot-settings__label">Retrieved memory</div>
+              <pre class="zbot-profile-memory" data-el="profile-memory">{}</pre>
+            </div>
+            <p class="zbot-profile-install-id" data-el="profile-install-id"></p>
           </section>
 
           <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="history"
@@ -462,6 +513,14 @@
         historyDetailTitle: this.shadow.querySelector('[data-el="history-detail-title"]'),
         historyBack: this.shadow.querySelector('[data-el="history-back"]'),
         historyContinue: this.shadow.querySelector('[data-el="history-continue"]'),
+        profileRole: this.shadow.querySelector('[data-el="profile-role"]'),
+        profileGrades: this.shadow.querySelector('[data-el="profile-grades"]'),
+        profileSave: this.shadow.querySelector('[data-el="profile-save"]'),
+        profileRecall: this.shadow.querySelector('[data-el="profile-recall"]'),
+        profileForget: this.shadow.querySelector('[data-el="profile-forget"]'),
+        profileStatus: this.shadow.querySelector('[data-el="profile-status"]'),
+        profileMemory: this.shadow.querySelector('[data-el="profile-memory"]'),
+        profileInstallId: this.shadow.querySelector('[data-el="profile-install-id"]'),
       };
 
       this.els.privacyLink.href = chrome.runtime.getURL("privacy-policy.html");
@@ -501,6 +560,27 @@
       this.els.healthCheck.addEventListener("click", () => this.checkHealth(true));
       this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
       this.els.newChat.addEventListener("click", () => this.startNewChat());
+      if (this.els.profileRole) {
+        this.els.profileRole.addEventListener("change", () =>
+          this.updateProfileSaveState()
+        );
+      }
+      if (this.els.profileGrades) {
+        this.els.profileGrades.addEventListener("change", () =>
+          this.updateProfileSaveState()
+        );
+      }
+      if (this.els.profileSave) {
+        this.els.profileSave.addEventListener("click", () => this.saveMemory());
+      }
+      if (this.els.profileRecall) {
+        this.els.profileRecall.addEventListener("click", () =>
+          this.startRecallSession()
+        );
+      }
+      if (this.els.profileForget) {
+        this.els.profileForget.addEventListener("click", () => this.forgetMemory());
+      }
       this.els.historyBack.addEventListener("click", () => this.showHistoryList());
       this.els.historyContinue.addEventListener("click", () =>
         this.continueHistorySession()
@@ -682,6 +762,9 @@
         this.loadHistory();
       } else {
         this.closeHistoryMenu();
+      }
+      if (id === "profile") {
+        this.loadMemory();
       }
     }
 
@@ -928,6 +1011,132 @@
       }
       const digits = Math.abs(n) >= 100 ? 0 : Math.abs(n) >= 10 ? 1 : 2;
       return n.toFixed(digits) + (u ? " " + u : "");
+    }
+
+    getSelectedProfileGrades() {
+      if (!this.els.profileGrades) return [];
+      return Array.from(
+        this.els.profileGrades.querySelectorAll(".zbot-profile-grade__input:checked")
+      ).map((input) => String(input.dataset.grade || "").trim()).filter(Boolean);
+    }
+
+    updateProfileSaveState() {
+      if (!this.els.profileSave) return;
+      const role = this.els.profileRole
+        ? String(this.els.profileRole.value || "").trim()
+        : "";
+      const grades = this.getSelectedProfileGrades();
+      this.els.profileSave.disabled = !(role && grades.length);
+    }
+
+    renderProfileMemory(record, installId) {
+      if (this.els.profileMemory) {
+        this.els.profileMemory.textContent = JSON.stringify(record || {}, null, 2);
+      }
+      if (this.els.profileInstallId) {
+        this.els.profileInstallId.textContent = installId
+          ? "install_id: " + installId
+          : "";
+      }
+    }
+
+    applyProfileFormFromMemory(memory) {
+      const mem = memory || {};
+      if (this.els.profileRole) {
+        this.els.profileRole.value = mem.role || "";
+      }
+      const selected = new Set(
+        Array.isArray(mem.grade_bands) ? mem.grade_bands : []
+      );
+      if (this.els.profileGrades) {
+        this.els.profileGrades
+          .querySelectorAll(".zbot-profile-grade__input")
+          .forEach((input) => {
+            input.checked = selected.has(String(input.dataset.grade || ""));
+          });
+      }
+      this.updateProfileSaveState();
+    }
+
+    async loadMemory() {
+      if (!this.els.profileMemory) return;
+      this.els.profileStatus.textContent = "Loading saved memory…";
+      const resp = await sendMessage({ type: "getMemory" });
+      if (!resp || resp.error) {
+        this.els.profileStatus.textContent =
+          "Could not load memory: " + ((resp && resp.error) || "unknown error");
+        this.renderProfileMemory({ install_id: resp && resp.install_id }, resp && resp.install_id);
+        return;
+      }
+      const memory = resp.memory || { install_id: resp.install_id };
+      this.applyProfileFormFromMemory(memory);
+      this.renderProfileMemory(memory, resp.install_id);
+      const hasPrefs =
+        memory.role && Array.isArray(memory.grade_bands) && memory.grade_bands.length;
+      this.els.profileStatus.textContent = hasPrefs
+        ? "Preference loaded."
+        : "No saved preference yet.";
+    }
+
+    async saveMemory() {
+      const role = this.els.profileRole
+        ? String(this.els.profileRole.value || "").trim()
+        : "";
+      const gradeBands = this.getSelectedProfileGrades();
+      if (!role || !gradeBands.length) {
+        this.els.profileStatus.textContent = "Choose a role and at least one grade band.";
+        this.updateProfileSaveState();
+        return;
+      }
+      this.els.profileStatus.textContent = "Saving durable memory…";
+      this.els.profileSave.disabled = true;
+      const resp = await sendMessage({
+        type: "saveMemory",
+        role,
+        gradeBands,
+      });
+      this.updateProfileSaveState();
+      if (!resp || resp.error) {
+        this.els.profileStatus.textContent =
+          "Save failed: " + ((resp && resp.error) || "unknown error");
+        return;
+      }
+      const memory = resp.memory || {};
+      this.applyProfileFormFromMemory(memory);
+      this.renderProfileMemory(memory, resp.install_id);
+      this.els.profileStatus.textContent = "Preference saved.";
+    }
+
+    async forgetMemory() {
+      this.els.profileStatus.textContent = "Deleting durable memory…";
+      const resp = await sendMessage({ type: "deleteMemory" });
+      if (!resp || resp.error) {
+        this.els.profileStatus.textContent =
+          "Forget failed: " + ((resp && resp.error) || "unknown error");
+        return;
+      }
+      if (this.els.profileRole) this.els.profileRole.value = "";
+      if (this.els.profileGrades) {
+        this.els.profileGrades
+          .querySelectorAll(".zbot-profile-grade__input")
+          .forEach((input) => {
+            input.checked = false;
+          });
+      }
+      this.updateProfileSaveState();
+      this.renderProfileMemory(
+        { install_id: resp.install_id },
+        resp.install_id
+      );
+      this.els.profileStatus.textContent = "Preference removed.";
+    }
+
+    async startRecallSession() {
+      this.startNewChat();
+      await this.loadMemory();
+      this.els.profileStatus.textContent =
+        "New session started — preference recalled for this install.";
+      this.switchTab("ask");
     }
 
     async runTraceChecks() {

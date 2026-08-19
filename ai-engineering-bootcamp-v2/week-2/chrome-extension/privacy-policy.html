@@ -22,7 +22,7 @@
   </head>
   <body>
     <h1>Ask Z-Bot — Privacy Policy</h1>
-    <p><strong>Effective date:</strong> 2026-08-05 · <strong>Extension version:</strong> 1.0.0</p>
+    <p><strong>Effective date:</strong> 2026-08-05 · <strong>Extension version:</strong> 1.1.0</p>
 
     <p>
       Ask Z-Bot is a Chrome extension that answers Zearn support questions by calling a
@@ -44,8 +44,15 @@
       </li>
       <li>
         <strong>Anonymous install ID</strong> — a random UUID in
-        <code>chrome.storage.local</code>, used only for API rate limiting
-        (<code>X-Install-Id</code>). It does not identify you personally.
+        <code>chrome.storage.local</code>, sent as <code>X-Install-Id</code> for API rate
+        limiting and to key optional durable preferences on the server. It does not identify
+        you personally.
+      </li>
+      <li>
+        <strong>Optional profile preferences</strong> — if you use the Profile tab and click
+        Save, your chosen role and grade bands are stored on the Agent API server, keyed by
+        your install ID, so answers can be tailored across browser sessions. You can remove
+        them anytime with Forget preference.
       </li>
       <li>
         <strong>Optional error reports</strong> — only if you enable
