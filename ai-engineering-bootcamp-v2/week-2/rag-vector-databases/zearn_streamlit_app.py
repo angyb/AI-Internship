@@ -219,12 +219,14 @@ with st.sidebar:
             options=MEMORY_ROLE_OPTIONS,
             index=None,
             placeholder="Choose your role",
+            filter_mode=None,
             key="memory_role",
         )
         grade_bands = st.multiselect(
             "Grade bands",
             options=MEMORY_GRADE_BAND_OPTIONS,
             placeholder="Choose grade(s)",
+            filter_mode=None,
             key="memory_grade_bands",
         )
 
