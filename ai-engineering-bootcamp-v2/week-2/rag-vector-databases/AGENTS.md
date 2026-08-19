@@ -10,12 +10,12 @@
 - The server rejects writes when `confirmed_write` is not true, and it ignores any non-`role` / non-`grade_band` content.
 
 ### Retrieval (when we read)
-- Every `POST /agent` request loads memory for the same `install_id` and seeds it into the agent context as:
-  `"User preference (durable memory): role=<role>; grade_bands=<comma-separated list>."`
+- Every `POST /agent` request loads memory for the same `install_id` and seeds it into the agent context via `format_memory_context()` in `memory_preferences.py` (role, grade bands, and a retrieval hint with the role search term).
 
 ### How the agent should use memory
-- Memory is allowed only to tailor response style (tone/reading level).
-- It must not be treated as a factual source: Zearn facts still come from `search_zearn_doc` and/or `google_search_agent`.
+- Memory may tailor response style (tone/reading level) and scope `search_zearn_doc` queries.
+- Role → query terms: `admin` → **administrators** (never "school administrators"), `teacher` → teachers, `student` → students. Include grade bands in queries when relevant.
+- Memory must not be treated as a factual source: Zearn facts still come from `search_zearn_doc` and/or `google_search_agent`.
 - When preference memory is present, the agent includes one short, non-factual sentence near the start reflecting the grade band / role (to make recall obvious in the demo).
 
 ### Forgetting (when we delete)

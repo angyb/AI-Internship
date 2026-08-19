@@ -809,10 +809,10 @@ def agent_run(body: AgentRequest) -> AgentResponse:
         if body.install_id:
             mem = db.get_user_memory(body.install_id)
             if mem and mem.get("role") and mem.get("grade_bands"):
-                bands = ", ".join(mem["grade_bands"])
-                memory_context = (
-                    "User preference (durable memory): "
-                    f"role={mem['role']}; grade_bands={bands}."
+                from memory_preferences import format_memory_context
+
+                memory_context = format_memory_context(
+                    mem["role"], mem["grade_bands"]
                 )
 
         with timed_span("agent_total"):
