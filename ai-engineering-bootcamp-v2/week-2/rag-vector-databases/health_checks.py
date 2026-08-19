@@ -5,12 +5,17 @@ from __future__ import annotations
 import os
 import time
 from typing import Any, Callable
+from urllib.parse import quote
 
 from env_utils import bool_env
 from secret_redaction import redact_secrets, safe_error_message, sanitize_for_client
 
 _PINECONE_CACHE_TTL_S = 20.0
 _pinecone_cache: tuple[float, dict[str, Any]] | None = None
+
+_GEMINI_CACHE_TTL_S = 60.0
+_GEMINI_HTTP_TIMEOUT_S = 10.0
+_gemini_cache: tuple[float, dict[str, Any]] | None = None
 
 
 def _check(ok: bool, detail: str) -> dict[str, Any]:
@@ -69,10 +74,89 @@ def check_embeddings() -> dict[str, Any]:
     return _check(False, "OPENAI_API_KEY is not set — query embeddings will fail.")
 
 
+def _gemini_agent_model() -> str:
+    return os.getenv("GEMINI_MODEL", "gemini-flash-latest").strip() or "gemini-flash-latest"
+
+
+def _gemini_api_error_message(body: Any) -> str:
+    if isinstance(body, dict):
+        err = body.get("error")
+        if isinstance(err, dict):
+            return redact_secrets(str(err.get("message") or err))[:280]
+        if isinstance(err, str) and err:
+            return redact_secrets(err)[:280]
+        if body.get("message"):
+            return redact_secrets(str(body["message"]))[:280]
+    if isinstance(body, str) and body:
+        return redact_secrets(body)[:280]
+    return "request failed"
+
+
+def _gemini_smoke_error_detail(status: int, body: Any) -> str:
+    msg = _gemini_api_error_message(body)
+    if status == 403:
+        return (
+            f"Agent cannot run ({msg}). Update GOOGLE_API_KEY on Render and confirm "
+            "Generative Language API access in Google AI Studio."
+        )
+    return f"Gemini generateContent failed ({status}): {msg}"
+
+
+def _gemini_generate_smoke(key: str, model: str) -> tuple[int, Any]:
+    """Minimal generateContent call using the same model as POST /agent."""
+    import httpx
+
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{quote(model)}:generateContent?key={quote(key)}"
+    )
+    payload = {
+        "contents": [{"role": "user", "parts": [{"text": "Reply with exactly: ok"}]}],
+        "generationConfig": {"maxOutputTokens": 8, "temperature": 0},
+    }
+    with httpx.Client(timeout=_GEMINI_HTTP_TIMEOUT_S) as client:
+        resp = client.post(url, json=payload)
+        try:
+            body = resp.json()
+        except Exception:
+            body = {"error": redact_secrets((resp.text or "")[:300])}
+        return resp.status_code, body
+
+
+def _check_gemini_uncached() -> dict[str, Any]:
+    key = os.getenv("GOOGLE_API_KEY", "").strip()
+    if not key:
+        return _check(False, "GOOGLE_API_KEY is not set — the agent cannot run.")
+
+    model = _gemini_agent_model()
+    try:
+        status, body = _gemini_generate_smoke(key, model)
+    except Exception as exc:
+        return _check(False, safe_error_message(exc))
+
+    if status != 200:
+        return _check(False, _gemini_smoke_error_detail(status, body))
+
+    candidates = body.get("candidates") if isinstance(body, dict) else None
+    if not candidates:
+        return _check(
+            False,
+            f"Gemini returned no candidates for model {model} — POST /agent may fail.",
+        )
+    return _check(
+        True,
+        f"Agent model {model} responded — POST /agent should work.",
+    )
+
+
 def check_gemini() -> dict[str, Any]:
-    if os.getenv("GOOGLE_API_KEY", "").strip():
-        return _check(True, "GOOGLE_API_KEY set")
-    return _check(False, "GOOGLE_API_KEY is not set — the agent cannot run.")
+    global _gemini_cache
+    now = time.monotonic()
+    if _gemini_cache and now - _gemini_cache[0] < _GEMINI_CACHE_TTL_S:
+        return _gemini_cache[1]
+    result = _check_gemini_uncached()
+    _gemini_cache = (now, result)
+    return result
 
 
 def check_bm25() -> dict[str, Any]:

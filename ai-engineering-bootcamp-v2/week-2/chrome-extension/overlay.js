@@ -22,12 +22,26 @@
     (role) => `<option value="${role}">${role}</option>`
   ).join("");
 
-  const PROFILE_GRADE_CHECKBOXES_HTML = CONFIG.MEMORY_GRADE_BAND_OPTIONS.map(
-    (grade) =>
-      `<label class="zbot-profile-grade">` +
-      `<input type="checkbox" class="zbot-profile-grade__input" data-grade="${grade}" />` +
-      `<span>${grade}</span></label>`
-  ).join("");
+  const PROFILE_GRADE_SELECT_ALL_HTML =
+    `<label class="zbot-profile-multiselect__item zbot-profile-multiselect__item--select-all">` +
+    `<input type="checkbox" class="zbot-profile-multiselect__checkbox" data-select-all="true" />` +
+    `<span>Select all</span></label>`;
+
+  const PROFILE_GRADE_OPTIONS_HTML =
+    PROFILE_GRADE_SELECT_ALL_HTML +
+    CONFIG.MEMORY_GRADE_BAND_OPTIONS.map(
+      (grade) =>
+        `<label class="zbot-profile-multiselect__item">` +
+        `<input type="checkbox" class="zbot-profile-multiselect__checkbox"` +
+        ` data-grade="${grade}" />` +
+        `<span>${grade}</span></label>`
+    ).join("");
+
+  const PROFILE_CHEVRON_SVG =
+    '<svg class="zbot-profile-field__chevron" viewBox="0 0 12 16"' +
+    ' aria-hidden="true" focusable="false">' +
+    '<path d="M2 6l4 4 4-4" fill="none" stroke="currentColor"' +
+    ' stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   const DEFAULT_TAB = "ask";
 
@@ -156,43 +170,60 @@
             </div>
           </section>
 
-          <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="profile"
+          <section class="zbot-tabpanel zbot-tabpanel--profile zbot-hidden" role="tabpanel" data-tabpanel="profile"
                    id="zbot-panel-profile" aria-labelledby="zbot-tab-profile">
-            <div class="zbot-section-title">Week 5 Memory (Path A)</div>
+            <div class="zbot-section-title">User profile</div>
             <p class="zbot-profile-intro">
               Save role and grade preferences once; the agent recalls them in new sessions
               for this browser install.
             </p>
-            <div class="zbot-settings__section">
-              <label class="zbot-settings__label" for="zbot-profile-role">Role</label>
-              <select class="zbot-input zbot-profile-role" data-el="profile-role" id="zbot-profile-role">
-                <option value="">Choose your role</option>
-                ${PROFILE_ROLE_OPTIONS_HTML}
-              </select>
-            </div>
-            <div class="zbot-settings__section">
-              <div class="zbot-settings__label">Grade bands</div>
-              <div class="zbot-profile-grades" data-el="profile-grades">
-                ${PROFILE_GRADE_CHECKBOXES_HTML}
+            <div class="zbot-profile-field">
+              <label class="zbot-profile-label" for="zbot-profile-role">Role</label>
+              <div class="zbot-profile-select">
+                <select class="zbot-profile-select__control" data-el="profile-role" id="zbot-profile-role">
+                  <option value="">Choose your role</option>
+                  ${PROFILE_ROLE_OPTIONS_HTML}
+                </select>
+                ${PROFILE_CHEVRON_SVG}
               </div>
             </div>
-            <div class="zbot-settings__row zbot-settings__row--actions zbot-profile-actions">
-              <button class="zbot-btn" data-el="profile-save" type="button" disabled>
-                Save preference
-              </button>
-              <button class="zbot-btn zbot-btn--ghost" data-el="profile-recall" type="button">
-                New session (recall)
-              </button>
-              <button class="zbot-btn zbot-btn--ghost" data-el="profile-forget" type="button">
+            <div class="zbot-profile-field">
+              <label class="zbot-profile-label" for="zbot-profile-grades-trigger">Grade bands</label>
+              <div class="zbot-profile-multiselect" data-el="profile-grades">
+                <button class="zbot-profile-multiselect__trigger" type="button"
+                        id="zbot-profile-grades-trigger" data-el="profile-grades-trigger"
+                        aria-haspopup="listbox" aria-expanded="false"
+                        aria-labelledby="zbot-profile-grades-label">
+                  <span class="zbot-profile-multiselect__value zbot-profile-multiselect__value--placeholder"
+                        data-el="profile-grades-label" id="zbot-profile-grades-label">
+                    Choose grade(s)
+                  </span>
+                  ${PROFILE_CHEVRON_SVG}
+                </button>
+                <div class="zbot-profile-multiselect__menu zbot-hidden" data-el="profile-grades-menu"
+                     role="listbox" aria-multiselectable="true" aria-label="Grade bands">
+                  ${PROFILE_GRADE_OPTIONS_HTML}
+                </div>
+              </div>
+            </div>
+            <div class="zbot-profile-actions">
+              <div class="zbot-profile-actions__row">
+                <button class="zbot-btn zbot-profile-actions__save" data-el="profile-save" type="button" disabled>
+                  Save profile
+                </button>
+                <button class="zbot-btn zbot-btn--ghost zbot-profile-actions__recall" data-el="profile-recall" type="button">
+                  New session (recall)
+                </button>
+              </div>
+              <button class="zbot-btn zbot-btn--ghost zbot-profile-actions__forget" data-el="profile-forget" type="button">
                 Forget preference
               </button>
             </div>
-            <div class="zbot-status" data-el="profile-status"></div>
-            <div class="zbot-settings__section">
-              <div class="zbot-settings__label">Retrieved memory</div>
-              <pre class="zbot-profile-memory" data-el="profile-memory">{}</pre>
+            <div class="zbot-status zbot-profile-status" data-el="profile-status"></div>
+            <div class="zbot-profile-field zbot-profile-field--memory">
+              <div class="zbot-profile-label">Retrieved memory</div>
+              <pre class="zbot-profile-memory" data-el="profile-memory" id="zbot-profile-memory">{}</pre>
             </div>
-            <p class="zbot-profile-install-id" data-el="profile-install-id"></p>
           </section>
 
           <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="history"
@@ -515,12 +546,14 @@
         historyContinue: this.shadow.querySelector('[data-el="history-continue"]'),
         profileRole: this.shadow.querySelector('[data-el="profile-role"]'),
         profileGrades: this.shadow.querySelector('[data-el="profile-grades"]'),
+        profileGradesTrigger: this.shadow.querySelector('[data-el="profile-grades-trigger"]'),
+        profileGradesMenu: this.shadow.querySelector('[data-el="profile-grades-menu"]'),
+        profileGradesLabel: this.shadow.querySelector('[data-el="profile-grades-label"]'),
         profileSave: this.shadow.querySelector('[data-el="profile-save"]'),
         profileRecall: this.shadow.querySelector('[data-el="profile-recall"]'),
         profileForget: this.shadow.querySelector('[data-el="profile-forget"]'),
         profileStatus: this.shadow.querySelector('[data-el="profile-status"]'),
         profileMemory: this.shadow.querySelector('[data-el="profile-memory"]'),
-        profileInstallId: this.shadow.querySelector('[data-el="profile-install-id"]'),
       };
 
       this.els.privacyLink.href = chrome.runtime.getURL("privacy-policy.html");
@@ -561,14 +594,23 @@
       this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
       this.els.newChat.addEventListener("click", () => this.startNewChat());
       if (this.els.profileRole) {
-        this.els.profileRole.addEventListener("change", () =>
-          this.updateProfileSaveState()
-        );
+        this.els.profileRole.addEventListener("change", () => {
+          this.updateProfileRolePlaceholder();
+          this.updateProfileSaveState();
+        });
       }
-      if (this.els.profileGrades) {
-        this.els.profileGrades.addEventListener("change", () =>
-          this.updateProfileSaveState()
-        );
+      if (this.els.profileGradesTrigger && this.els.profileGradesMenu) {
+        this.els.profileGradesTrigger.addEventListener("click", (event) => {
+          event.stopPropagation();
+          this.toggleProfileGradesMenu();
+        });
+        this.els.profileGradesMenu.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+        this.els.profileGradesMenu.addEventListener("change", (event) => {
+          this.handleProfileGradesChange(event);
+        });
+        this.shadow.addEventListener("click", () => this.closeProfileGradesMenu());
       }
       if (this.els.profileSave) {
         this.els.profileSave.addEventListener("click", () => this.saveMemory());
@@ -765,6 +807,8 @@
       }
       if (id === "profile") {
         this.loadMemory();
+      } else {
+        this.closeProfileGradesMenu();
       }
     }
 
@@ -1013,11 +1057,115 @@
       return n.toFixed(digits) + (u ? " " + u : "");
     }
 
-    getSelectedProfileGrades() {
-      if (!this.els.profileGrades) return [];
+    getProfileGradeCheckboxes() {
+      if (!this.els.profileGradesMenu) return [];
       return Array.from(
-        this.els.profileGrades.querySelectorAll(".zbot-profile-grade__input:checked")
-      ).map((input) => String(input.dataset.grade || "").trim()).filter(Boolean);
+        this.els.profileGradesMenu.querySelectorAll(
+          '.zbot-profile-multiselect__checkbox:not([data-select-all="true"])'
+        )
+      );
+    }
+
+    getProfileSelectAllCheckbox() {
+      if (!this.els.profileGradesMenu) return null;
+      return this.els.profileGradesMenu.querySelector('[data-select-all="true"]');
+    }
+
+    syncProfileSelectAllCheckbox() {
+      const selectAll = this.getProfileSelectAllCheckbox();
+      if (!selectAll) return;
+      const boxes = this.getProfileGradeCheckboxes();
+      const checkedCount = boxes.filter((input) => input.checked).length;
+      selectAll.checked = checkedCount > 0 && checkedCount === boxes.length;
+      selectAll.indeterminate =
+        checkedCount > 0 && checkedCount < boxes.length;
+    }
+
+    handleProfileGradesChange(event) {
+      const target = event.target;
+      if (
+        !target ||
+        !target.classList ||
+        !target.classList.contains("zbot-profile-multiselect__checkbox")
+      ) {
+        return;
+      }
+      event.stopPropagation();
+      if (target.dataset.selectAll === "true") {
+        const checked = target.checked;
+        target.indeterminate = false;
+        this.getProfileGradeCheckboxes().forEach((input) => {
+          input.checked = checked;
+        });
+      } else {
+        this.syncProfileSelectAllCheckbox();
+      }
+      this.updateProfileGradesLabel();
+      this.updateProfileSaveState();
+    }
+
+    updateProfileRolePlaceholder() {
+      if (!this.els.profileRole) return;
+      const empty = !String(this.els.profileRole.value || "").trim();
+      this.els.profileRole.classList.toggle(
+        "zbot-profile-select__control--placeholder",
+        empty
+      );
+    }
+
+    getSelectedProfileGrades() {
+      return this.getProfileGradeCheckboxes()
+        .filter((input) => input.checked)
+        .map((input) => String(input.dataset.grade || "").trim())
+        .filter(Boolean);
+    }
+
+    updateProfileGradesLabel() {
+      if (!this.els.profileGradesLabel) return;
+      const grades = this.getSelectedProfileGrades();
+      if (!grades.length) {
+        this.els.profileGradesLabel.textContent = "Choose grade(s)";
+        this.els.profileGradesLabel.classList.add(
+          "zbot-profile-multiselect__value--placeholder"
+        );
+        return;
+      }
+      this.els.profileGradesLabel.textContent =
+        grades.length === 1 ? grades[0] : grades.join(", ");
+      this.els.profileGradesLabel.classList.remove(
+        "zbot-profile-multiselect__value--placeholder"
+      );
+    }
+
+    toggleProfileGradesMenu() {
+      if (!this.els.profileGradesMenu || !this.els.profileGradesTrigger) return;
+      const open = this.els.profileGradesMenu.classList.contains("zbot-hidden");
+      if (open) {
+        this.els.profileGradesMenu.classList.remove("zbot-hidden");
+        this.els.profileGradesTrigger.setAttribute("aria-expanded", "true");
+      } else {
+        this.closeProfileGradesMenu();
+      }
+    }
+
+    closeProfileGradesMenu() {
+      if (!this.els.profileGradesMenu || !this.els.profileGradesTrigger) return;
+      this.els.profileGradesMenu.classList.add("zbot-hidden");
+      this.els.profileGradesTrigger.setAttribute("aria-expanded", "false");
+    }
+
+    setProfileGradeSelections(gradeBands) {
+      if (!this.els.profileGradesMenu) return;
+      const selected = new Set(
+        Array.isArray(gradeBands)
+          ? gradeBands.map((grade) => String(grade || "").trim()).filter(Boolean)
+          : []
+      );
+      this.getProfileGradeCheckboxes().forEach((input) => {
+        input.checked = selected.has(String(input.dataset.grade || ""));
+      });
+      this.syncProfileSelectAllCheckbox();
+      this.updateProfileGradesLabel();
     }
 
     updateProfileSaveState() {
@@ -1030,14 +1178,10 @@
     }
 
     renderProfileMemory(record, installId) {
-      if (this.els.profileMemory) {
-        this.els.profileMemory.textContent = JSON.stringify(record || {}, null, 2);
-      }
-      if (this.els.profileInstallId) {
-        this.els.profileInstallId.textContent = installId
-          ? "install_id: " + installId
-          : "";
-      }
+      if (!this.els.profileMemory) return;
+      const payload = { ...(record || {}) };
+      if (installId) payload.install_id = installId;
+      this.els.profileMemory.textContent = JSON.stringify(payload, null, 2);
     }
 
     applyProfileFormFromMemory(memory) {
@@ -1045,16 +1189,8 @@
       if (this.els.profileRole) {
         this.els.profileRole.value = mem.role || "";
       }
-      const selected = new Set(
-        Array.isArray(mem.grade_bands) ? mem.grade_bands : []
-      );
-      if (this.els.profileGrades) {
-        this.els.profileGrades
-          .querySelectorAll(".zbot-profile-grade__input")
-          .forEach((input) => {
-            input.checked = selected.has(String(input.dataset.grade || ""));
-          });
-      }
+      this.updateProfileRolePlaceholder();
+      this.setProfileGradeSelections(mem.grade_bands);
       this.updateProfileSaveState();
     }
 
@@ -1104,7 +1240,7 @@
       const memory = resp.memory || {};
       this.applyProfileFormFromMemory(memory);
       this.renderProfileMemory(memory, resp.install_id);
-      this.els.profileStatus.textContent = "Preference saved.";
+      this.els.profileStatus.textContent = "";
     }
 
     async forgetMemory() {
@@ -1116,13 +1252,8 @@
         return;
       }
       if (this.els.profileRole) this.els.profileRole.value = "";
-      if (this.els.profileGrades) {
-        this.els.profileGrades
-          .querySelectorAll(".zbot-profile-grade__input")
-          .forEach((input) => {
-            input.checked = false;
-          });
-      }
+      this.updateProfileRolePlaceholder();
+      this.setProfileGradeSelections([]);
       this.updateProfileSaveState();
       this.renderProfileMemory(
         { install_id: resp.install_id },
@@ -1133,10 +1264,12 @@
 
     async startRecallSession() {
       this.startNewChat();
+      if (this.activeTab !== "profile") {
+        this.switchTab("profile");
+      }
       await this.loadMemory();
       this.els.profileStatus.textContent =
         "New session started — preference recalled for this install.";
-      this.switchTab("ask");
     }
 
     async runTraceChecks() {
@@ -1296,11 +1429,9 @@
     buildHistory() {
       const history = [];
       this.thread.forEach((turn) => {
-        if (turn.pending || !turn.question) return;
+        if (turn.pending || !turn.question || turn.error || !turn.answer) return;
         history.push({ role: "user", content: turn.question });
-        if (turn.answer && !turn.error) {
-          history.push({ role: "assistant", content: turn.answer });
-        }
+        history.push({ role: "assistant", content: turn.answer });
       });
       return history;
     }
@@ -1444,12 +1575,15 @@
 
       const body = document.createElement("div");
       body.className = "zbot-thread-bubble__body zbot-answer";
-      if (turn.error && !displayText) {
-        body.textContent = "Error: " + turn.error;
+      if (turn.error) {
+        if (!turn.banner) {
+          body.textContent = "Error: " + turn.error;
+          bubble.appendChild(body);
+        }
       } else {
         renderMarkdownInto(body, displayText || CONFIG.REFUSAL_MESSAGE);
+        bubble.appendChild(body);
       }
-      bubble.appendChild(body);
 
       block.appendChild(label);
       block.appendChild(bubble);
