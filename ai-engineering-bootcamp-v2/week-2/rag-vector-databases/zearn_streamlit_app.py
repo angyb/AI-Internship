@@ -52,14 +52,19 @@ st.markdown(
     """
 <style>
 .block-container{padding-top:1.5rem;}
-/* Role memory selectbox: hide clear (X) — Streamlit 1.59+ uses aria-label="Clear value". */
+/* Role memory selectbox: hide clear (X) via CSS only (no DOM MutationObserver). */
 .st-key-memory_role button[aria-label="Clear value"],
 .st-key-memory_role button[aria-label="Clear"],
 .st-key-memory_role button[aria-label="Clear all"],
+.st-key-memory_role button[title="Clear value"],
+.st-key-memory_role button[title="Clear"],
+[class*="st-key-memory_role"] button[aria-label*="Clear"],
+[class*="st-key-memory_role"] button[title*="Clear"],
 section[data-testid="stSidebar"] .st-key-memory_role button[aria-label="Clear value"],
 section[data-testid="stSidebar"] .st-key-memory_role button[aria-label="Clear"],
 section[data-testid="stSidebar"] .st-key-memory_role button[aria-label="Clear all"],
-section[data-testid="stSidebar"] [data-testid="stSelectbox"] button[aria-label="Clear value"] {
+section[data-testid="stSidebar"] [data-testid="stSelectbox"] button[aria-label="Clear value"],
+section[data-testid="stSidebar"] [data-testid="stSelectbox"] button[aria-label*="Clear"] {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;
@@ -97,7 +102,11 @@ def api_headers() -> dict[str, str]:
 
 
 def _suppress_empty_multiselect_dropdown() -> None:
-    """Hide Streamlit multiselect popovers that only show 'No results'."""
+    """Hide Streamlit multiselect popovers that only show 'No results'.
+
+    Debounced and attribute-safe: never mutates attributes the observer watches,
+    so selecting Role/Grade cannot freeze the page in an observer loop.
+    """
     components.html(
         """
 <div></div>
@@ -105,12 +114,14 @@ def _suppress_empty_multiselect_dropdown() -> None:
 (function () {
   const doc = window.parent.document;
   const EMPTY_LABELS = new Set(["No results", "No options to select."]);
+  let scheduled = null;
   function hideEmptyPopovers() {
     doc.querySelectorAll('[data-baseweb="popover"]').forEach((popover) => {
-      const text = popover.innerText.trim();
+      const text = (popover.innerText || "").trim();
       if (!EMPTY_LABELS.has(text)) {
         return;
       }
+      // Style-only; do not set attributes (avoids MutationObserver feedback loops).
       popover.style.setProperty("display", "none", "important");
       popover.style.setProperty("visibility", "hidden", "important");
       popover.style.setProperty("height", "0", "important");
@@ -118,84 +129,26 @@ def _suppress_empty_multiselect_dropdown() -> None:
       popover.style.setProperty("pointer-events", "none", "important");
     });
   }
+  function scheduleHide() {
+    if (scheduled != null) {
+      return;
+    }
+    scheduled = window.parent.requestAnimationFrame(() => {
+      scheduled = null;
+      hideEmptyPopovers();
+    });
+  }
   if (window.__zearnHideEmptyMultiselect) {
-    hideEmptyPopovers();
+    scheduleHide();
     return;
   }
   window.__zearnHideEmptyMultiselect = true;
-  new MutationObserver(hideEmptyPopovers).observe(doc.body, {
+  new MutationObserver(scheduleHide).observe(doc.body, {
     childList: true,
     subtree: true,
-    characterData: true,
   });
-  doc.addEventListener("click", hideEmptyPopovers, true);
-  hideEmptyPopovers();
-})();
-</script>
-        """,
-        height=0,
-        width=0,
-    )
-
-
-def _hide_role_selectbox_clear_button() -> None:
-    """Hide the clear (X) control on the memory demo Role selectbox."""
-    components.html(
-        """
-<div></div>
-<script>
-(function () {
-  const doc = window.parent.document;
-  function hideRoleClear() {
-    const selectors = [
-      ".st-key-memory_role",
-      '[class*="st-key-memory_role"]',
-    ];
-    const boxes = new Set();
-    selectors.forEach((sel) => {
-      doc.querySelectorAll(sel).forEach((el) => boxes.add(el));
-    });
-    if (boxes.size === 0) {
-      doc.querySelectorAll('[data-testid="stSelectbox"]').forEach((box) => {
-        const label = box.querySelector("label");
-        if (label && label.textContent.trim().startsWith("Role")) {
-          boxes.add(box);
-        }
-      });
-    }
-    boxes.forEach((box) => {
-      box.querySelectorAll("button").forEach((btn) => {
-        const hint = (btn.getAttribute("aria-label") || btn.getAttribute("title") || "")
-          .trim()
-          .toLowerCase();
-        if (hint.includes("clear")) {
-          btn.style.setProperty("display", "none", "important");
-          btn.style.setProperty("visibility", "hidden", "important");
-          btn.style.setProperty("width", "0", "important");
-          btn.style.setProperty("min-width", "0", "important");
-          btn.style.setProperty("padding", "0", "important");
-          btn.style.setProperty("margin", "0", "important");
-          btn.style.setProperty("pointer-events", "none", "important");
-          btn.setAttribute("hidden", "hidden");
-          btn.setAttribute("aria-hidden", "true");
-        }
-      });
-    });
-  }
-  hideRoleClear();
-  if (!window.__zearnHideRoleClear) {
-    window.__zearnHideRoleClear = true;
-    new MutationObserver(hideRoleClear).observe(doc.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["aria-label", "class", "hidden"],
-    });
-    doc.addEventListener("click", hideRoleClear, true);
-    doc.addEventListener("focusin", hideRoleClear, true);
-  } else {
-    hideRoleClear();
-  }
+  doc.addEventListener("click", scheduleHide, true);
+  scheduleHide();
 })();
 </script>
         """,
@@ -374,7 +327,8 @@ with st.sidebar:
             filter_mode=None,
             key="memory_role",
         )
-        _hide_role_selectbox_clear_button()
+        # Clear (X) is hidden via CSS only — do not use a MutationObserver that
+        # sets [hidden]; that feedback loop freezes the page when a role is chosen.
         _suppress_empty_multiselect_dropdown()
         grade_bands = st.multiselect(
             "Grade bands",
