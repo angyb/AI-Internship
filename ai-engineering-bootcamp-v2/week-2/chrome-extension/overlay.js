@@ -181,7 +181,8 @@
             <div class="zbot-profile-field">
               <label class="zbot-profile-label" for="zbot-profile-role">Role</label>
               <div class="zbot-profile-select">
-                <select class="zbot-profile-select__control" data-el="profile-role" id="zbot-profile-role">
+                <select class="zbot-profile-select__control zbot-profile-select__control--placeholder"
+                        data-el="profile-role" id="zbot-profile-role">
                   <option value="">Choose your role</option>
                   ${PROFILE_ROLE_OPTIONS_HTML}
                 </select>
@@ -189,7 +190,7 @@
               </div>
             </div>
             <div class="zbot-profile-field">
-              <label class="zbot-profile-label" for="zbot-profile-grades-trigger">Grade bands</label>
+              <label class="zbot-profile-label" for="zbot-profile-grades-trigger">Grade(s)</label>
               <div class="zbot-profile-multiselect" data-el="profile-grades">
                 <button class="zbot-profile-multiselect__trigger" type="button"
                         id="zbot-profile-grades-trigger" data-el="profile-grades-trigger"
@@ -202,7 +203,7 @@
                   ${PROFILE_CHEVRON_SVG}
                 </button>
                 <div class="zbot-profile-multiselect__menu zbot-hidden" data-el="profile-grades-menu"
-                     role="listbox" aria-multiselectable="true" aria-label="Grade bands">
+                     role="listbox" aria-multiselectable="true" aria-label="Grade(s)">
                   ${PROFILE_GRADE_OPTIONS_HTML}
                 </div>
               </div>
@@ -267,25 +268,6 @@
 
           <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="health"
                    id="zbot-panel-health" aria-labelledby="zbot-tab-health">
-            <div class="zbot-settings__section">
-              <label class="zbot-settings__label" for="zbot-apiurl">Agent API URL</label>
-              <div class="zbot-settings__row">
-                <input class="zbot-input" id="zbot-apiurl" data-el="apiurl" type="text"
-                       placeholder="https://...onrender.com" autocomplete="off" />
-              </div>
-              <label class="zbot-settings__label" for="zbot-apikey">API key</label>
-              <div class="zbot-settings__row">
-                <input class="zbot-input" id="zbot-apikey" data-el="apikey" type="password"
-                       placeholder="Required when AGENT_API_KEY is set on the server"
-                       autocomplete="off" />
-              </div>
-              <div class="zbot-settings__row zbot-settings__row--actions">
-                <button class="zbot-btn" data-el="save-api" type="button">Save API settings</button>
-                <button class="zbot-btn zbot-btn--ghost" data-el="reset-api" type="button">Reset</button>
-              </div>
-              <div class="zbot-settings__hint" data-el="default-hint"></div>
-              <div class="zbot-status" data-el="api-settings-status"></div>
-            </div>
             <div class="zbot-settings__section">
               <div class="zbot-settings__label">API</div>
               <div class="zbot-settings__row zbot-settings__row--actions">
@@ -551,12 +533,6 @@
         healthCheck: this.shadow.querySelector('[data-el="health-check"]'),
         healthChecks: this.shadow.querySelector('[data-el="health-checks"]'),
         healthUsage: this.shadow.querySelector('[data-el="health-usage"]'),
-        apiurl: this.shadow.querySelector('[data-el="apiurl"]'),
-        apikey: this.shadow.querySelector('[data-el="apikey"]'),
-        saveApi: this.shadow.querySelector('[data-el="save-api"]'),
-        resetApi: this.shadow.querySelector('[data-el="reset-api"]'),
-        defaultHint: this.shadow.querySelector('[data-el="default-hint"]'),
-        apiSettingsStatus: this.shadow.querySelector('[data-el="api-settings-status"]'),
         traceRun: this.shadow.querySelector('[data-el="trace-run"]'),
         traceStatus: this.shadow.querySelector('[data-el="trace-status"]'),
         traceOutput: this.shadow.querySelector('[data-el="trace-output"]'),
@@ -618,12 +594,6 @@
         }
       });
       this.els.healthCheck.addEventListener("click", () => this.checkHealth(true));
-      if (this.els.saveApi) {
-        this.els.saveApi.addEventListener("click", () => this.saveApiSettings());
-      }
-      if (this.els.resetApi) {
-        this.els.resetApi.addEventListener("click", () => this.resetApiSettings());
-      }
       this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
       this.els.newChat.addEventListener("click", () => this.startNewChat());
       if (this.els.profileRole) {
@@ -693,6 +663,9 @@
       this.applyLayout();
       this.switchTab(DEFAULT_TAB);
       this.renderTaoEmpty();
+      this.updateProfileRolePlaceholder();
+      this.updateProfileGradesLabel();
+      this.updateProfileSaveState();
       this.loadSettings();
       this.restoreCurrentSession();
     }
@@ -1266,11 +1239,8 @@
       });
       this.updateProfileSaveState();
       if (!resp || resp.error) {
-        let err = (resp && resp.error) || "unknown error";
-        if (/api key/i.test(err)) {
-          err += " Open the Health tab, paste AGENT_API_KEY, and click Save API settings.";
-        }
-        this.els.profileStatus.textContent = "Save failed: " + err;
+        this.els.profileStatus.textContent =
+          "Save failed: " + ((resp && resp.error) || "unknown error");
         return;
       }
       const memory = resp.memory || {};
@@ -2253,56 +2223,6 @@
       } else {
         this.applyRetrievalMode("fast");
       }
-      if (this.els.apiurl && resp && resp.base) {
-        this.els.apiurl.value = resp.base;
-      }
-      if (this.els.apikey && resp) {
-        this.els.apikey.value = resp.apiKey || "";
-      }
-      if (this.els.defaultHint) {
-        this.els.defaultHint.textContent =
-          "Default: " +
-          this.defaultBase +
-          " · Local: http://127.0.0.1:8000 · Paste the same AGENT_API_KEY as Render when auth is on.";
-      }
-    }
-
-    async saveApiSettings() {
-      if (!this.els.apiurl || !this.els.apikey) return;
-      const value = this.els.apiurl.value.trim().replace(/\/+$/, "");
-      const resp = await sendMessage({
-        type: "saveSettings",
-        base: value || this.defaultBase,
-        apiKey: this.els.apikey.value,
-      });
-      if (resp && resp.base) this.els.apiurl.value = resp.base;
-      if (this.els.apiSettingsStatus) {
-        this.els.apiSettingsStatus.textContent = "API settings saved.";
-      }
-      this.wakeTriggered = false;
-      this.checkHealth(true);
-      setTimeout(() => {
-        if (this.els.apiSettingsStatus) this.els.apiSettingsStatus.textContent = "";
-      }, 2000);
-    }
-
-    async resetApiSettings() {
-      if (!this.els.apiurl || !this.els.apikey) return;
-      this.els.apiurl.value = this.defaultBase;
-      this.els.apikey.value = "";
-      await sendMessage({
-        type: "saveSettings",
-        base: this.defaultBase,
-        apiKey: "",
-      });
-      if (this.els.apiSettingsStatus) {
-        this.els.apiSettingsStatus.textContent = "Reset to defaults.";
-      }
-      this.wakeTriggered = false;
-      this.checkHealth(true);
-      setTimeout(() => {
-        if (this.els.apiSettingsStatus) this.els.apiSettingsStatus.textContent = "";
-      }, 2000);
     }
   }
 

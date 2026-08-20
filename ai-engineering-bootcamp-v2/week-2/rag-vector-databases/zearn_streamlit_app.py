@@ -79,6 +79,11 @@ section[data-testid="stSidebar"] [data-testid="stSelectbox"] button[aria-label*=
   margin: 0 !important;
   pointer-events: none !important;
 }
+/* Role empty placeholder: match Grade(s) multiselect muted gray. */
+[class*="st-key-memory_role"] [data-baseweb="select"] [class*="placeholder"],
+.st-key-memory_role [data-baseweb="select"] [class*="placeholder"] {
+  color: rgba(49, 51, 63, 0.4) !important;
+}
 </style>
     """,
     unsafe_allow_html=True,
@@ -337,7 +342,7 @@ with st.sidebar:
         # sets [hidden]; that feedback loop freezes the page when a role is chosen.
         _suppress_empty_multiselect_dropdown()
         grade_bands = st.multiselect(
-            "Grade bands",
+            "Grade(s)",
             options=MEMORY_GRADE_BAND_OPTIONS,
             placeholder="Choose grade(s)",
             key="memory_grade_bands",

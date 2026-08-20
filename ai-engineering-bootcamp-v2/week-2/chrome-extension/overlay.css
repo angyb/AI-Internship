@@ -1232,7 +1232,17 @@
   box-shadow: 0 0 0 3px rgba(28, 199, 230, 0.28);
 }
 
-.zbot-profile-select__control--placeholder {
+/* Match Grade(s) empty-state gray (#8e8e8e). */
+.zbot-profile-select__control--placeholder,
+.zbot-profile-select__control--placeholder:focus {
+  color: #8e8e8e;
+}
+
+.zbot-profile-select__control option {
+  color: var(--zbot-ink);
+}
+
+.zbot-profile-select__control option[value=""] {
   color: #8e8e8e;
 }
 
