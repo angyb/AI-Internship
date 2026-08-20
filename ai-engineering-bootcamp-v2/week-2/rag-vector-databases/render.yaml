@@ -116,3 +116,6 @@ services:
     envVars:
       - key: AGENT_API_URL
         value: https://ai-internship-i3lw.onrender.com
+      # Must match week-2-rag-api AGENT_API_KEY when that gate is enabled.
+      - key: AGENT_API_KEY
+        sync: false

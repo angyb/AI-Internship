@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ask Z-Bot — Zearn Support Agent",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Floating Ask Z-Bot overlay on zearn.org and Zearn staging that answers support questions via the Zearn Support Agent (POST /agent).",
   "icons": {
     "16": "icons/icon16.png",

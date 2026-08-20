@@ -8,6 +8,7 @@ Run against remote API (Render UI service):
     AGENT_API_URL=https://your-rag-api.onrender.com streamlit run zearn_streamlit_app.py
 """
 
+import inspect
 import os
 import uuid
 
@@ -19,6 +20,11 @@ from dotenv import load_dotenv
 from memory_preferences import MEMORY_GRADE_BAND_OPTIONS, MEMORY_ROLE_OPTIONS
 
 load_dotenv()
+
+# filter_mode landed in Streamlit 1.56; older Render installs reject the kwarg.
+_SELECT_FILTER_KW: dict = {}
+if "filter_mode" in inspect.signature(st.selectbox).parameters:
+    _SELECT_FILTER_KW["filter_mode"] = None
 
 # Render UI service uses requirements-streamlit.txt (no google-adk). Always call the API.
 DEFAULT_PRODUCTION_AGENT_API_URL = "https://ai-internship-i3lw.onrender.com"
@@ -324,8 +330,8 @@ with st.sidebar:
             options=MEMORY_ROLE_OPTIONS,
             index=None,
             placeholder="Choose your role",
-            filter_mode=None,
             key="memory_role",
+            **_SELECT_FILTER_KW,
         )
         # Clear (X) is hidden via CSS only — do not use a MutationObserver that
         # sets [hidden]; that feedback loop freezes the page when a role is chosen.
@@ -334,8 +340,8 @@ with st.sidebar:
             "Grade bands",
             options=MEMORY_GRADE_BAND_OPTIONS,
             placeholder="Choose grade(s)",
-            filter_mode=None,
             key="memory_grade_bands",
+            **_SELECT_FILTER_KW,
         )
 
         save_ready = bool(role) and bool(grade_bands)
