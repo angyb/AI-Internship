@@ -702,6 +702,23 @@
   min-height: 16px;
 }
 
+.zbot-ask-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  background: var(--zbot-danger-soft);
+  border: 1px solid var(--zbot-danger-line);
+  color: var(--zbot-danger);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.zbot-ask-error.zbot-hidden {
+  display: none !important;
+}
+
 .zbot-banner {
   margin-top: 12px;
   padding: 10px 12px;

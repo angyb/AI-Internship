@@ -829,17 +829,6 @@ def agent_run(body: AgentRequest) -> AgentResponse:
     except HTTPException:
         raise
     except Exception as exc:
-        # Persist the question (and the error) so the session survives a failure.
-        if db.database_enabled() and body.session_id and body.install_id:
-            try:
-                db.ensure_session(body.session_id, body.install_id)
-                db.add_message(body.session_id, "user", content=body.question)
-                db.add_message(
-                    body.session_id, "assistant", content="", error=redact_secrets(str(exc))
-                )
-                db.update_session(body.session_id, status="error", ended_reason="error")
-            except Exception as persist_exc:
-                logger.warning("Failed to persist errored turn: %s", persist_exc)
         raise HTTPException(status_code=500, detail=safe_error_message(exc, prefix="Agent run failed")) from exc
 
     title, token_count = _persist_agent_turn(body, answer, steps, usage)

@@ -125,6 +125,7 @@
                    id="zbot-panel-ask" aria-labelledby="zbot-tab-ask">
             <div class="zbot-ask-scroll">
               <div class="zbot-thread" data-el="output"></div>
+              <div class="zbot-ask-error zbot-hidden" data-el="ask-error" role="alert"></div>
               <div class="zbot-status" data-el="status"></div>
             </div>
             <div class="zbot-ask-footer">
@@ -521,6 +522,7 @@
         retrievalModeLabel: this.shadow.querySelector('[data-el="retrieval-mode-label"]'),
         ask: this.shadow.querySelector('[data-el="ask"]'),
         status: this.shadow.querySelector('[data-el="status"]'),
+        askError: this.shadow.querySelector('[data-el="ask-error"]'),
         output: this.shadow.querySelector('[data-el="output"]'),
         tao: this.shadow.querySelector('[data-el="tao"]'),
         layout: this.shadow.querySelector('[data-el="layout"]'),
@@ -1374,6 +1376,7 @@
       this.thread.push({ question: question, pending: true, generation: generation });
       this.renderThread();
       this.els.tao.innerHTML = "";
+      this.clearAskError();
       this.setStatus("");
 
       const resp = await sendMessage({
@@ -1399,12 +1402,10 @@
       }
       if (!resp || resp.error) {
         const message = (resp && resp.error) || "Unknown error.";
-        this.completePendingTurn({
-          answer: "",
-          steps: [],
-          error: message,
-        });
-        this.saveCurrentSession();
+        this.removePendingTurn(generation);
+        this.els.question.value = question;
+        this.resizeQuestionInput();
+        this.showAskError(message);
         sendMessage({ type: "reportError", message: message });
         return;
       }
@@ -1425,11 +1426,11 @@
       this.updateContextNote();
     }
 
-    /** Prior completed, non-error turns as [{role, content}] for agent memory. */
+    /** Prior completed turns as [{role, content}] for agent memory. */
     buildHistory() {
       const history = [];
       this.thread.forEach((turn) => {
-        if (turn.pending || !turn.question || turn.error || !turn.answer) return;
+        if (turn.pending || !turn.question || !turn.answer) return;
         history.push({ role: "user", content: turn.question });
         history.push({ role: "assistant", content: turn.answer });
       });
@@ -1455,13 +1456,9 @@
       turn.timingsMs = result.timingsMs || {};
       turn.searchCallCount =
         typeof result.searchCallCount === "number" ? result.searchCallCount : 0;
-      turn.error = result.error || "";
 
       const classified = classifyAnswer(turn.answer, turn.steps);
-      if (turn.error) {
-        turn.banner = "error";
-        turn.bannerText = turn.error;
-      } else if (classified.isWebFallback) {
+      if (classified.isWebFallback) {
         turn.banner = "web";
         turn.bannerText = "Not found in Zearn docs — sourced from the web";
       } else if (classified.isRefusal) {
@@ -1575,15 +1572,8 @@
 
       const body = document.createElement("div");
       body.className = "zbot-thread-bubble__body zbot-answer";
-      if (turn.error) {
-        if (!turn.banner) {
-          body.textContent = "Error: " + turn.error;
-          bubble.appendChild(body);
-        }
-      } else {
-        renderMarkdownInto(body, displayText || CONFIG.REFUSAL_MESSAGE);
-        bubble.appendChild(body);
-      }
+      renderMarkdownInto(body, displayText || CONFIG.REFUSAL_MESSAGE);
+      bubble.appendChild(body);
 
       block.appendChild(label);
       block.appendChild(bubble);
@@ -1650,12 +1640,15 @@
       status.appendChild(document.createTextNode(text));
     }
 
-    renderError(message) {
-      this.completePendingTurn({
-        answer: "",
-        steps: [],
-        error: message,
-      });
+    showAskError(message) {
+      if (!this.els.askError) return;
+      const text = String(message || "").trim();
+      this.els.askError.textContent = text;
+      this.els.askError.classList.toggle("zbot-hidden", !text);
+    }
+
+    clearAskError() {
+      this.showAskError("");
     }
 
     renderTaoEmpty() {
@@ -1792,6 +1785,7 @@
       this.loading = false;
       this.setAskButtonMode("ask");
       this.setStatus("");
+      this.clearAskError();
       this.renderThread();
       this.renderTaoEmpty();
       this.clearCurrentSession();
@@ -1850,12 +1844,11 @@
         tokenCount: this.tokenCount,
         contextLimit: this.contextLimit,
         thread: this.thread
-          .filter((turn) => !turn.pending)
+          .filter((turn) => !turn.pending && turn.answer)
           .map((turn) => ({
             question: turn.question,
             answer: turn.answer || "",
             steps: turn.steps || [],
-            error: turn.error || "",
             banner: turn.banner || "",
             bannerText: turn.bannerText || "",
           })),
@@ -1895,15 +1888,17 @@
           this.sessionTitle = data.title || "";
           this.tokenCount = data.tokenCount || 0;
           if (data.contextLimit) this.contextLimit = data.contextLimit;
-          this.thread = data.thread.map((turn) => ({
-            question: turn.question,
-            answer: turn.answer || "",
-            steps: turn.steps || [],
-            error: turn.error || "",
-            banner: turn.banner || "",
-            bannerText: turn.bannerText || "",
-            pending: false,
-          }));
+          this.thread = data.thread
+            .filter((turn) => turn && turn.answer && !turn.error)
+            .map((turn) => ({
+              question: turn.question,
+              answer: turn.answer || "",
+              steps: turn.steps || [],
+              banner: turn.banner || "",
+              bannerText: turn.bannerText || "",
+              pending: false,
+            }));
+          this.clearAskError();
           this.renderThread();
           this.updateContextNote();
         });
@@ -2097,42 +2092,39 @@
     /** Rebuild Ask thread turns from a saved session's flat message list. */
     threadFromMessages(messages) {
       const turns = [];
-      messages.forEach((message) => {
+      (messages || []).forEach((message) => {
+        if (message.error) {
+          if (turns.length && !turns[turns.length - 1].answer) {
+            turns.pop();
+          }
+          return;
+        }
         const content = message.content || "";
         if (message.role === "user") {
           turns.push({
             question: content,
             answer: "",
             steps: [],
-            error: "",
             banner: "",
             bannerText: "",
             pending: false,
           });
-        } else {
-          let turn = turns[turns.length - 1];
-          if (!turn || turn.answer || turn.error) {
-            turn = {
-              question: "",
-              answer: "",
-              steps: [],
-              error: "",
-              banner: "",
-              bannerText: "",
-              pending: false,
-            };
-            turns.push(turn);
-          }
-          turn.answer = content;
-          turn.steps = message.steps || [];
-          turn.error = message.error || "";
-          if (message.error) {
-            turn.banner = "error";
-            turn.bannerText = message.error;
-          }
+          return;
+        }
+        const turn = turns[turns.length - 1];
+        if (!turn || turn.answer) return;
+        turn.answer = content;
+        turn.steps = message.steps || [];
+        const classified = classifyAnswer(turn.answer, turn.steps);
+        if (classified.isWebFallback) {
+          turn.banner = "web";
+          turn.bannerText = "Not found in Zearn docs — sourced from the web";
+        } else if (classified.isRefusal) {
+          turn.banner = "refusal";
+          turn.bannerText = "Not found in corpus";
         }
       });
-      return turns;
+      return turns.filter((turn) => turn.answer);
     }
 
     continueHistorySession() {
@@ -2147,6 +2139,7 @@
       this.loading = false;
       this.setAskButtonMode("ask");
       this.setStatus("");
+      this.clearAskError();
       this.renderThread();
       this.renderTaoEmpty();
       this.saveCurrentSession();
@@ -2160,19 +2153,9 @@
     renderHistoryTranscript(messages) {
       const container = this.els.historyDetail;
       container.innerHTML = "";
-      messages.forEach((message) => {
-        if (message.role === "user") {
-          container.appendChild(this.buildThreadAskBlock(message.content || ""));
-        } else {
-          container.appendChild(
-            this.buildThreadAnswerBlock({
-              answer: message.content || "",
-              error: message.error || "",
-              banner: message.error ? "error" : "",
-              bannerText: message.error || "",
-            })
-          );
-        }
+      this.threadFromMessages(messages).forEach((turn) => {
+        container.appendChild(this.buildThreadAskBlock(turn.question));
+        container.appendChild(this.buildThreadAnswerBlock(turn));
       });
     }
 
