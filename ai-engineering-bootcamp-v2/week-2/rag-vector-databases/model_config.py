@@ -1,10 +1,12 @@
-"""OpenAI model names and generation settings from .env."""
+"""OpenAI and Gemini model names and generation settings from .env."""
 
 from __future__ import annotations
 
 import os
 
 from env_utils import float_env
+
+DEFAULT_GEMINI_MODEL = "gemini-3.6-flash"
 
 
 def answer_model() -> str:
@@ -35,3 +37,9 @@ def ragas_judge_model() -> str:
 
 def generation_temperature() -> float:
     return float_env("GENERATION_TEMPERATURE", 0.0)
+
+
+def gemini_agent_model() -> str:
+    """Gemini model for ADK zearn_support_agent and google_search sub-agent."""
+    value = os.getenv("GEMINI_MODEL", DEFAULT_GEMINI_MODEL).strip()
+    return value or DEFAULT_GEMINI_MODEL

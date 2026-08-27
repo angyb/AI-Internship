@@ -86,7 +86,7 @@
 - **PDF link labels** include `(PDF)`, e.g. `[Zearn Account Comparison (PDF)](https://drive.google.com/...)`.
 - **Observe steps** still include a `sources` array in JSON (optional raw-step panel); user-facing citations live in `answer`.
 - **`search_zearn_doc`** returns `title`, `source_url`, `document_id` per chunk from Pinecone ([`zearn_faq_bot/tools/search_zearn_doc.py`](zearn_faq_bot/tools/search_zearn_doc.py)).
-- **Agent model:** `GEMINI_MODEL` env (default `gemini-flash-latest`); `MAX_LLM_CALLS=15`.
+- **Agent model:** `GEMINI_MODEL` env (default `gemini-3.6-flash`); `MAX_LLM_CALLS=15`.
 - **No CORS middleware** on FastAPI — service-worker proxy is the path used by the extension (Phase 1 skipped CORS).
 - **Retrieval config (`00f5ad7`):** `RETRIEVAL_FETCH_K=20` (local `.env` + [`render.yaml`](render.yaml)) widens the candidate pool so borderline-relevant chunks surface. Local cross-encoder rerank is **on** (`RERANK_ENABLED=true`) but stays **off on Render** (512MB limit) — so `/agent` answers the extension sees are hybrid-retrieval-only, without local reranking.
 - **Retrieval internals hardened (`00f5ad7`):** cached Pinecone/embeddings clients, thread-locked BM25 index + cross-encoder singleton, a single cross-encoder scoring pass, and batched neighbor fetches. Transparent to the extension — lower `/agent` latency and safe under concurrent requests. **No re-ingest required** (embedding model, chunk size/overlap, and stored metadata are unchanged).

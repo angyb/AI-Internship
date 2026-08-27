@@ -75,7 +75,9 @@ def check_embeddings() -> dict[str, Any]:
 
 
 def _gemini_agent_model() -> str:
-    return os.getenv("GEMINI_MODEL", "gemini-flash-latest").strip() or "gemini-flash-latest"
+    from model_config import gemini_agent_model
+
+    return gemini_agent_model()
 
 
 def _gemini_api_error_message(body: Any) -> str:

@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
+from model_config import gemini_agent_model
+
+MODEL = gemini_agent_model()
 MAX_LLM_CALLS = int(os.getenv("MAX_LLM_CALLS", "25"))
 MAX_SEARCH_ZEARN_DOC_CALLS = int(os.getenv("MAX_SEARCH_ZEARN_DOC_CALLS", "3"))
 # Neighbor merge can combine several ingest chunks (~500 chars each) into one block.

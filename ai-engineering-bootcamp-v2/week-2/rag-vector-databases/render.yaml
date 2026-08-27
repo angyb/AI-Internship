@@ -18,6 +18,8 @@ services:
         sync: false
       - key: GOOGLE_API_KEY
         sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.6-flash
       - key: AGENT_API_KEY
         sync: false
 

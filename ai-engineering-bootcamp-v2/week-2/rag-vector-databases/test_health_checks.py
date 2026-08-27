@@ -37,6 +37,22 @@ def test_check_gemini_missing_key(monkeypatch) -> None:
     assert "GOOGLE_API_KEY is not set" in result["detail"]
 
 
+def test_check_gemini_smoke_uses_default_model(monkeypatch) -> None:
+    monkeypatch.delenv("GEMINI_MODEL", raising=False)
+    monkeypatch.setenv("GOOGLE_API_KEY", "test-google-key")
+
+    def fake_smoke(key: str, model: str) -> tuple[int, dict]:
+        assert key == "test-google-key"
+        assert model == "gemini-3.6-flash"
+        return 200, {"candidates": [{"content": {"parts": [{"text": "ok"}]}}]}
+
+    monkeypatch.setattr("health_checks._gemini_generate_smoke", fake_smoke)
+    monkeypatch.setattr("health_checks._gemini_cache", None)
+    result = check_gemini()
+    assert result["ok"] is True
+    assert "gemini-3.6-flash" in result["detail"]
+
+
 def test_check_gemini_smoke_success(monkeypatch) -> None:
     monkeypatch.setenv("GOOGLE_API_KEY", "test-google-key")
     monkeypatch.setenv("GEMINI_MODEL", "gemini-2.5-flash")

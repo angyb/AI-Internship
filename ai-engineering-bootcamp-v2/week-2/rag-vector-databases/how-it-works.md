@@ -27,7 +27,7 @@ Everything is env-var driven, so behavior differs between **local** (full featur
 | Orchestration | Fixed workflow | Gemini agent chooses tools |
 | Retrieval | Always exactly once | 1+ times, agent-driven |
 | Fallback | None | Google Search sub-agent |
-| Model | OpenAI (`gpt-4o`) | Gemini (`gemini-flash-latest`) |
+| Model | OpenAI (`gpt-4o`) | Gemini (`gemini-3.6-flash`) |
 | Output | Structured answer + chunk_ids + sources | Answer + Think/Act/Observe step log |
 
 ---
