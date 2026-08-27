@@ -21,7 +21,9 @@ zip -r "$ZIP" . \
   -x './**/.DS_Store' \
   -x './store-listing.md' \
   -x './PUBLISH_CHECKLIST.md' \
-  -x './ask-zbot-cloud-handoff.md'
+  -x './ask-zbot-cloud-handoff.md' \
+  -x './README.md' \
+  -x './.gitignore'
 
 echo "Wrote $ZIP"
 unzip -l "$ZIP" | head -40
