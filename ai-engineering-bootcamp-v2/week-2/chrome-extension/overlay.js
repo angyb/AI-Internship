@@ -394,6 +394,22 @@
     });
   }
 
+  function formatAskError(resp) {
+    const message = (resp && resp.error) || "Unknown error.";
+    if (
+      resp &&
+      resp.status === 401 &&
+      String(message).includes("AGENT_API_KEY")
+    ) {
+      return (
+        "The live API is still requiring AGENT_API_KEY (usually an old Render deploy). " +
+        "Remove AGENT_API_KEY in Render → AI-Internship → Environment and redeploy. " +
+        "The extension does not need an API key when auth is off."
+      );
+    }
+    return message;
+  }
+
   function usedWebFallback(steps) {
     return (steps || []).some((step) => {
       const tool = (step && step.tool) || "";
@@ -502,12 +518,24 @@
 
       injectBundledFonts(this.shadow);
 
+      const wrapper = document.createElement("div");
+      // Prevent a flash of unstyled content: the panel markup relies on
+      // .zbot-hidden (and all layout) from overlay.css, which loads async.
+      // Keep the overlay invisible until the stylesheet has applied.
+      wrapper.style.visibility = "hidden";
+
       const link = document.createElement("link");
       link.rel = "stylesheet";
       link.href = chrome.runtime.getURL("overlay.css");
+      const reveal = () => {
+        wrapper.style.visibility = "";
+      };
+      link.addEventListener("load", reveal);
+      link.addEventListener("error", reveal);
+      // Safety net in case the load/error event is missed.
+      setTimeout(reveal, 2000);
       this.shadow.appendChild(link);
 
-      const wrapper = document.createElement("div");
       wrapper.innerHTML = PANEL_HTML;
       this.shadow.appendChild(wrapper);
 
@@ -1405,7 +1433,7 @@
         return;
       }
       if (!resp || resp.error) {
-        const message = (resp && resp.error) || "Unknown error.";
+        const message = formatAskError(resp);
         this.removePendingTurn(generation);
         this.els.question.value = question;
         this.resizeQuestionInput();

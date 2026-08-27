@@ -111,6 +111,23 @@ async function authHeaders() {
   return { headers, settings, installId };
 }
 
+/** True when the API rejected a stored or missing X-API-Key. */
+function isAgentApiKeyAuthError(detail) {
+  const text = String(detail || "");
+  return (
+    text.includes("Invalid or missing API key") &&
+    text.includes("AGENT_API_KEY")
+  );
+}
+
+/** Drop a stale agentApiKey from sync storage (optional gate no longer used). */
+async function clearStoredApiKeyIfSet() {
+  const settings = await loadSettings();
+  if (!settings.apiKey) return false;
+  await saveSettings({ apiKey: "" });
+  return true;
+}
+
 async function fetchWithTimeout(url, options, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort("timeout"), timeoutMs);
@@ -213,6 +230,53 @@ async function handleAsk(msg) {
 
     if (!resp.ok) {
       const detail = await extractDetail(resp);
+      if (
+        resp.status === 401 &&
+        isAgentApiKeyAuthError(detail) &&
+        settings.apiKey &&
+        (await clearStoredApiKeyIfSet())
+      ) {
+        const retry = await authHeaders();
+        const retryResp = await fetchWithTimeout(
+          settings.base + "/agent",
+          {
+            method: "POST",
+            headers: retry.headers,
+            body: JSON.stringify({
+              question,
+              session_id: sessionId,
+              install_id: retry.installId,
+              history,
+              retrieval_mode: retrievalMode,
+            }),
+            signal: entry.controller.signal,
+          },
+          CONFIG.AGENT_TIMEOUT_MS
+        );
+        if (retryResp.ok) {
+          const data = await retryResp.json();
+          return {
+            answer: typeof data.answer === "string" ? data.answer : "",
+            steps: Array.isArray(data.steps) ? data.steps : [],
+            sessionId: data.session_id || sessionId,
+            title: typeof data.title === "string" ? data.title : "",
+            tokenCount:
+              typeof data.token_count === "number" ? data.token_count : 0,
+            contextTokenLimit:
+              typeof data.context_token_limit === "number"
+                ? data.context_token_limit
+                : CONFIG.CONTEXT_TOKEN_LIMIT,
+            timingsMs:
+              data.timings_ms && typeof data.timings_ms === "object"
+                ? data.timings_ms
+                : {},
+            searchCallCount:
+              typeof data.search_call_count === "number"
+                ? data.search_call_count
+                : 0,
+          };
+        }
+      }
       return { error: detail || "HTTP " + resp.status, status: resp.status };
     }
 

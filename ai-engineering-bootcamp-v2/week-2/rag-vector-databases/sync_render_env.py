@@ -35,6 +35,7 @@ DEFAULT_ENV = THIS_DIR / ".env"
 # set on the service in the Render Dashboard (Environment).
 SKIP_KEYS = frozenset(
     {
+        "AGENT_API_KEY",  # auth off on Render unless set manually in Dashboard
         "RAG_API_URL",
         "RENDER_API_KEY",
         "RENDER_SERVICE_ID",
