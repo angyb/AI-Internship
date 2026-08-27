@@ -2,10 +2,11 @@
 """Push local .env variables to a Render web service.
 
 Credentials (local only — never synced to Render):
-  RENDER_API_KEY=rnd_...      # https://dashboard.render.com/u/settings#api-keys
   RENDER_SERVICE_ID=srv_...   # Service → Settings → Service ID
 
-Add both to your local `.env`, or export them in the shell.
+RENDER_API_KEY is read from `.env` to authenticate sync requests and is also
+pushed to the Render service (Health tab usage meters). A full sync preserves
+the remote RENDER_API_KEY if it is missing from the local `.env`.
 
 Usage:
   python sync_render_env.py
@@ -31,16 +32,16 @@ THIS_DIR = Path(__file__).resolve().parent
 DEFAULT_ENV = THIS_DIR / ".env"
 
 # Local-only keys — never push to the Render service.
-# RENDER_API_KEY is skipped here, but production /health usage meters need it
-# set on the service in the Render Dashboard (Environment).
 SKIP_KEYS = frozenset(
     {
         "AGENT_API_KEY",  # auth off on Render unless set manually in Dashboard
         "RAG_API_URL",
-        "RENDER_API_KEY",
         "RENDER_SERVICE_ID",
     }
 )
+
+# If absent from the local sync payload, keep the remote value (PUT replaces all vars).
+PRESERVE_REMOTE_KEYS = frozenset({"RENDER_API_KEY"})
 
 # Full deps (PyTorch + cross-encoder) for paid Render instances with >=1GB RAM.
 FULL_DEPS_BUILD_COMMAND = "pip install --upgrade pip && pip install -r requirements.txt"
@@ -61,6 +62,46 @@ def load_env_pairs(path: Path) -> list[dict[str, str]]:
 def print_bulk_env(pairs: list[dict[str, str]]) -> None:
     for item in pairs:
         print(f"{item['key']}={item['value']}")
+
+
+def fetch_remote_env_vars(service_id: str, api_key: str) -> dict[str, str]:
+    """Return current Render env vars keyed by name."""
+    headers = {"Authorization": f"Bearer {api_key}", "Accept": "application/json"}
+    remote: dict[str, str] = {}
+    cursor: str | None = None
+    while True:
+        params: dict[str, str | int] = {"limit": 100}
+        if cursor:
+            params["cursor"] = cursor
+        response = httpx.get(
+            f"https://api.render.com/v1/services/{service_id}/env-vars",
+            headers=headers,
+            params=params,
+            timeout=60.0,
+        )
+        response.raise_for_status()
+        batch = response.json()
+        if not batch:
+            break
+        for item in batch:
+            ev = item.get("envVar") or item
+            remote[str(ev["key"])] = str(ev.get("value") or "")
+        cursor = batch[-1].get("cursor")
+        if not cursor:
+            break
+    return remote
+
+
+def merge_preserved_remote_keys(
+    pairs: list[dict[str, str]],
+    remote: dict[str, str],
+) -> list[dict[str, str]]:
+    """Keep selected remote-only keys when a full PUT would otherwise drop them."""
+    by_key = {item["key"]: item["value"] for item in pairs}
+    for key in PRESERVE_REMOTE_KEYS:
+        if key not in by_key and remote.get(key):
+            by_key[key] = remote[key]
+    return [{"key": key, "value": by_key[key]} for key in sorted(by_key)]
 
 
 def sync_to_render(
@@ -242,6 +283,8 @@ def main() -> None:
         )
         sys.exit(1)
 
+    remote = fetch_remote_env_vars(service_id, api_key)
+    pairs = merge_preserved_remote_keys(pairs, remote)
     sync_to_render(service_id, api_key, pairs, dry_run=args.dry_run)
     if args.full_deps and not args.dry_run:
         update_service_build(service_id, api_key, FULL_DEPS_BUILD_COMMAND)
