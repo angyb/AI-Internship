@@ -100,6 +100,7 @@ selectors in `overlay.js`.
 | Control | Purpose |
 |---------|---------|
 | Check now | `GET /health` — API liveness, dependency checks, and usage/quota meters |
+| Unlock code | Optional `AGENT_OVERRIDE_CODE` — skips the global 100 asks/day cap |
 | Privacy policy link | On the Ask tab — opens `privacy-policy.html` |
 
 Usage meters come from the API (not the extension). Remaining prepaid credits are not exposed by most vendors:
@@ -122,6 +123,8 @@ Server (`../rag-vector-databases/`):
 | `AGENT_API_KEY` | When set, `/agent` requires matching `X-API-Key` or Bearer token |
 | `AGENT_RATE_LIMIT_ENABLED` | Default `true` |
 | `AGENT_RATE_LIMIT_PER_MINUTE` | Default `20` (keyed by `X-Install-Id` or IP) |
+| `AGENT_DAILY_ASK_LIMIT` | Default `100` asks per UTC day (global). `0` disables. Requires Postgres. |
+| `AGENT_OVERRIDE_CODE` | Shared unlock code. Matching `X-Override-Code` skips the daily cap. Set on Render only. |
 | `TELEMETRY_ENABLED` | Default `false` — enables `POST /telemetry` |
 
 Auth is **off** when `AGENT_API_KEY` is empty (local/dev and current public Render stay usable).

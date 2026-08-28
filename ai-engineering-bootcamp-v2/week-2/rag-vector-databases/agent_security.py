@@ -1,13 +1,15 @@
-"""API key auth, per-install/IP rate limiting, and optional telemetry for POST /agent."""
+"""API key auth, per-install/IP rate limiting, daily ask cap, and optional telemetry."""
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import os
 import secrets
 import threading
 import time
 from collections import defaultdict, deque
+from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, Request
@@ -31,6 +33,15 @@ def rate_limit_enabled() -> bool:
 
 def rate_limit_per_minute() -> int:
     return int_env("AGENT_RATE_LIMIT_PER_MINUTE", 20, minimum=1)
+
+
+def daily_ask_limit() -> int:
+    """Global asks per UTC day for POST /agent and POST /ask. 0 disables the cap."""
+    return int_env("AGENT_DAILY_ASK_LIMIT", 100, minimum=0)
+
+
+def override_code_configured() -> str:
+    return os.getenv("AGENT_OVERRIDE_CODE", "").strip()
 
 
 def telemetry_enabled() -> bool:
@@ -106,6 +117,59 @@ def enforce_agent_rate_limit(
                 ),
             )
         bucket.append(now)
+
+
+def _codes_equal(presented: str, expected: str) -> bool:
+    """Constant-time compare via SHA-256 so unequal lengths cannot 500."""
+    if not presented or not expected:
+        return False
+    left = hashlib.sha256(presented.encode("utf-8")).digest()
+    right = hashlib.sha256(expected.encode("utf-8")).digest()
+    return secrets.compare_digest(left, right)
+
+
+def _utc_day_start() -> datetime:
+    now = datetime.now(timezone.utc)
+    return now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+def override_code_accepted(presented: str | None) -> bool:
+    expected = override_code_configured()
+    if not expected:
+        return False
+    return _codes_equal((presented or "").strip(), expected)
+
+
+def enforce_daily_ask_limit(
+    x_override_code: Annotated[str | None, Header(alias="X-Override-Code")] = None,
+) -> None:
+    """Cap unauthenticated asks per UTC day. A matching AGENT_OVERRIDE_CODE skips the cap."""
+    limit = daily_ask_limit()
+    if limit <= 0:
+        return
+    if override_code_accepted(x_override_code):
+        return
+
+    import db
+
+    if not db.database_enabled():
+        logger.warning(
+            "AGENT_DAILY_ASK_LIMIT=%s but DATABASE_URL is unset — daily cap skipped.",
+            limit,
+        )
+        return
+
+    since = _utc_day_start()
+    used = db.count_asks_since(since)
+    if used >= limit:
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                f"Daily ask limit reached ({limit} questions per day). "
+                "Enter the unlock code in the Health tab to continue, or try again tomorrow."
+            ),
+        )
+    db.record_ask()
 
 
 def require_agent_access(

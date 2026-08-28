@@ -12,6 +12,7 @@
     base: "http://127.0.0.1:8000",
     defaultBase: "http://127.0.0.1:8000",
     apiKey: "",
+    overrideCode: "",
     telemetryOptIn: false,
     layoutMode: "panel",
     agentTimeoutMs: 120000,
@@ -63,6 +64,9 @@
           }
           if (Object.prototype.hasOwnProperty.call(msg, "apiKey")) {
             settings.apiKey = String(msg.apiKey || "");
+          }
+          if (Object.prototype.hasOwnProperty.call(msg, "overrideCode")) {
+            settings.overrideCode = String(msg.overrideCode || "");
           }
           if (Object.prototype.hasOwnProperty.call(msg, "telemetryOptIn")) {
             settings.telemetryOptIn = Boolean(msg.telemetryOptIn);

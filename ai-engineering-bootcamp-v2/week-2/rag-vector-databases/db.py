@@ -9,6 +9,7 @@ Schema:
   sessions(id, install_id, title, token_count, status, ended_reason, created_at, updated_at)
   messages(id, session_id, role, content, steps, error, prompt_tokens, total_tokens, created_at)
   user_memory(install_id, role, grade_band, created_at, updated_at)
+  agent_asks(id, created_at)
   bm25_chunks(chunk_id, document_id, chunk_index, source, title, source_url, text)
 
 Sessions are scoped by ``install_id`` (the extension's anonymous per-install
@@ -33,6 +34,7 @@ from sqlalchemy import (
     Text,
     create_engine,
     delete,
+    func,
     select,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -219,6 +221,38 @@ class Bm25Chunk(Base):
     title: Mapped[str] = mapped_column(Text, default="")
     source_url: Mapped[str] = mapped_column(Text, default="")
     text: Mapped[str] = mapped_column(Text, default="")
+
+
+class AgentAsk(Base):
+    """One row per public /agent or /ask that counted toward the daily cap."""
+
+    __tablename__ = "agent_asks"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        index=True,
+    )
+
+
+def count_asks_since(since: datetime) -> int:
+    """How many capped asks have been recorded on/after ``since``."""
+    if not database_enabled():
+        return 0
+    with _session_scope() as session:
+        n = session.scalar(
+            select(func.count()).select_from(AgentAsk).where(AgentAsk.created_at >= since)
+        )
+    return int(n or 0)
+
+
+def record_ask() -> None:
+    """Count one ask toward the global daily cap. No-op without DATABASE_URL."""
+    if not database_enabled():
+        return
+    with _session_scope() as session:
+        session.add(AgentAsk())
 
 
 def init_db() -> None:

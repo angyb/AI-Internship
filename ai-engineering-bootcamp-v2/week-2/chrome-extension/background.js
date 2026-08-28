@@ -57,6 +57,7 @@ async function loadSettings() {
     CONFIG.STORAGE_KEY,
     CONFIG.API_KEY_STORAGE_KEY,
     CONFIG.TELEMETRY_STORAGE_KEY,
+    CONFIG.OVERRIDE_CODE_STORAGE_KEY,
     CONFIG.LAYOUT_STORAGE_KEY,
     CONFIG.RETRIEVAL_MODE_STORAGE_KEY,
   ]);
@@ -65,6 +66,7 @@ async function loadSettings() {
     defaultBase: CONFIG.DEFAULT_AGENT_API_URL,
     apiKey: (sync[CONFIG.API_KEY_STORAGE_KEY] || "").trim(),
     telemetryOptIn: Boolean(sync[CONFIG.TELEMETRY_STORAGE_KEY]),
+    overrideCode: (sync[CONFIG.OVERRIDE_CODE_STORAGE_KEY] || "").trim(),
     layoutMode: normalizeLayoutMode(sync[CONFIG.LAYOUT_STORAGE_KEY]),
     retrievalMode: normalizeRetrievalMode(sync[CONFIG.RETRIEVAL_MODE_STORAGE_KEY]),
     agentTimeoutMs: CONFIG.AGENT_TIMEOUT_MS,
@@ -81,6 +83,11 @@ async function saveSettings(partial) {
   }
   if (Object.prototype.hasOwnProperty.call(partial, "apiKey")) {
     toSync[CONFIG.API_KEY_STORAGE_KEY] = String(partial.apiKey || "").trim();
+  }
+  if (Object.prototype.hasOwnProperty.call(partial, "overrideCode")) {
+    toSync[CONFIG.OVERRIDE_CODE_STORAGE_KEY] = String(
+      partial.overrideCode || ""
+    ).trim();
   }
   if (Object.prototype.hasOwnProperty.call(partial, "telemetryOptIn")) {
     toSync[CONFIG.TELEMETRY_STORAGE_KEY] = Boolean(partial.telemetryOptIn);
@@ -108,6 +115,9 @@ async function authHeaders() {
   };
   if (settings.apiKey) {
     headers["X-API-Key"] = settings.apiKey;
+  }
+  if (settings.overrideCode) {
+    headers["X-Override-Code"] = settings.overrideCode;
   }
   return { headers, settings, installId };
 }

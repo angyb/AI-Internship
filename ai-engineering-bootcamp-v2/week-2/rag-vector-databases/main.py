@@ -16,6 +16,7 @@ from openai import APIError, OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
 from agent_security import (
+    enforce_daily_ask_limit,
     record_telemetry_event,
     require_agent_access,
     telemetry_enabled,
@@ -780,12 +781,17 @@ def _persist_agent_turn(
         return None, usage.get("total_tokens", 0)
 
 
-@app.post("/agent", dependencies=[Depends(require_agent_access)])
+@app.post(
+    "/agent",
+    dependencies=[Depends(require_agent_access), Depends(enforce_daily_ask_limit)],
+)
 def agent_run(body: AgentRequest) -> AgentResponse:
     """Run the Zearn ADK support agent (search_zearn_doc + google_search_agent fallback).
 
     When ``AGENT_API_KEY`` is set, require matching ``X-API-Key`` / Bearer token.
-    Rate-limited per ``X-Install-Id`` (preferred) or client IP.
+    Rate-limited per ``X-Install-Id`` (preferred) or client IP. A global daily
+    ask cap (``AGENT_DAILY_ASK_LIMIT``, default 100) applies unless
+    ``X-Override-Code`` matches ``AGENT_OVERRIDE_CODE``.
 
     Conversational: pass ``history`` (prior turns) to give the agent memory, plus
     ``session_id`` + ``install_id`` to persist the chat for the History tab.
@@ -1177,7 +1183,7 @@ def call_model_unsafe(prompt: str, model: str) -> tuple[Answer, int, int, int]:
     return answer, total, prompt_tokens, completion_tokens
 
 
-@app.post("/ask")
+@app.post("/ask", dependencies=[Depends(enforce_daily_ask_limit)])
 def ask(body: AskRequest) -> AskResponse:
     """Retrieve context from Pinecone, then answer with structured output."""
 

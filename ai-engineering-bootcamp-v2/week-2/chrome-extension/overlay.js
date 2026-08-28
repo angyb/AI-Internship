@@ -269,6 +269,21 @@
           <section class="zbot-tabpanel zbot-hidden" role="tabpanel" data-tabpanel="health"
                    id="zbot-panel-health" aria-labelledby="zbot-tab-health">
             <div class="zbot-settings__section">
+              <div class="zbot-settings__label">Unlock code</div>
+              <p class="zbot-settings__hint">
+                Everyone shares 100 asks per day. If you have the code, enter it
+                to keep asking after the public limit.
+              </p>
+              <div class="zbot-settings__row">
+                <input class="zbot-input" data-el="override-code" type="password"
+                       autocomplete="off" placeholder="Optional unlock code" />
+                <button class="zbot-btn zbot-btn--ghost" data-el="override-save" type="button">
+                  Save
+                </button>
+              </div>
+              <div class="zbot-status" data-el="override-status"></div>
+            </div>
+            <div class="zbot-settings__section">
               <div class="zbot-settings__label">API</div>
               <div class="zbot-settings__row zbot-settings__row--actions">
                 <span class="zbot-health" data-el="health">Not checked yet</span>
@@ -405,6 +420,16 @@
         "The live API is still requiring AGENT_API_KEY (usually an old Render deploy). " +
         "Remove AGENT_API_KEY in Render → AI-Internship → Environment and redeploy. " +
         "The extension does not need an API key when auth is off."
+      );
+    }
+    if (
+      resp &&
+      resp.status === 429 &&
+      String(message).toLowerCase().indexOf("daily ask limit") !== -1
+    ) {
+      return (
+        "Daily ask limit reached (100 questions today). " +
+        "If you have an unlock code, open the Health tab, enter it, and Save."
       );
     }
     return message;
@@ -562,6 +587,9 @@
         healthCheck: this.shadow.querySelector('[data-el="health-check"]'),
         healthChecks: this.shadow.querySelector('[data-el="health-checks"]'),
         healthUsage: this.shadow.querySelector('[data-el="health-usage"]'),
+        overrideCode: this.shadow.querySelector('[data-el="override-code"]'),
+        overrideSave: this.shadow.querySelector('[data-el="override-save"]'),
+        overrideStatus: this.shadow.querySelector('[data-el="override-status"]'),
         traceRun: this.shadow.querySelector('[data-el="trace-run"]'),
         traceStatus: this.shadow.querySelector('[data-el="trace-status"]'),
         traceOutput: this.shadow.querySelector('[data-el="trace-output"]'),
@@ -623,6 +651,17 @@
         }
       });
       this.els.healthCheck.addEventListener("click", () => this.checkHealth(true));
+      if (this.els.overrideSave) {
+        this.els.overrideSave.addEventListener("click", () => this.saveOverrideCode());
+      }
+      if (this.els.overrideCode) {
+        this.els.overrideCode.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            this.saveOverrideCode();
+          }
+        });
+      }
       this.els.traceRun.addEventListener("click", () => this.runTraceChecks());
       this.els.newChat.addEventListener("click", () => this.startNewChat());
       if (this.els.profileRole) {
@@ -2247,9 +2286,23 @@
       this.loadHistory();
     }
 
+    async saveOverrideCode() {
+      if (!this.els.overrideCode) return;
+      const code = String(this.els.overrideCode.value || "").trim();
+      await sendMessage({ type: "saveSettings", overrideCode: code });
+      if (this.els.overrideStatus) {
+        this.els.overrideStatus.textContent = code
+          ? "Unlock code saved on this browser."
+          : "Unlock code cleared.";
+      }
+    }
+
     async loadSettings() {
       const resp = await sendMessage({ type: "getSettings" });
       if (resp && resp.defaultBase) this.defaultBase = resp.defaultBase;
+      if (resp && this.els.overrideCode && resp.overrideCode) {
+        this.els.overrideCode.value = resp.overrideCode;
+      }
       if (resp && resp.layoutMode && resp.layoutMode !== this.layoutMode) {
         this.layoutMode = resp.layoutMode;
         this.applyLayout();

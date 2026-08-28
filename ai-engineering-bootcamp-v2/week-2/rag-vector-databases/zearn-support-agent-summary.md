@@ -138,6 +138,8 @@ Both use `rootDir: ai-engineering-bootcamp-v2/week-2/rag-vector-databases` (`ren
 |----------|---------|
 | `GOOGLE_API_KEY` | ADK agent + Google Search sub-agent |
 | `GEMINI_MODEL` | Agent model (default `gemini-3.6-flash`) |
+| `AGENT_DAILY_ASK_LIMIT` | Global asks per UTC day (default `100`; `0` disables) |
+| `AGENT_OVERRIDE_CODE` | Unlock code; send as `X-Override-Code` to skip the daily cap |
 | `OPENAI_API_KEY` | Embeddings + `/ask` generation |
 | `PINECONE_*` | Vector index |
 | `AGENT_API_URL` | Streamlit remote mode (UI service) |

@@ -22,6 +22,10 @@ services:
         value: gemini-3.6-flash
       - key: AGENT_API_KEY
         sync: false
+      - key: AGENT_OVERRIDE_CODE
+        sync: false
+      - key: AGENT_DAILY_ASK_LIMIT
+        value: "100"
 
       # Agent hardening (Phase 3)
       - key: AGENT_RATE_LIMIT_ENABLED

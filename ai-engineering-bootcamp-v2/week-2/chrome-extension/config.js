@@ -12,6 +12,7 @@
     STORAGE_KEY: "agentApiUrl",
     API_KEY_STORAGE_KEY: "agentApiKey",
     TELEMETRY_STORAGE_KEY: "telemetryOptIn",
+    OVERRIDE_CODE_STORAGE_KEY: "overrideCode",
     INSTALL_ID_STORAGE_KEY: "installId",
     LAYOUT_STORAGE_KEY: "layoutMode",
     RETRIEVAL_MODE_STORAGE_KEY: "retrievalMode",

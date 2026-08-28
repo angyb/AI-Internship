@@ -134,6 +134,9 @@ def api_headers() -> dict[str, str]:
     api_key = os.getenv("AGENT_API_KEY", "").strip()
     if api_key:
         headers["X-API-Key"] = api_key
+    override = str(st.session_state.get("override_code") or "").strip()
+    if override:
+        headers["X-Override-Code"] = override
     return headers
 
 
@@ -341,6 +344,16 @@ with st.sidebar:
             st.caption(
                 "Start: `uvicorn main:app --host 127.0.0.1 --port 8000` in this folder"
             )
+
+    st.divider()
+    st.subheader("Daily ask limit")
+    st.caption("Public traffic shares 100 asks per UTC day. Unlock code skips the cap.")
+    st.text_input(
+        "Unlock code",
+        type="password",
+        key="override_code",
+        placeholder="Optional — same as AGENT_OVERRIDE_CODE",
+    )
 
     if REMOTE_MODE:
         st.divider()
