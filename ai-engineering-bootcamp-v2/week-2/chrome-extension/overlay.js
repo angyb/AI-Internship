@@ -486,6 +486,7 @@
       this.shadow = null;
       this.els = {};
       this.wakeTriggered = false;
+      this.healthUsageLoaded = false;
       this.loading = false;
       this.expanded = false;
       this.defaultBase = CONFIG.DEFAULT_AGENT_API_URL;
@@ -839,6 +840,9 @@
       } else {
         this.closeHistoryMenu();
       }
+      if (id === "health" && !this.healthUsageLoaded) {
+        this.checkHealth(false);
+      }
       if (id === "profile") {
         this.loadMemory();
       } else {
@@ -880,7 +884,7 @@
       this.setStatus("Waking up the API…", true);
       this.setHealthPending();
       const resp = await sendMessage({ type: "wake" });
-      this.applyHealthResult(resp);
+      this.applyHealthResult(resp, { updateUsage: false });
       if (this.loading) return;
       if (resp && resp.ok) {
         const pinecone =
@@ -896,10 +900,10 @@
         );
     }
 
-    async checkHealth(fromSettings) {
-      if (fromSettings) this.setHealthPending();
-      const resp = await sendMessage({ type: "wake" });
-      this.applyHealthResult(resp);
+    async checkHealth(force) {
+      if (force) this.setHealthPending();
+      const resp = await sendMessage({ type: "healthCheck", force: Boolean(force) });
+      this.applyHealthResult(resp, { updateUsage: true });
       return resp;
     }
 
@@ -910,7 +914,8 @@
       this.renderHealthUsage(null, "Checking…");
     }
 
-    applyHealthResult(resp) {
+    applyHealthResult(resp, options) {
+      const updateUsage = !options || options.updateUsage !== false;
       if (resp && resp.ok) {
         const health = (resp && resp.health) || {};
         const checks = health.checks || {};
@@ -937,10 +942,13 @@
           checks,
           "This API build does not report dependency checks yet. Redeploy week-2-rag-api."
         );
-        this.renderHealthUsage(
-          usage,
-          "This API build does not report usage yet. Redeploy week-2-rag-api."
-        );
+        if (updateUsage && Object.keys(usage).length) {
+          this.healthUsageLoaded = true;
+          this.renderHealthUsage(
+            usage,
+            "This API build does not report usage yet. Redeploy week-2-rag-api."
+          );
+        }
       } else {
         this.els.health.className = "zbot-health zbot-health--bad";
         const detail =

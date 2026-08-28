@@ -16,7 +16,8 @@ from urllib.parse import quote
 from env_utils import float_env
 from secret_redaction import read_env_secret, redact_secrets, safe_error_message
 
-_USAGE_CACHE_TTL_S = 60.0
+def _usage_cache_ttl_s() -> float:
+    return float_env("USAGE_CACHE_TTL_S", 300.0, minimum=30.0)
 _HTTP_TIMEOUT_S = 8.0
 _usage_cache: tuple[float, dict[str, Any]] | None = None
 
@@ -582,7 +583,8 @@ def collect_usage(*, force: bool = False) -> dict[str, Any]:
     """Fetch vendor usage in parallel. Cached briefly; never raises."""
     global _usage_cache
     now = time.monotonic()
-    if not force and _usage_cache and now - _usage_cache[0] < _USAGE_CACHE_TTL_S:
+    ttl = _usage_cache_ttl_s()
+    if not force and _usage_cache and now - _usage_cache[0] < ttl:
         return _usage_cache[1]
 
     usage: dict[str, Any] = {}

@@ -443,16 +443,19 @@ class EvalAgentResponse(BaseModel):
 
 
 @app.get("/health")
-def health() -> dict[str, Any]:
-    """Liveness plus dependency checks and vendor usage snapshots.
+def health(usage: bool = True) -> dict[str, Any]:
+    """Liveness plus dependency checks and optional vendor usage snapshots.
 
     Always HTTP 200 when this process is up. ``status`` is ``ok`` or ``degraded``
     so the extension Health tab can show per-check errors (e.g. Pinecone egress)
     and remaining-quota meters for Render / Pinecone / OpenAI / Gemini.
+
+    Pass ``usage=false`` (or ``usage=0``) for a lightweight wake probe that skips
+    vendor billing/usage API calls.
     """
     from health_checks import collect_health
 
-    return collect_health()
+    return collect_health(include_usage=usage)
 
 
 @app.post("/ingest")

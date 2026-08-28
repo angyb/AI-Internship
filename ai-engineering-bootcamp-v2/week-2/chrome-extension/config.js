@@ -32,6 +32,8 @@
     // (multi-step retrieval + optional Google fallback) can be slow.
     AGENT_TIMEOUT_MS: 120000,
     HEALTH_TIMEOUT_MS: 60000,
+    // Full /health (with vendor usage meters) — cached in the service worker.
+    HEALTH_USAGE_CACHE_MS: 5 * 60 * 1000,
 
     // Extension version — keep in sync with manifest.json
     EXTENSION_VERSION: "1.1.1",

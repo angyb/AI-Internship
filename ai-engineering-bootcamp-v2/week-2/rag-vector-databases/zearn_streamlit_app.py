@@ -10,6 +10,7 @@ Run against remote API (Render UI service):
 
 import inspect
 import os
+import time
 import uuid
 
 import httpx
@@ -35,6 +36,7 @@ if not AGENT_API_URL and os.getenv("RENDER"):
 
 REMOTE_MODE = bool(AGENT_API_URL)
 HEALTH_TIMEOUT = float(os.getenv("API_HEALTH_TIMEOUT", "60"))
+HEALTH_CACHE_TTL_S = float(os.getenv("API_HEALTH_CACHE_TTL_S", "300"))
 AGENT_TIMEOUT = float(os.getenv("API_AGENT_TIMEOUT", "120"))
 LOCAL_API_URL = os.getenv("RAG_API_URL", "http://127.0.0.1:8000").rstrip("/")
 
@@ -93,15 +95,38 @@ if "hide_enter_hint" not in st.session_state:
     st.session_state.hide_enter_hint = False
 
 
-def check_api_health(base_url: str, timeout: float = HEALTH_TIMEOUT) -> tuple[bool, str]:
+def check_api_health(
+    base_url: str, timeout: float = HEALTH_TIMEOUT, *, include_usage: bool = False
+) -> tuple[bool, str]:
     try:
+        params = "" if include_usage else "?usage=0"
         with httpx.Client(timeout=timeout) as client:
-            response = client.get(f"{base_url.rstrip('/')}/health")
+            response = client.get(f"{base_url.rstrip('/')}/health{params}")
             if response.status_code == 200:
                 return True, response.text
             return False, f"HTTP {response.status_code}"
     except httpx.RequestError as exc:
         return False, str(exc)
+
+
+def cached_api_health(base_url: str) -> tuple[bool, str]:
+    """Reachability probe — cached in session state to avoid Streamlit rerun spam."""
+    cache = st.session_state.get("api_health_cache")
+    now = time.monotonic()
+    if (
+        cache
+        and cache.get("base") == base_url
+        and now - float(cache.get("at") or 0) < HEALTH_CACHE_TTL_S
+    ):
+        return bool(cache.get("ok")), str(cache.get("detail") or "")
+    healthy, detail = check_api_health(base_url)
+    st.session_state.api_health_cache = {
+        "at": now,
+        "base": base_url,
+        "ok": healthy,
+        "detail": detail,
+    }
+    return healthy, detail
 
 
 def api_headers() -> dict[str, str]:
@@ -300,9 +325,9 @@ with st.sidebar:
         with st.spinner(
             "Checking API… first visit may take up to a minute while the service wakes up."
         ):
-            healthy, detail = check_api_health(RAG_API_URL)
+            healthy, detail = cached_api_health(RAG_API_URL)
     else:
-        healthy, detail = check_api_health(RAG_API_URL)
+        healthy, detail = cached_api_health(RAG_API_URL)
     if healthy:
         st.success("API reachable")
     else:

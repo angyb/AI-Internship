@@ -6,7 +6,8 @@
  * NOT an OpenAI/Google user secret; it is an optional gate for POST /agent.
  *
  * Messages:
- *   - { type: "wake" } -> GET /health
+ *   - { type: "wake" } -> GET /health?usage=0 (lite wake, no vendor usage APIs)
+ *   - { type: "healthCheck", force?: boolean } -> GET /health (cached; force refreshes)
  *   - { type: "ask", question } -> POST /agent
  *   - { type: "cancelAsk" } -> abort in-flight /agent request
  *   - { type: "getSettings" } / { type: "saveSettings", ... }
@@ -177,7 +178,44 @@ async function extractDetail(response) {
 
 async function handleWake() {
   const { headers, settings } = await authHeaders();
-  // Health is unauthenticated; still send install id for consistency.
+  // Lite health: dependency checks only — skips OpenAI/Render billing API calls.
+  try {
+    const resp = await fetchWithTimeout(
+      settings.base + "/health?usage=0",
+      { method: "GET", headers: { "X-Install-Id": headers["X-Install-Id"] } },
+      CONFIG.HEALTH_TIMEOUT_MS
+    );
+    let health = null;
+    try {
+      health = await resp.json();
+    } catch (_e) {
+      health = null;
+    }
+    return { ok: resp.ok, status: resp.status, base: settings.base, health };
+  } catch (e) {
+    const timedOut = e && e.name === "AbortError";
+    return {
+      ok: false,
+      base: settings.base,
+      error: timedOut ? "Health check timed out" : String(e),
+    };
+  }
+}
+
+let healthUsageCache = { at: 0, result: null };
+
+async function handleHealthCheck(force) {
+  const now = Date.now();
+  const ttl = CONFIG.HEALTH_USAGE_CACHE_MS || 300000;
+  if (
+    !force &&
+    healthUsageCache.result &&
+    now - healthUsageCache.at < ttl
+  ) {
+    return healthUsageCache.result;
+  }
+
+  const { headers, settings } = await authHeaders();
   try {
     const resp = await fetchWithTimeout(
       settings.base + "/health",
@@ -190,7 +228,17 @@ async function handleWake() {
     } catch (_e) {
       health = null;
     }
-    return { ok: resp.ok, status: resp.status, base: settings.base, health };
+    const result = {
+      ok: resp.ok,
+      status: resp.status,
+      base: settings.base,
+      health,
+      cached: false,
+    };
+    if (resp.ok) {
+      healthUsageCache = { at: now, result: Object.assign({}, result, { cached: true }) };
+    }
+    return result;
   } catch (e) {
     const timedOut = e && e.name === "AbortError";
     return {
@@ -637,6 +685,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
   if (msg.type === "wake") {
     handleWake().then(sendResponse);
+    return true;
+  }
+  if (msg.type === "healthCheck") {
+    handleHealthCheck(Boolean(msg && msg.force)).then(sendResponse);
     return true;
   }
   if (msg.type === "evalAgent") {

@@ -199,10 +199,8 @@ _CHECKS: tuple[tuple[str, Callable[[], dict[str, Any]]], ...] = (
 )
 
 
-def collect_health() -> dict[str, Any]:
-    """Return API liveness plus per-dependency checks. Always safe to serialize."""
-    from usage_checks import collect_usage, usage_level
-
+def collect_health(*, include_usage: bool = True) -> dict[str, Any]:
+    """Return API liveness plus dependency checks. Usage is optional (vendor API calls)."""
     checks: dict[str, Any] = {}
     all_ok = True
     for name, fn in _CHECKS:
@@ -210,16 +208,18 @@ def collect_health() -> dict[str, Any]:
         checks[name] = result
         if not result.get("ok"):
             all_ok = False
-    usage = collect_usage()
-    level = usage_level(usage)
-    status = "ok" if all_ok else "degraded"
-    if all_ok and level == "over":
-        status = "degraded"
-    return sanitize_for_client(
-        {
-            "status": status,
-            "usage_level": level,
-            "checks": checks,
-            "usage": usage,
-        }
-    )
+
+    payload: dict[str, Any] = {
+        "status": "ok" if all_ok else "degraded",
+        "checks": checks,
+    }
+    if include_usage:
+        from usage_checks import collect_usage, usage_level
+
+        usage = collect_usage()
+        level = usage_level(usage)
+        if all_ok and level == "over":
+            payload["status"] = "degraded"
+        payload["usage_level"] = level
+        payload["usage"] = usage
+    return sanitize_for_client(payload)

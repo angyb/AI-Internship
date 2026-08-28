@@ -76,11 +76,12 @@
           return;
         }
 
-        if (msg.type === "wake") {
+        if (msg.type === "wake" || msg.type === "healthCheck") {
           respond(cb, {
             ok: true,
             status: 200,
             base: settings.base,
+            cached: msg.type === "healthCheck" && !msg.force,
             health: {
               status: "ok",
               checks: {

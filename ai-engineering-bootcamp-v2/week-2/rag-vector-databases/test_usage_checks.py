@@ -104,10 +104,11 @@ def test_health_payload_is_sanitized(monkeypatch) -> None:
 
     from health_checks import collect_health
 
-    payload = collect_health()
+    payload = collect_health(include_usage=False)
     dumped = str(payload)
     assert "pcsk_leak" not in dumped
     assert "sk-admin-test" not in dumped
+    assert "usage" not in payload
 
 
 def test_openai_missing_admin_scope(monkeypatch) -> None:
