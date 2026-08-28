@@ -1,4 +1,4 @@
-"""Ingest documents/data/zearn_lessons.csv — one Pinecone document per grade.
+"""Ingest documents/data/zearn_lessons.csv — one Pinecone document per grade + mission.
 
 Usage:
   cd ai-engineering-bootcamp-v2/week-2/rag-vector-databases
@@ -22,7 +22,7 @@ from ingest import ZEARN_LESSONS_CSV, ingest_zearn_lessons_csv
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Ingest zearn_lessons.csv into Pinecone (one document_id per grade)."
+        description="Ingest zearn_lessons.csv into Pinecone (one document_id per grade + mission)."
     )
     parser.add_argument(
         "--path",
@@ -45,7 +45,7 @@ def main() -> None:
         sys.exit(1)
 
     total_chunks = sum(r.chunks_indexed for r in results)
-    print(f"Grades ingested: {len(results)}")
+    print(f"Missions ingested: {len(results)}")
     print(f"Total chunks indexed: {total_chunks}")
     for result in results:
         print(f"  {result.document_id}: {result.chunks_indexed} chunks")

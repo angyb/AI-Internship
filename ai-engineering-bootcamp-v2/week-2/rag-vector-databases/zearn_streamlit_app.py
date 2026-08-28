@@ -359,7 +359,7 @@ with st.sidebar:
         "Unlock code",
         type="password",
         key="override_code",
-        placeholder="Optional — same as AGENT_OVERRIDE_CODE",
+        placeholder="Optional unlock code",
     )
 
     if REMOTE_MODE:

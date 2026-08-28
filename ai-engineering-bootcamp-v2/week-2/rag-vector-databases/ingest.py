@@ -380,12 +380,6 @@ def _grade_display_label(grade: str) -> str:
     return f"Grade {g}"
 
 
-def _zearn_lessons_document_id(grade: str) -> str:
-    g = (grade or "").strip()
-    slug = "K" if g.upper() == "K" else g.replace(" ", "_")
-    return f"zearn_lessons_grade_{slug}"
-
-
 def _lesson_row_sort_key(row: dict[str, str]) -> tuple:
     def _int(key: str, default: int = 0) -> int:
         try:
@@ -400,37 +394,59 @@ def _lesson_row_sort_key(row: dict[str, str]) -> tuple:
     )
 
 
-def _format_zearn_lessons_grade(grade: str, rows: list[dict[str, str]]) -> str:
-    """One searchable text block per grade — grouped by mission and topic."""
-    label = _grade_display_label(grade)
+def _zearn_lessons_mission_document_id(grade: str, mission_num: str) -> str:
+    g = (grade or "").strip()
+    grade_slug = "K" if g.upper() == "K" else g.replace(" ", "_")
+    mission_slug = (mission_num or "").strip().replace(" ", "_")
+    return f"zearn_lessons_grade_{grade_slug}_mission_{mission_slug}"
+
+
+def _zearn_lessons_legacy_grade_document_ids() -> list[str]:
+    """Grade-level document_ids from the first ingest strategy (one doc per grade)."""
+    return ["zearn_lessons_grade_K", *[f"zearn_lessons_grade_{g}" for g in range(1, 9)]]
+
+
+def _mission_sort_key(item: tuple[str, str, str]) -> tuple:
+    grade, mission_num, mission_name = item
+    try:
+        mission_int = int((mission_num or "").strip())
+    except ValueError:
+        mission_int = 0
+    return (_grade_sort_key(grade), mission_int, mission_name)
+
+
+def _format_zearn_lessons_mission(
+    grade: str,
+    mission_num: str,
+    mission_name: str,
+    rows: list[dict[str, str]],
+) -> str:
+    """One searchable text block per grade + mission — grouped by topic."""
+    grade_label = _grade_display_label(grade)
     lines = [
-        f"# Zearn Math Digital Lessons — {label}",
+        f"# Zearn Math Digital Lessons — {grade_label}, Mission {mission_num}: {mission_name}",
         "",
-        "Catalog of Zearn independent digital lesson names organized by mission and topic.",
+        f"Catalog of Zearn independent digital lesson names for {grade_label}, Mission {mission_num}.",
         "",
     ]
     sorted_rows = sorted(rows, key=_lesson_row_sort_key)
-    current_mission: tuple[str, str] | None = None
     current_topic: tuple[str, str] | None = None
 
     for row in sorted_rows:
-        mission_num = (row.get("Mission Number") or "").strip()
-        mission_name = (row.get("Mission Name") or "").strip()
         topic_letter = (row.get("Topic Letter") or "").strip()
         topic_name = (row.get("Topic Name") or "").strip()
         lesson_num = (row.get("Lesson Number") or "").strip()
         lesson_name = (row.get("Lesson Name") or "").strip()
 
-        mission_key = (mission_num, mission_name)
-        if mission_key != current_mission:
-            current_mission = mission_key
-            current_topic = None
-            lines.extend(["", f"## Mission {mission_num}: {mission_name}", ""])
-
         topic_key = (topic_letter, topic_name)
         if topic_key != current_topic:
             current_topic = topic_key
-            lines.extend([f"### Topic {topic_letter}: {topic_name}", ""])
+            lines.extend(
+                [
+                    f"### {grade_label}, Mission {mission_num} — Topic {topic_letter}: {topic_name}",
+                    "",
+                ]
+            )
 
         lines.append(f"- Lesson {lesson_num}: {lesson_name}")
 
@@ -438,7 +454,7 @@ def _format_zearn_lessons_grade(grade: str, rows: list[dict[str, str]]) -> str:
 
 
 def _load_zearn_lessons_csv(path: Path) -> list[Document]:
-    """Load zearn_lessons.csv as one Document per grade (chunked downstream)."""
+    """Load zearn_lessons.csv as one Document per grade + mission."""
     if not path.is_file():
         return []
 
@@ -448,10 +464,14 @@ def _load_zearn_lessons_csv(path: Path) -> list[Document]:
             return []
         rows = [row for row in reader if (row.get("Grade") or "").strip()]
 
-    by_grade: dict[str, list[dict[str, str]]] = {}
+    by_mission: dict[tuple[str, str, str], list[dict[str, str]]] = {}
     for row in rows:
         grade = (row.get("Grade") or "").strip()
-        by_grade.setdefault(grade, []).append(row)
+        mission_num = (row.get("Mission Number") or "").strip()
+        mission_name = (row.get("Mission Name") or "").strip()
+        if not mission_num:
+            continue
+        by_mission.setdefault((grade, mission_num, mission_name), []).append(row)
 
     try:
         source = str(path.relative_to(DOCS_DIR))
@@ -459,10 +479,11 @@ def _load_zearn_lessons_csv(path: Path) -> list[Document]:
         source = str(path)
 
     documents: list[Document] = []
-    for grade in sorted(by_grade, key=_grade_sort_key):
-        doc_id = _zearn_lessons_document_id(grade)
-        title = f"Zearn Math Digital Lessons — {_grade_display_label(grade)}"
-        text = _format_zearn_lessons_grade(grade, by_grade[grade])
+    for grade, mission_num, mission_name in sorted(by_mission, key=_mission_sort_key):
+        doc_id = _zearn_lessons_mission_document_id(grade, mission_num)
+        grade_label = _grade_display_label(grade)
+        title = f"Zearn Math Digital Lessons — {grade_label}, Mission {mission_num}: {mission_name}"
+        text = _format_zearn_lessons_mission(grade, mission_num, mission_name, by_mission[(grade, mission_num, mission_name)])
         documents.append(
             Document(
                 page_content=text,
@@ -471,10 +492,39 @@ def _load_zearn_lessons_csv(path: Path) -> list[Document]:
                     "source": source,
                     "title": title,
                     "grade": grade,
+                    "mission_number": mission_num,
+                    "mission_name": mission_name,
                 },
             )
         )
     return documents
+
+
+_ZEARN_LESSON_CATALOG_QUERY_RE = re.compile(
+    r"\b(?:lesson|lessons|lesson names|names of the lessons)\b",
+    re.IGNORECASE,
+)
+
+
+def zearn_lessons_catalog_document_id_from_query(question: str) -> str | None:
+    """Return a zearn_lessons grade+mission document_id for lesson-catalog questions."""
+    q = (question or "").strip()
+    if not q or not _ZEARN_LESSON_CATALOG_QUERY_RE.search(q):
+        return None
+
+    grade: str | None = None
+    grade_match = re.search(r"\bgrade\s*(K|[1-8])\b", q, re.IGNORECASE)
+    if grade_match:
+        token = grade_match.group(1)
+        grade = "K" if token.upper() == "K" else token
+    elif re.search(r"\bkindergarten\b", q, re.IGNORECASE):
+        grade = "K"
+
+    mission_match = re.search(r"\bmission\s*(\d+)\b", q, re.IGNORECASE)
+    if not grade or not mission_match:
+        return None
+
+    return _zearn_lessons_mission_document_id(grade, mission_match.group(1))
 
 
 def _load_document_file(path: Path) -> list[Document]:
@@ -798,13 +848,16 @@ def ingest_zearn_lessons_csv(
     chunk_size: int | None = None,
     chunk_overlap: int | None = None,
 ) -> list[IngestResult]:
-    """Ingest zearn_lessons.csv — one document_id per grade, without clearing the index."""
+    """Ingest zearn_lessons.csv — one document_id per grade + mission, without clearing the index."""
     csv_path = Path(path or ZEARN_LESSONS_CSV).resolve()
     documents = _load_zearn_lessons_csv(csv_path)
     if not documents:
-        raise ValueError(f"No grade documents loaded from {csv_path}")
+        raise ValueError(f"No mission documents loaded from {csv_path}")
 
     chunk_size, chunk_overlap = resolve_chunk_settings(chunk_size, chunk_overlap)
+    for legacy_id in _zearn_lessons_legacy_grade_document_ids():
+        delete_vectors_for_document(legacy_id)
+
     results: list[IngestResult] = []
     for doc in documents:
         doc_id = str(doc.metadata.get("document_id", "")).strip()

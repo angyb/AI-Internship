@@ -2,7 +2,7 @@
 
 Usage:
   python ingest_one.py ../documents/zendesk/md/getting-started-checklist-for-teachers.md
-  python ingest_one.py ../documents/data/zearn_lessons.csv --document-id zearn_lessons_grade_3
+  python ingest_one.py ../documents/data/zearn_lessons.csv --document-id zearn_lessons_grade_2_mission_5
 """
 
 from __future__ import annotations

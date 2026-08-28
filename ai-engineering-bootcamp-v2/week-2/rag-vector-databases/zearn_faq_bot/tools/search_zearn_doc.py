@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from zearn_faq_bot.constants import CHUNK_TEXT_LIMIT, MAX_SEARCH_ZEARN_DOC_CALLS
+from ingest import zearn_lessons_catalog_document_id_from_query
 from secret_redaction import safe_error_message
 
 DOCS_DIR = Path(__file__).resolve().parents[3] / "documents"
@@ -175,6 +176,8 @@ def search_zearn_doc(question: str) -> dict:
     span_name = f"search_zearn_doc_{call_count + 1}"
     role_phrase = _role_search_phrase.get()
     query_used = scope_search_query(question, role_phrase)
+    catalog_doc_id = zearn_lessons_catalog_document_id_from_query(query_used)
+    document_ids = [catalog_doc_id] if catalog_doc_id else None
 
     try:
         from agent_retrieval import retrieval_lite_enabled
@@ -183,7 +186,11 @@ def search_zearn_doc(question: str) -> dict:
 
         lite = retrieval_lite_enabled()
         with timed_span(span_name):
-            chunks, _context, _chunk_ids, _sources = retrieve_context(query_used, lite=lite)
+            chunks, _context, _chunk_ids, _sources = retrieve_context(
+                query_used,
+                lite=lite,
+                document_ids=document_ids,
+            )
     except KeyError as exc:
         return {
             "error": f"Missing required environment variable: {exc.args[0]}",
