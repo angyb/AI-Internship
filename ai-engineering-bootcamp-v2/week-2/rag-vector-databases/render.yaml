@@ -51,7 +51,7 @@ services:
       - key: HYBRID_SEARCH
         value: "true"
       - key: EXCLUDE_DOCUMENT_IDS
-        value: employee_handbook
+        value: ""
       - key: RETRIEVAL_K
         value: "5"
       - key: RETRIEVAL_FETCH_K

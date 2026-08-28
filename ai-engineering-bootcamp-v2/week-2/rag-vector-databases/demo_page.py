@@ -180,8 +180,8 @@ with ingest_tab:
 with ask_tab:
     st.subheader("POST /ask — question with citations")
     st.caption(
-        "General queries search the full corpus except `employee_handbook` "
-        "(set `EXCLUDE_DOCUMENT_IDS` on the API to change). Golden-set eval still targets the handbook."
+        "General queries search the full ingested corpus. "
+        "Set `EXCLUDE_DOCUMENT_IDS` on the API to omit specific document_ids."
     )
     question = st.text_area("Question", value=SAMPLE_QUESTION, height=100)
 

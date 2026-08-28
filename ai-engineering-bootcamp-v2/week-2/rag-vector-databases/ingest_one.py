@@ -1,8 +1,8 @@
 """Ingest a single file into Pinecone without clearing the rest of the index.
 
 Usage:
-  python ingest_one.py ../documents/northwind/employee_handbook.txt
-  python ingest_one.py ../documents/northwind/employee_handbook.txt --document-id employee_handbook
+  python ingest_one.py ../documents/zendesk/md/getting-started-checklist-for-teachers.md
+  python ingest_one.py ../documents/data/zearn_lessons.csv --document-id zearn_lessons_grade_3
 """
 
 from __future__ import annotations

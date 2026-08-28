@@ -206,17 +206,17 @@ Restart uvicorn after changing model env vars.
 
 ## Document scope for general queries
 
-By default, `/ask` and `/retrieve` search the **full ingested corpus except `employee_handbook`**. Golden-set eval uses `expected_document_ids` from `golden_set.json` when set; otherwise it follows the same default exclude.
+By default, `/ask` and `/retrieve` search the **full ingested corpus**. Golden-set eval uses `expected_document_ids` from `golden_set.json` when set.
 
-- **Default exclude:** `EXCLUDE_DOCUMENT_IDS=employee_handbook` (comma-separated for multiple IDs)
-- **Search everything:** pass `"exclude_document_ids": []` in the request body, or set `EXCLUDE_DOCUMENT_IDS=false`
+- **Exclude specific docs:** set `EXCLUDE_DOCUMENT_IDS=doc_a,doc_b` (comma-separated)
+- **Search everything explicitly:** pass `"exclude_document_ids": []` in the request body, or leave `EXCLUDE_DOCUMENT_IDS` unset
 - **Restrict to specific docs:** pass `"document_ids": ["accessibility"]` (include wins over exclude)
 
 Debug side-by-side rankings locally:
 
 ```bash
-python debug_retrieve.py "director approval fully remote"
-python debug_retrieve.py --dense-only "director approval fully remote"
+python debug_retrieve.py "How do I add students to my class?"
+python debug_retrieve.py --dense-only "How do I add students to my class?"
 ```
 
 ## Streamlit demo UIs

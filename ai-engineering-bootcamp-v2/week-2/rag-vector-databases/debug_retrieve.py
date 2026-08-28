@@ -3,7 +3,7 @@
 Shows dense, BM25, and hybrid (RRF) rankings side-by-side.
 
 Usage:
-  python debug_retrieve.py "director approval fully remote"
+  python debug_retrieve.py "How do I add students to my class?"
   python debug_retrieve.py --dense-only "How do I add students to my class?"
   python debug_retrieve.py   # uses a default sample question
 """

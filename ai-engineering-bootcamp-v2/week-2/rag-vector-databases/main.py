@@ -170,7 +170,7 @@ class AskRequest(BaseModel):
         default=None,
         description=(
             "Omit these document_id values from retrieval. "
-            "Omit this field to use EXCLUDE_DOCUMENT_IDS env (default: employee_handbook). "
+            "Omit this field to use EXCLUDE_DOCUMENT_IDS env (empty by default). "
             "Pass [] to search the full index."
         ),
     )
@@ -225,7 +225,7 @@ class RetrieveRequest(BaseModel):
         default=None,
         description=(
             "Omit these document_id values from retrieval. "
-            "Omit this field to use EXCLUDE_DOCUMENT_IDS env (default: employee_handbook). "
+            "Omit this field to use EXCLUDE_DOCUMENT_IDS env (empty by default). "
             "Pass [] to search the full index."
         ),
     )

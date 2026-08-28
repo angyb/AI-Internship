@@ -106,8 +106,7 @@ from `ingest.py`, `bm25_index.py`, and `rerank.py`.
 Result: `(chunks, formatted_context, chunk_ids, sources)`.
 
 **Document scoping** (`resolve_retrieval_filters`): an explicit include list wins;
-otherwise apply `EXCLUDE_DOCUMENT_IDS` (default `employee_handbook`, so internal HR docs
-never leak into public answers).
+otherwise apply `EXCLUDE_DOCUMENT_IDS` when set (comma-separated document_ids to omit).
 
 ---
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 import os
 import re
@@ -95,8 +96,8 @@ PDF_TITLE_OVERRIDES: dict[str, str] = {
     "accelerationmethodology": "AccelerationMethodology",
 }
 
-# Any .md / .pdf / .txt under documents/ is ingested (recursive). Skip crawl metadata.
-SUPPORTED_SUFFIXES = {".md", ".pdf", ".txt"}
+# Any .md / .pdf / .txt / .csv under documents/ is ingested (recursive).
+SUPPORTED_SUFFIXES = {".md", ".pdf", ".txt", ".csv"}
 SKIP_FILENAMES = {"manifest.json", ".DS_Store"}
 
 _pdf_manifest_cache: dict[Path, dict[str, str]] = {}
@@ -359,6 +360,123 @@ def _load_text(path: Path) -> Document | None:
     )
 
 
+ZEARN_LESSONS_CSV = DOCS_DIR / "data" / "zearn_lessons.csv"
+
+
+def _grade_sort_key(grade: str) -> tuple[int, int | str]:
+    g = (grade or "").strip()
+    if g.upper() == "K":
+        return (0, 0)
+    try:
+        return (1, int(g))
+    except ValueError:
+        return (2, g)
+
+
+def _grade_display_label(grade: str) -> str:
+    g = (grade or "").strip()
+    if g.upper() == "K":
+        return "Kindergarten"
+    return f"Grade {g}"
+
+
+def _zearn_lessons_document_id(grade: str) -> str:
+    g = (grade or "").strip()
+    slug = "K" if g.upper() == "K" else g.replace(" ", "_")
+    return f"zearn_lessons_grade_{slug}"
+
+
+def _lesson_row_sort_key(row: dict[str, str]) -> tuple:
+    def _int(key: str, default: int = 0) -> int:
+        try:
+            return int((row.get(key) or "").strip())
+        except ValueError:
+            return default
+
+    return (
+        _int("Mission Number"),
+        (row.get("Topic Letter") or "").strip(),
+        _int("Lesson Number"),
+    )
+
+
+def _format_zearn_lessons_grade(grade: str, rows: list[dict[str, str]]) -> str:
+    """One searchable text block per grade — grouped by mission and topic."""
+    label = _grade_display_label(grade)
+    lines = [
+        f"# Zearn Math Digital Lessons — {label}",
+        "",
+        "Catalog of Zearn independent digital lesson names organized by mission and topic.",
+        "",
+    ]
+    sorted_rows = sorted(rows, key=_lesson_row_sort_key)
+    current_mission: tuple[str, str] | None = None
+    current_topic: tuple[str, str] | None = None
+
+    for row in sorted_rows:
+        mission_num = (row.get("Mission Number") or "").strip()
+        mission_name = (row.get("Mission Name") or "").strip()
+        topic_letter = (row.get("Topic Letter") or "").strip()
+        topic_name = (row.get("Topic Name") or "").strip()
+        lesson_num = (row.get("Lesson Number") or "").strip()
+        lesson_name = (row.get("Lesson Name") or "").strip()
+
+        mission_key = (mission_num, mission_name)
+        if mission_key != current_mission:
+            current_mission = mission_key
+            current_topic = None
+            lines.extend(["", f"## Mission {mission_num}: {mission_name}", ""])
+
+        topic_key = (topic_letter, topic_name)
+        if topic_key != current_topic:
+            current_topic = topic_key
+            lines.extend([f"### Topic {topic_letter}: {topic_name}", ""])
+
+        lines.append(f"- Lesson {lesson_num}: {lesson_name}")
+
+    return "\n".join(lines).strip() + "\n"
+
+
+def _load_zearn_lessons_csv(path: Path) -> list[Document]:
+    """Load zearn_lessons.csv as one Document per grade (chunked downstream)."""
+    if not path.is_file():
+        return []
+
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        if not reader.fieldnames or "Grade" not in reader.fieldnames:
+            return []
+        rows = [row for row in reader if (row.get("Grade") or "").strip()]
+
+    by_grade: dict[str, list[dict[str, str]]] = {}
+    for row in rows:
+        grade = (row.get("Grade") or "").strip()
+        by_grade.setdefault(grade, []).append(row)
+
+    try:
+        source = str(path.relative_to(DOCS_DIR))
+    except ValueError:
+        source = str(path)
+
+    documents: list[Document] = []
+    for grade in sorted(by_grade, key=_grade_sort_key):
+        doc_id = _zearn_lessons_document_id(grade)
+        title = f"Zearn Math Digital Lessons — {_grade_display_label(grade)}"
+        text = _format_zearn_lessons_grade(grade, by_grade[grade])
+        documents.append(
+            Document(
+                page_content=text,
+                metadata={
+                    "document_id": doc_id,
+                    "source": source,
+                    "title": title,
+                    "grade": grade,
+                },
+            )
+        )
+    return documents
+
+
 def _load_document_file(path: Path) -> list[Document]:
     suffix = path.suffix.lower()
     if suffix == ".md":
@@ -369,6 +487,8 @@ def _load_document_file(path: Path) -> list[Document]:
     if suffix == ".txt":
         doc = _load_text(path)
         return [doc] if doc is not None else []
+    if suffix == ".csv" and path.name == "zearn_lessons.csv":
+        return _load_zearn_lessons_csv(path)
     return []
 
 
@@ -466,7 +586,7 @@ def _pinecone_document_filter(
 
 def excluded_document_ids_from_env() -> list[str]:
     """Default document_ids to omit from general retrieval (comma-separated env var)."""
-    raw = os.getenv("EXCLUDE_DOCUMENT_IDS", "employee_handbook").strip()
+    raw = os.getenv("EXCLUDE_DOCUMENT_IDS", "").strip()
     if not raw or raw.lower() in ("false", "none", "0"):
         return []
     return [part.strip() for part in raw.split(",") if part.strip()]
@@ -670,6 +790,45 @@ def ingest_file(
         replace_existing=replace_existing,
         source=source,
     )
+
+
+def ingest_zearn_lessons_csv(
+    path: Path | str | None = None,
+    *,
+    chunk_size: int | None = None,
+    chunk_overlap: int | None = None,
+) -> list[IngestResult]:
+    """Ingest zearn_lessons.csv — one document_id per grade, without clearing the index."""
+    csv_path = Path(path or ZEARN_LESSONS_CSV).resolve()
+    documents = _load_zearn_lessons_csv(csv_path)
+    if not documents:
+        raise ValueError(f"No grade documents loaded from {csv_path}")
+
+    chunk_size, chunk_overlap = resolve_chunk_settings(chunk_size, chunk_overlap)
+    results: list[IngestResult] = []
+    for doc in documents:
+        doc_id = str(doc.metadata.get("document_id", "")).strip()
+        if not doc_id:
+            continue
+        chunks = chunk_text(
+            doc.page_content,
+            doc_id,
+            str(doc.metadata.get("source", "")),
+            chunk_size,
+            chunk_overlap,
+            title=str(doc.metadata.get("title", "")),
+        )
+        delete_vectors_for_document(doc_id)
+        chunks_indexed = upsert_chunks(chunks)
+        results.append(
+            IngestResult(
+                document_id=doc_id,
+                chunks_indexed=chunks_indexed,
+                status="ok",
+                vectors_cleared=0,
+            )
+        )
+    return results
 
 
 def ingest_documents(
