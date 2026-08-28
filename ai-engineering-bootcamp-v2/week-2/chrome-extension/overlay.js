@@ -3,8 +3,8 @@
  * expanded panel) and talks to the agent through the background service worker.
  *
  * Plain script (no ES modules): exposes `self.ZBotOverlay`, instantiated by
- * content.js. Depends on config.js (self.ZBOT_CONFIG) and vendor/marked.min.js
- * (self.marked) being loaded first via the manifest content_scripts order.
+ * content.js. Depends on config.js, vendor/marked.min.js, and vendor/purify.min.js
+ * being loaded first via the manifest content_scripts order.
  */
 (function () {
   const CONFIG = self.ZBOT_CONFIG;
@@ -402,6 +402,12 @@
       element.textContent = String(text || "");
       return;
     }
+    if (self.DOMPurify && typeof self.DOMPurify.sanitize === "function") {
+      html = self.DOMPurify.sanitize(html);
+    } else {
+      element.textContent = String(text || "");
+      return;
+    }
     element.innerHTML = html;
     element.querySelectorAll("a").forEach((a) => {
       a.setAttribute("target", "_blank");
@@ -540,7 +546,7 @@
       this.host = document.createElement("div");
       this.host.id = "ask-zbot-overlay-host";
       this.host.style.cssText = HOST_CSS_FLOATING;
-      this.shadow = this.host.attachShadow({ mode: "open" });
+      this.shadow = this.host.attachShadow({ mode: "closed" });
 
       injectBundledFonts(this.shadow);
 
@@ -1258,10 +1264,10 @@
       this.els.profileSave.disabled = !(role && grades.length);
     }
 
-    renderProfileMemory(record, installId) {
+    renderProfileMemory(record, _installId) {
       if (!this.els.profileMemory) return;
       const payload = { ...(record || {}) };
-      if (installId) payload.install_id = installId;
+      delete payload.install_id;
       this.els.profileMemory.textContent = JSON.stringify(payload, null, 2);
     }
 
@@ -1282,12 +1288,12 @@
       if (!resp || resp.error) {
         this.els.profileStatus.textContent =
           "Could not load memory: " + ((resp && resp.error) || "unknown error");
-        this.renderProfileMemory({ install_id: resp && resp.install_id }, resp && resp.install_id);
+        this.renderProfileMemory(resp.memory || {});
         return;
       }
-      const memory = resp.memory || { install_id: resp.install_id };
+      const memory = resp.memory || {};
       this.applyProfileFormFromMemory(memory);
-      this.renderProfileMemory(memory, resp.install_id);
+      this.renderProfileMemory(memory);
       const hasPrefs =
         memory.role && Array.isArray(memory.grade_bands) && memory.grade_bands.length;
       this.els.profileStatus.textContent = hasPrefs
@@ -1320,7 +1326,7 @@
       }
       const memory = resp.memory || {};
       this.applyProfileFormFromMemory(memory);
-      this.renderProfileMemory(memory, resp.install_id);
+      this.renderProfileMemory(memory);
       this.els.profileStatus.textContent = "";
     }
 
@@ -1336,10 +1342,7 @@
       this.updateProfileRolePlaceholder();
       this.setProfileGradeSelections([]);
       this.updateProfileSaveState();
-      this.renderProfileMemory(
-        { install_id: resp.install_id },
-        resp.install_id
-      );
+      this.renderProfileMemory({});
       this.els.profileStatus.textContent = "Preference removed.";
     }
 

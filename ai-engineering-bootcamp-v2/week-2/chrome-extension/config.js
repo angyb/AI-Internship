@@ -37,7 +37,7 @@
     HEALTH_USAGE_CACHE_MS: 5 * 60 * 1000,
 
     // Extension version — keep in sync with manifest.json
-    EXTENSION_VERSION: "1.1.1",
+    EXTENSION_VERSION: "1.1.3",
 
     // Week 5 durable memory options — keep in sync with memory_preferences.py
     MEMORY_ROLE_OPTIONS: ["student", "teacher", "parent", "admin"],

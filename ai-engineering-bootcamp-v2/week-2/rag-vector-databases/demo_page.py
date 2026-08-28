@@ -64,12 +64,18 @@ def call_json(
     timeout: float = 120.0,
 ) -> tuple[int, dict | str]:
     url = f"{api_url()}{path}"
+    headers: dict[str, str] = {}
+    code = str(st.session_state.get("override_code") or "").strip() or os.getenv(
+        "AGENT_OVERRIDE_CODE", ""
+    ).strip()
+    if code:
+        headers["X-Override-Code"] = code
     try:
         with httpx.Client(timeout=timeout) as client:
             if method == "GET":
-                response = client.get(url)
+                response = client.get(url, headers=headers or None)
             else:
-                response = client.post(url, json=payload)
+                response = client.post(url, json=payload, headers=headers or None)
         try:
             return response.status_code, response.json()
         except json.JSONDecodeError:
@@ -102,12 +108,20 @@ st.caption("Streamlit calls your FastAPI service only. No RAG logic runs in this
 
 if "api_url" not in st.session_state:
     st.session_state.api_url = DEFAULT_API_URL
+if "override_code" not in st.session_state:
+    st.session_state.override_code = os.getenv("AGENT_OVERRIDE_CODE", "")
 
 st.sidebar.header("API connection")
 st.session_state.api_url = st.sidebar.text_input(
     "API base URL",
     value=st.session_state.api_url,
     help="Set RAG_API_URL in .env or paste your Render URL here.",
+)
+st.sidebar.text_input(
+    "Unlock / operator code",
+    type="password",
+    key="override_code",
+    help="Sent as X-Override-Code. Required on Render for /ingest, /retrieve, and /eval.",
 )
 
 if st.sidebar.button("Check /health"):

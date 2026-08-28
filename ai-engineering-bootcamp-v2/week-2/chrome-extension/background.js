@@ -6,8 +6,8 @@
  * NOT an OpenAI/Google user secret; it is an optional gate for POST /agent.
  *
  * Messages:
- *   - { type: "wake" } -> GET /health?usage=0 (lite wake, no vendor usage APIs)
- *   - { type: "healthCheck", force?: boolean } -> GET /health (cached; force refreshes)
+ *   - { type: "wake" } -> GET /healthz (process liveness, no vendor APIs)
+ *   - { type: "healthCheck", force?: boolean } -> GET /health?usage=1 (cached; force refreshes)
  *   - { type: "ask", question } -> POST /agent
  *   - { type: "cancelAsk" } -> abort in-flight /agent request
  *   - { type: "getSettings" } / { type: "saveSettings", ... }
@@ -188,10 +188,10 @@ async function extractDetail(response) {
 
 async function handleWake() {
   const { headers, settings } = await authHeaders();
-  // Lite health: dependency checks only — skips OpenAI/Render billing API calls.
+  // Process liveness only — skips Pinecone, Gemini, and billing API calls.
   try {
     const resp = await fetchWithTimeout(
-      settings.base + "/health?usage=0",
+      settings.base + "/healthz",
       { method: "GET", headers: { "X-Install-Id": headers["X-Install-Id"] } },
       CONFIG.HEALTH_TIMEOUT_MS
     );
@@ -228,7 +228,7 @@ async function handleHealthCheck(force) {
   const { headers, settings } = await authHeaders();
   try {
     const resp = await fetchWithTimeout(
-      settings.base + "/health",
+      settings.base + "/health?usage=1",
       { method: "GET", headers: { "X-Install-Id": headers["X-Install-Id"] } },
       CONFIG.HEALTH_TIMEOUT_MS
     );

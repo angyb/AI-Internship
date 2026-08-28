@@ -34,6 +34,7 @@ what “work in the cloud” usually means, and a starter prompt.
 | `scripts/preview.sh` | Local UI harness in a normal browser tab (stubbed agent) |
 | `preview.html` / `preview/` | Preview host page + `chrome.*` stub (not packaged) |
 | `vendor/marked.min.js` | Bundled markdown (MV3 forbids remote/CDN code) |
+| `vendor/purify.min.js` | DOMPurify — sanitizes marked HTML before `innerHTML` |
 | `icons/` | Placeholder icons |
 
 ---

@@ -8,10 +8,10 @@ import threading
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from openai import APIError, OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
@@ -19,6 +19,7 @@ from agent_security import (
     enforce_daily_ask_limit,
     record_telemetry_event,
     require_agent_access,
+    require_operator_access,
     telemetry_enabled,
 )
 import db
@@ -116,7 +117,21 @@ async def lifespan(_app: FastAPI):
     yield
 
 
-app = FastAPI(title="Week 2 RAG API", lifespan=lifespan)
+def _api_docs_enabled() -> bool:
+    """Show Swagger/ReDoc unless this is Render, or when ENABLE_API_DOCS is set."""
+    if os.getenv("ENABLE_API_DOCS", "").strip():
+        return bool_env("ENABLE_API_DOCS", False)
+    return not bool(os.getenv("RENDER_EXTERNAL_URL", "").strip())
+
+
+_docs_on = _api_docs_enabled()
+app = FastAPI(
+    title="Week 2 RAG API",
+    lifespan=lifespan,
+    docs_url="/docs" if _docs_on else None,
+    redoc_url="/redoc" if _docs_on else None,
+    openapi_url="/openapi.json" if _docs_on else None,
+)
 client = OpenAI()
 
 DEFAULT_MODEL = answer_model()
@@ -443,27 +458,37 @@ class EvalAgentResponse(BaseModel):
     after: dict[str, Any] | None = None
 
 
-@app.get("/health")
-def health(usage: bool = True) -> dict[str, Any]:
+@app.get("/healthz")
+def healthz() -> dict[str, str]:
+    """Process liveness only — no vendor or dependency checks."""
+    return {"status": "ok"}
+
+
+@app.get("/health", dependencies=[Depends(require_agent_access)])
+def health(usage: bool = False) -> dict[str, Any]:
     """Liveness plus dependency checks and optional vendor usage snapshots.
 
     Always HTTP 200 when this process is up. ``status`` is ``ok`` or ``degraded``
     so the extension Health tab can show per-check errors (e.g. Pinecone egress)
     and remaining-quota meters for Render / Pinecone / OpenAI / Gemini.
 
-    Pass ``usage=false`` (or ``usage=0``) for a lightweight wake probe that skips
-    vendor billing/usage API calls.
+    Defaults to ``usage=false`` so anonymous probes skip vendor billing APIs.
+    Pass ``usage=true`` (or ``usage=1``) for spend/quota meters. Rate-limited
+    per client IP. Use ``GET /healthz`` for process liveness with no vendor calls.
     """
     from health_checks import collect_health
 
     return collect_health(include_usage=usage)
 
 
-@app.post("/ingest")
+@app.post(
+    "/ingest",
+    dependencies=[Depends(require_operator_access), Depends(require_agent_access)],
+)
 def ingest(
     chunk_size: int | None = None,
     chunk_overlap: int | None = None,
-    clear_index: bool = True,
+    clear_index: bool = False,
     body: IngestDocumentRequest | None = None,
 ) -> IngestResponse:
     """Ingest documents into Pinecone.
@@ -471,8 +496,9 @@ def ingest(
     With a JSON body ``{"document_id": "...", "text": "..."}``, chunks and upserts
     that single pasted document (replacing any prior vectors for the same document_id).
 
-    With no body, loads the full week-2/documents corpus from disk. By default,
-    clears the index before a full-corpus upsert.
+    With no body, loads the full week-2/documents corpus from disk. Does **not**
+    clear the index unless ``clear_index=true`` is passed. When
+    ``AGENT_OVERRIDE_CODE`` is set, require ``X-Override-Code``.
 
     curl examples:
       curl -X POST "http://127.0.0.1:8000/ingest?chunk_size=800&chunk_overlap=100"
@@ -670,7 +696,10 @@ def retrieve_context(
     return chunks, context, chunk_ids, sources
 
 
-@app.post("/retrieve")
+@app.post(
+    "/retrieve",
+    dependencies=[Depends(require_operator_access), Depends(require_agent_access)],
+)
 def retrieve(body: RetrieveRequest) -> RetrieveResponse:
     """Return top-k retrieved chunks with text (for eval and debugging)."""
 
@@ -776,6 +805,9 @@ def _persist_agent_turn(
                 status="active",
             )
         return title, token_count
+    except db.SessionOwnershipError as exc:
+        logger.warning("Skipped persist — session belongs to another install: %s", exc)
+        return None, usage.get("total_tokens", 0)
     except Exception as exc:
         logger.warning("Failed to persist chat turn: %s", exc)
         return None, usage.get("total_tokens", 0)
@@ -789,8 +821,8 @@ def agent_run(body: AgentRequest) -> AgentResponse:
     """Run the Zearn ADK support agent (search_zearn_doc + google_search_agent fallback).
 
     When ``AGENT_API_KEY`` is set, require matching ``X-API-Key`` / Bearer token.
-    Rate-limited per ``X-Install-Id`` (preferred) or client IP. A global daily
-    ask cap (``AGENT_DAILY_ASK_LIMIT``, default 100) applies unless
+    Rate-limited per trusted client IP. A global daily ask cap
+    (``AGENT_DAILY_ASK_LIMIT``, default 100) applies unless
     ``X-Override-Code`` matches ``AGENT_OVERRIDE_CODE``.
 
     Conversational: pass ``history`` (prior turns) to give the agent memory, plus
@@ -1183,7 +1215,10 @@ def call_model_unsafe(prompt: str, model: str) -> tuple[Answer, int, int, int]:
     return answer, total, prompt_tokens, completion_tokens
 
 
-@app.post("/ask", dependencies=[Depends(enforce_daily_ask_limit)])
+@app.post(
+    "/ask",
+    dependencies=[Depends(require_agent_access), Depends(enforce_daily_ask_limit)],
+)
 def ask(body: AskRequest) -> AskResponse:
     """Retrieve context from Pinecone, then answer with structured output."""
 
@@ -1253,9 +1288,16 @@ def ask(body: AskRequest) -> AskResponse:
     )
 
 
-@app.post("/eval-agent")
-def run_agent_eval_endpoint(body: EvalAgentRequest | None = None) -> EvalAgentResponse:
-    """Run deterministic pass/fail checks on committed agent traces (Week 4 TRACE)."""
+@app.post("/eval-agent", dependencies=[Depends(require_agent_access)])
+def run_agent_eval_endpoint(
+    body: EvalAgentRequest | None = None,
+    x_override_code: Annotated[str | None, Header(alias="X-Override-Code")] = None,
+) -> EvalAgentResponse:
+    """Run deterministic pass/fail checks on committed agent traces (Week 4 TRACE).
+
+    Read-only checks are public (rate-limited). Regenerating traces requires
+    ``X-Override-Code`` when ``AGENT_OVERRIDE_CODE`` is set.
+    """
 
     from pathlib import Path
 
@@ -1268,6 +1310,7 @@ def run_agent_eval_endpoint(body: EvalAgentRequest | None = None) -> EvalAgentRe
 
     regenerate = bool(body and body.regenerate)
     if regenerate:
+        require_operator_access(x_override_code=x_override_code)
         if not os.getenv("GOOGLE_API_KEY"):
             raise HTTPException(
                 status_code=500,
@@ -1318,7 +1361,10 @@ def run_agent_eval_endpoint(body: EvalAgentRequest | None = None) -> EvalAgentRe
     )
 
 
-@app.post("/eval")
+@app.post(
+    "/eval",
+    dependencies=[Depends(require_operator_access), Depends(require_agent_access)],
+)
 def run_golden_eval(body: EvalRequest | None = None) -> EvalResponse:
     """Run golden-set evaluation (retrieval + /ask + RAGAS) on this server."""
 

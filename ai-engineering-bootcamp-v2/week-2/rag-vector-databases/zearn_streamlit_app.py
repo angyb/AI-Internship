@@ -140,6 +140,13 @@ def api_headers() -> dict[str, str]:
     return headers
 
 
+def memory_for_display(record: dict | None) -> dict:
+    """Drop install_id so the sidebar does not treat the UUID as a displayed secret."""
+    if not isinstance(record, dict):
+        return {}
+    return {key: value for key, value in record.items() if key != "install_id"}
+
+
 def _suppress_empty_multiselect_dropdown() -> None:
     """Hide Streamlit multiselect popovers that only show 'No results'.
 
@@ -414,9 +421,6 @@ with st.sidebar:
                 memory_delete_remote(st.session_state.install_id)
                 st.session_state.memory_record = {"install_id": st.session_state.install_id}
 
-        st.caption(f"install_id: `{st.session_state.install_id}`")
-        st.caption(f"session_id: `{st.session_state.session_id}`")
-
         # Best-effort load on first render.
         if st.session_state.memory_record is None:
             with st.spinner("Loading saved memory…"):
@@ -426,7 +430,7 @@ with st.sidebar:
                     st.session_state.memory_record = {"install_id": st.session_state.install_id}
 
         st.markdown("**Retrieved memory**")
-        st.json(st.session_state.memory_record)
+        st.json(memory_for_display(st.session_state.memory_record))
 
 # --- Main ---
 

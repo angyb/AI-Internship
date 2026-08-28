@@ -71,8 +71,10 @@ Largest module. Full-ingest flow:
 4. **Sync BM25** — the same chunks (including full text) are written to Postgres
    `bm25_chunks` and the in-process BM25 index.
 
-`clear_index=True` (default) wipes Pinecone + BM25 first. Pasted single docs replace only
-their own `document_id`.
+`clear_index=false` (API default) leaves existing vectors in place. Pass
+`clear_index=true` to wipe Pinecone + BM25 first (requires `X-Override-Code` when
+`AGENT_OVERRIDE_CODE` is set). Pasted single docs replace only their own
+`document_id`.
 
 ---
 

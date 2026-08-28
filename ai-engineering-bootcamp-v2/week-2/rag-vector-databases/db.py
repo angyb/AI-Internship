@@ -12,13 +12,15 @@ Schema:
   agent_asks(id, created_at)
   bm25_chunks(chunk_id, document_id, chunk_index, source, title, source_url, text)
 
-Sessions are scoped by ``install_id`` (the extension's anonymous per-install
-UUID) — there is no user login. ``bm25_chunks`` is the durable keyword-index
-corpus so API boots do not re-download Pinecone.
+Sessions are scoped by a SHA-256 hash of ``install_id`` (the extension's
+anonymous per-install UUID) — there is no user login. Legacy rows that still
+store the raw UUID are read and rewritten on the next write. ``bm25_chunks`` is
+the durable keyword-index corpus so API boots do not re-download Pinecone.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -106,6 +108,43 @@ def ping() -> None:
         conn.execute(text("SELECT 1"))
 
 
+def hash_install_id(install_id: str) -> str:
+    """SHA-256 hex of the presented install UUID (server-side storage key)."""
+    return hashlib.sha256((install_id or "").encode("utf-8")).hexdigest()
+
+
+def _install_lookup_keys(install_id: str) -> list[str]:
+    """Hashed key plus raw UUID so legacy rows still match."""
+    presented = (install_id or "").strip()
+    if not presented:
+        return []
+    hashed = hash_install_id(presented)
+    if hashed == presented:
+        return [hashed]
+    return [hashed, presented]
+
+
+def _install_id_matches(stored: str | None, presented: str) -> bool:
+    if not stored:
+        return False
+    return stored in _install_lookup_keys(presented)
+
+
+class SessionOwnershipError(Exception):
+    """Raised when a session_id exists but belongs to a different install."""
+
+
+def _require_session_owner(stored: str | None, presented: str) -> None:
+    if not _install_id_matches(stored, presented):
+        raise SessionOwnershipError("session does not belong to this install")
+
+
+def _migrate_session_install_id(row: ChatSession, presented: str) -> None:
+    hashed = hash_install_id(presented)
+    if row.install_id == presented and hashed != presented:
+        row.install_id = hashed
+
+
 def sum_assistant_tokens_since(since: datetime) -> dict[str, int]:
     """Sum Gemini token counts from assistant messages on/after ``since``."""
     if not database_enabled():
@@ -190,7 +229,7 @@ class ChatMessage(Base):
 class UserMemory(Base):
     """Durable preference memory — survives process restart.
 
-    Scoped by ``install_id`` (anonymous per-install UUID). For Path A, we store a
+    Scoped by a hash of ``install_id`` (anonymous per-install UUID). For Path A, we store a
     single stable preference: ``role`` + one or more ``grade_band`` values (JSON list in DB).
     """
 
@@ -355,12 +394,16 @@ def _message_to_dict(row: ChatMessage) -> dict[str, Any]:
 
 def ensure_session(session_id: str, install_id: str) -> dict[str, Any]:
     """Return the session, creating it (status=active) if new."""
+    hashed = hash_install_id(install_id)
     with _session_scope() as db:
         row = db.get(ChatSession, session_id)
         if row is None:
-            row = ChatSession(id=session_id, install_id=install_id, title="", status="active")
+            row = ChatSession(id=session_id, install_id=hashed, title="", status="active")
             db.add(row)
             db.flush()
+        else:
+            _require_session_owner(row.install_id, install_id)
+            _migrate_session_install_id(row, install_id)
         return _session_to_summary(row)
 
 
@@ -417,17 +460,20 @@ def update_session(
 
 def list_sessions(install_id: str, *, limit: int = 100) -> list[dict[str, Any]]:
     """Most-recently-updated sessions for an install, newest first."""
+    keys = _install_lookup_keys(install_id)
     with _session_scope() as db:
         rows = (
             db.execute(
                 select(ChatSession)
-                .where(ChatSession.install_id == install_id)
+                .where(ChatSession.install_id.in_(keys))
                 .order_by(ChatSession.updated_at.desc())
                 .limit(limit)
             )
             .scalars()
             .all()
         )
+        for row in rows:
+            _migrate_session_install_id(row, install_id)
         return [_session_to_summary(row) for row in rows]
 
 
@@ -435,8 +481,9 @@ def get_session(session_id: str, install_id: str) -> dict[str, Any] | None:
     """Full session with messages, or None if it does not belong to this install."""
     with _session_scope() as db:
         row = db.get(ChatSession, session_id)
-        if row is None or row.install_id != install_id:
+        if row is None or not _install_id_matches(row.install_id, install_id):
             return None
+        _migrate_session_install_id(row, install_id)
         summary = _session_to_summary(row)
         summary["messages"] = [_message_to_dict(m) for m in row.messages]
         return summary
@@ -446,7 +493,7 @@ def delete_session(session_id: str, install_id: str) -> bool:
     """Delete a session (and its messages). Returns True if a row was removed."""
     with _session_scope() as db:
         row = db.get(ChatSession, session_id)
-        if row is None or row.install_id != install_id:
+        if row is None or not _install_id_matches(row.install_id, install_id):
             return False
         db.execute(delete(ChatSession).where(ChatSession.id == session_id))
         return True
@@ -477,9 +524,13 @@ def get_user_memory(install_id: str) -> dict[str, Any] | None:
     if not install_id:
         return None
 
+    hashed = hash_install_id(install_id)
+
     if not database_enabled():
         data = _fallback_load_user_memory()
-        row = data.get(install_id)
+        row = data.get(hashed)
+        if not isinstance(row, dict):
+            row = data.get(install_id)
         if not isinstance(row, dict):
             return None
         if not (row.get("role") and (row.get("grade_bands") or row.get("grade_band"))):
@@ -499,14 +550,16 @@ def get_user_memory(install_id: str) -> dict[str, Any] | None:
         }
 
     with _session_scope() as db:
-        row = db.get(UserMemory, install_id)
+        row = db.get(UserMemory, hashed)
+        if row is None and hashed != install_id:
+            row = db.get(UserMemory, install_id)
         if row is None:
             return None
         role = (row.role or "").strip()
         grade_bands = _parse_grade_bands(row.grade_band)
         if not role or not grade_bands:
             return None
-        return _memory_to_dict(row.install_id, row.role, row.grade_band, row.updated_at)
+        return _memory_to_dict(install_id, row.role, row.grade_band, row.updated_at)
 
 
 def replace_user_memory(
@@ -526,14 +579,17 @@ def replace_user_memory(
         raise ValueError("role and grade_bands are required")
 
     serialized = _serialize_grade_bands(grade_bands)
+    hashed = hash_install_id(install_id)
 
     if not database_enabled():
         data = _fallback_load_user_memory()
-        data[install_id] = {
+        data[hashed] = {
             "role": role,
             "grade_bands": grade_bands,
             "updated_at": now,
         }
+        if hashed != install_id:
+            data.pop(install_id, None)
         _fallback_save_user_memory(data)
         return {
             "install_id": install_id,
@@ -543,14 +599,23 @@ def replace_user_memory(
         }
 
     with _session_scope() as db:
-        row = db.get(UserMemory, install_id)
-        if row is None:
-            row = UserMemory(install_id=install_id)
+        row = db.get(UserMemory, hashed)
+        legacy = db.get(UserMemory, install_id) if hashed != install_id else None
+        if row is None and legacy is not None:
+            row = UserMemory(
+                install_id=hashed,
+                role=legacy.role,
+                grade_band=legacy.grade_band,
+            )
+            db.add(row)
+            db.delete(legacy)
+        elif row is None:
+            row = UserMemory(install_id=hashed)
             db.add(row)
         row.role = role
         row.grade_band = serialized
         db.flush()
-        return _memory_to_dict(row.install_id, row.role, row.grade_band, row.updated_at)
+        return _memory_to_dict(install_id, row.role, row.grade_band, row.updated_at)
 
 
 def delete_user_memory(install_id: str) -> bool:
@@ -558,20 +623,33 @@ def delete_user_memory(install_id: str) -> bool:
     if not install_id:
         return False
 
+    hashed = hash_install_id(install_id)
+
     if not database_enabled():
         data = _fallback_load_user_memory()
+        removed = False
+        if hashed in data:
+            data.pop(hashed, None)
+            removed = True
         if install_id in data:
             data.pop(install_id, None)
+            removed = True
+        if removed:
             _fallback_save_user_memory(data)
-            return True
-        return False
+        return removed
 
     with _session_scope() as db:
-        row = db.get(UserMemory, install_id)
-        if row is None:
-            return False
-        db.delete(row)
-        return True
+        removed = False
+        row = db.get(UserMemory, hashed)
+        if row is not None:
+            db.delete(row)
+            removed = True
+        if hashed != install_id:
+            legacy = db.get(UserMemory, install_id)
+            if legacy is not None:
+                db.delete(legacy)
+                removed = True
+        return removed
 
 
 def _chunk_row(row: dict[str, Any]) -> Bm25Chunk:

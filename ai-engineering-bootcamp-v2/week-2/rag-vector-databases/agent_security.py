@@ -75,7 +75,7 @@ def verify_agent_api_key(
         return
 
     presented = _extract_presented_key(x_api_key, authorization)
-    if not presented or not secrets.compare_digest(presented, expected):
+    if not _codes_equal(presented, expected):
         raise HTTPException(
             status_code=401,
             detail="Invalid or missing API key. Set X-API-Key (or Authorization: Bearer) to match AGENT_API_KEY.",
@@ -83,9 +83,11 @@ def verify_agent_api_key(
 
 
 def _client_ip(request: Request) -> str:
-    forwarded = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
-    if forwarded:
-        return forwarded
+    """Trusted client IP: rightmost X-Forwarded-For hop (Render proxy), else peer."""
+    forwarded = request.headers.get("x-forwarded-for", "")
+    parts = [p.strip() for p in forwarded.split(",") if p.strip()]
+    if parts:
+        return parts[-1]
     if request.client and request.client.host:
         return request.client.host
     return "unknown"
@@ -95,14 +97,15 @@ def enforce_agent_rate_limit(
     request: Request,
     x_install_id: Annotated[str | None, Header(alias="X-Install-Id")] = None,
 ) -> None:
-    """Sliding-window rate limit keyed by install ID when present, else client IP."""
+    """Sliding-window rate limit keyed by trusted client IP (not X-Install-Id)."""
     if not rate_limit_enabled():
         return
+    _ = x_install_id  # accepted for compatibility; not used as a bucket key
 
     limit = rate_limit_per_minute()
     window = 60.0
     now = time.monotonic()
-    key = (x_install_id or "").strip() or f"ip:{_client_ip(request)}"
+    key = f"ip:{_client_ip(request)}"
 
     with _rate_lock:
         bucket = _rate_buckets[key]
@@ -140,6 +143,10 @@ def override_code_accepted(presented: str | None) -> bool:
     return _codes_equal((presented or "").strip(), expected)
 
 
+def _is_render() -> bool:
+    return bool(os.getenv("RENDER_EXTERNAL_URL", "").strip())
+
+
 def enforce_daily_ask_limit(
     x_override_code: Annotated[str | None, Header(alias="X-Override-Code")] = None,
 ) -> None:
@@ -153,11 +160,13 @@ def enforce_daily_ask_limit(
     import db
 
     if not db.database_enabled():
-        logger.warning(
-            "AGENT_DAILY_ASK_LIMIT=%s but DATABASE_URL is unset — daily cap skipped.",
-            limit,
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Daily ask limit cannot be enforced because the database is unavailable. "
+                "Try again later, or enter the unlock code in the Health tab."
+            ),
         )
-        return
 
     since = _utc_day_start()
     used = db.count_asks_since(since)
@@ -170,6 +179,32 @@ def enforce_daily_ask_limit(
             ),
         )
     db.record_ask()
+
+
+def require_operator_access(
+    x_override_code: Annotated[str | None, Header(alias="X-Override-Code")] = None,
+) -> None:
+    """When AGENT_OVERRIDE_CODE is set, require a matching X-Override-Code.
+
+    When unset locally, this is a no-op so uvicorn remains usable without a code.
+    On Render, an unset code is a 503 so ingest/eval/retrieve cannot run open.
+    """
+    expected = override_code_configured()
+    if not expected:
+        if _is_render():
+            raise HTTPException(
+                status_code=503,
+                detail="Operator code is not configured. Set AGENT_OVERRIDE_CODE on this service.",
+            )
+        return
+    if not override_code_accepted(x_override_code):
+        raise HTTPException(
+            status_code=401,
+            detail=(
+                "Invalid or missing operator code. Set X-Override-Code to match "
+                "AGENT_OVERRIDE_CODE."
+            ),
+        )
 
 
 def require_agent_access(

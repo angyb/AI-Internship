@@ -94,6 +94,14 @@ def collect_eval_rows_local(golden_set: list[dict], *, verbose: bool = False) ->
     return rows
 
 
+def _api_headers() -> dict[str, str]:
+    """Send AGENT_OVERRIDE_CODE so /retrieve and /ask skip the public daily cap."""
+    code = os.getenv("AGENT_OVERRIDE_CODE", "").strip()
+    if code:
+        return {"X-Override-Code": code}
+    return {}
+
+
 def collect_eval_rows_api(
     api_url: str,
     golden_set: list[dict],
@@ -103,6 +111,7 @@ def collect_eval_rows_api(
     base = api_url.rstrip("/")
     rows: list[dict] = []
 
+    headers = _api_headers()
     health = httpx.get(f"{base}/health", timeout=30.0)
     health.raise_for_status()
 
@@ -117,6 +126,7 @@ def collect_eval_rows_api(
         retrieve_resp = httpx.post(
             f"{base}/retrieve",
             json=request_payload,
+            headers=headers,
             timeout=120.0,
         )
         retrieve_resp.raise_for_status()
@@ -125,6 +135,7 @@ def collect_eval_rows_api(
         ask_resp = httpx.post(
             f"{base}/ask",
             json=request_payload,
+            headers=headers,
             timeout=120.0,
         )
         ask_resp.raise_for_status()

@@ -22,7 +22,7 @@
   </head>
   <body>
     <h1>Ask Z-Bot — Privacy Policy</h1>
-    <p><strong>Effective date:</strong> 2026-08-27 · <strong>Extension version:</strong> 1.1.1</p>
+    <p><strong>Effective date:</strong> 2026-08-28 · <strong>Extension version:</strong> 1.1.3</p>
 
     <p>
       Ask Z-Bot is a Chrome extension that answers Zearn support questions by calling a
@@ -34,8 +34,10 @@
     <ul>
       <li>
         <strong>Questions you submit</strong> — sent to the configured Agent API so the
-        agent can retrieve Zearn documentation and generate an answer. Questions are not
-        stored by the extension itself.
+        agent can retrieve Zearn documentation and generate an answer. The extension does
+        not keep a local copy of your questions after the overlay is closed, but the API
+        <strong>does persist</strong> questions, answers, and Think/Act/Observe (TAO) steps
+        in Postgres when chat History is enabled, keyed by an anonymous install ID.
       </li>
       <li>
         <strong>Settings you save</strong> — Agent API URL, optional shared API key, and
@@ -44,15 +46,16 @@
       </li>
       <li>
         <strong>Anonymous install ID</strong> — a random UUID in
-        <code>chrome.storage.local</code>, sent as <code>X-Install-Id</code> for API rate
-        limiting and to key optional durable preferences on the server. It does not identify
-        you personally.
+        <code>chrome.storage.local</code>, sent as <code>X-Install-Id</code> so the API can
+        key History and Profile preferences. It does not identify you personally. Knowing
+        the UUID is enough to read that install’s stored chats, so treat it like a
+        capability token (the extension does not display it).
       </li>
       <li>
         <strong>Optional profile preferences</strong> — if you use the Profile tab and click
         Save, your chosen role and grade bands are stored on the Agent API server, keyed by
         your install ID, so answers can be tailored across browser sessions. You can remove
-        them anytime with Forget preference.
+        them anytime with <strong>Forget preference</strong>.
       </li>
       <li>
         <strong>Optional error reports</strong> — only if you enable
@@ -68,11 +71,28 @@
       <li>OpenAI / Google API keys (those stay on the server)</li>
     </ul>
 
+    <h2>Your controls</h2>
+    <ul>
+      <li>
+        <strong>History tab</strong> — delete a saved session to remove that transcript
+        (questions, answers, and TAO steps) from the API database.
+      </li>
+      <li>
+        <strong>Profile tab</strong> — Forget preference removes stored role and grade bands.
+      </li>
+      <li>
+        Uninstalling the extension clears local Chrome storage. Server-side History remains
+        until you delete sessions or the API operator drops the database.
+      </li>
+    </ul>
+
     <h2>Data retention</h2>
     <p>
-      Extension storage persists until you clear it or uninstall. Server-side logging and
-      telemetry retention depend on the API operator’s configuration; telemetry is disabled
-      unless the server sets <code>TELEMETRY_ENABLED=true</code> <em>and</em> you opt in.
+      Extension storage persists until you clear it or uninstall. Server-side transcripts
+      and profile preferences persist until you delete them (History delete-session /
+      Forget preference) or the API operator drops the database. Telemetry is disabled
+      unless the server sets <code>TELEMETRY_ENABLED=true</code> <em>and</em> you opt in;
+      those reports never include question text.
     </p>
 
 

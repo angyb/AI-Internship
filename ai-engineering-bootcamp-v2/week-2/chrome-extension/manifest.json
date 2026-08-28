@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ask Z-Bot — Zearn Support Agent",
-  "version": "1.1.1",
+  "version": "1.1.3",
   "description": "Floating Ask Z-Bot overlay on zearn.org and Zearn staging that answers support questions via the Zearn Support Agent (POST /agent).",
   "icons": {
     "16": "icons/icon16.png",
@@ -41,7 +41,7 @@
         "*://zearn.org/*",
         "*://staging-zearny.herokuapp.com/*"
       ],
-      "js": ["config.js", "vendor/marked.min.js", "overlay.js", "content.js"],
+      "js": ["config.js", "vendor/marked.min.js", "vendor/purify.min.js", "overlay.js", "content.js"],
       "run_at": "document_idle"
     }
   ],
