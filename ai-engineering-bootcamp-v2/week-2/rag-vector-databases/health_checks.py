@@ -161,6 +161,14 @@ def check_gemini() -> dict[str, Any]:
     return result
 
 
+def check_gemini_shallow() -> dict[str, Any]:
+    """Cheap Gemini check — key presence only, no ``generateContent`` API call."""
+    key = os.getenv("GOOGLE_API_KEY", "").strip()
+    if not key:
+        return _check(False, "GOOGLE_API_KEY is not set — the agent cannot run.")
+    return _check(True, "GOOGLE_API_KEY set (deep smoke test skipped — pass ?deep=1).")
+
+
 def check_bm25() -> dict[str, Any]:
     if not bool_env("HYBRID_SEARCH", True):
         return _check(True, "Hybrid search disabled")
@@ -199,12 +207,21 @@ _CHECKS: tuple[tuple[str, Callable[[], dict[str, Any]]], ...] = (
 )
 
 
-def collect_health(*, include_usage: bool = True) -> dict[str, Any]:
-    """Return API liveness plus dependency checks. Usage is optional (vendor API calls)."""
+def collect_health(*, include_usage: bool = True, deep: bool = False) -> dict[str, Any]:
+    """Return API liveness plus dependency checks. Usage is optional (vendor API calls).
+
+    The Gemini ``generateContent`` smoke test is only run when ``deep`` or
+    ``include_usage`` is true; routine/shallow probes use a key-presence check so
+    health polling does not make per-minute Gemini calls.
+    """
+    run_deep_gemini = deep or include_usage
     checks: dict[str, Any] = {}
     all_ok = True
     for name, fn in _CHECKS:
-        result = fn()
+        if name == "gemini" and not run_deep_gemini:
+            result = check_gemini_shallow()
+        else:
+            result = fn()
         checks[name] = result
         if not result.get("ok"):
             all_ok = False

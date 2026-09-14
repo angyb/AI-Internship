@@ -684,6 +684,7 @@ def reset_clients() -> None:
     """Clear cached Pinecone/embeddings clients (e.g. after env changes in tests)."""
     _pinecone_index.cache_clear()
     _embeddings_client.cache_clear()
+    _pdf_manifest_cache.clear()
 
 
 def _chunk_to_metadata(chunk: Document, chunk_index: int) -> dict[str, str | int]:

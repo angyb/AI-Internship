@@ -20,6 +20,29 @@ logger = logging.getLogger(__name__)
 
 _rate_lock = threading.Lock()
 _rate_buckets: dict[str, deque[float]] = defaultdict(deque)
+# Timestamp of the last stale-bucket sweep (monotonic seconds). Throttles the
+# O(n) prune so it runs at most once per window.
+_last_sweep = 0.0
+
+
+def _sweep_rate_buckets_locked(now: float, window: float) -> None:
+    """Drop buckets with no timestamps inside the window. Caller must hold _rate_lock.
+
+    Without this, ``_rate_buckets`` grows unbounded: every distinct client IP
+    leaves a permanent key (plus up to ``limit`` stale timestamps) that is only
+    ever trimmed if that same IP calls again. Idle IPs would linger forever.
+    """
+    global _last_sweep
+    if now - _last_sweep < window:
+        return
+    _last_sweep = now
+    stale = [
+        key
+        for key, bucket in _rate_buckets.items()
+        if not bucket or (now - bucket[-1]) > window
+    ]
+    for key in stale:
+        del _rate_buckets[key]
 
 
 def agent_api_key_configured() -> str:
@@ -108,6 +131,7 @@ def enforce_agent_rate_limit(
     key = f"ip:{_client_ip(request)}"
 
     with _rate_lock:
+        _sweep_rate_buckets_locked(now, window)
         bucket = _rate_buckets[key]
         while bucket and (now - bucket[0]) > window:
             bucket.popleft()

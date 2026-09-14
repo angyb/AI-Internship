@@ -90,29 +90,34 @@ async def lifespan(_app: FastAPI):
         except Exception as exc:
             logger.warning("BM25 startup load failed: %s", exc)
 
-    from rerank import (
-        context_order_by_rerank_score_enabled,
-        relevance_filter_enabled,
-        rerank_enabled,
-        warmup_reranker,
-    )
+    # Cross-encoder warmup is opt-in (RERANK_WARMUP_ENABLED, default off). The model
+    # lazy-loads on the first slow retrieval via get_cross_encoder(); loading it at
+    # boot spikes cold-start RSS right when the platform measures memory, which can
+    # trip an OOM restart. Enable warmup only if first-request latency matters more.
+    if bool_env("RERANK_WARMUP_ENABLED", False):
+        from rerank import (
+            context_order_by_rerank_score_enabled,
+            relevance_filter_enabled,
+            rerank_enabled,
+            warmup_reranker,
+        )
 
-    if rerank_enabled() or relevance_filter_enabled() or context_order_by_rerank_score_enabled():
-        def _warmup_reranker_background() -> None:
-            start = time.perf_counter()
-            try:
-                warmup_reranker()
-                elapsed = time.perf_counter() - start
-                if elapsed > 0.01:
-                    logger.info("Cross-encoder reranker ready in %.1fs", elapsed)
-            except Exception as exc:
-                logger.warning("Cross-encoder reranker warmup failed: %s", exc)
+        if rerank_enabled() or relevance_filter_enabled() or context_order_by_rerank_score_enabled():
+            def _warmup_reranker_background() -> None:
+                start = time.perf_counter()
+                try:
+                    warmup_reranker()
+                    elapsed = time.perf_counter() - start
+                    if elapsed > 0.01:
+                        logger.info("Cross-encoder reranker ready in %.1fs", elapsed)
+                except Exception as exc:
+                    logger.warning("Cross-encoder reranker warmup failed: %s", exc)
 
-        threading.Thread(
-            target=_warmup_reranker_background,
-            name="rerank-warmup",
-            daemon=True,
-        ).start()
+            threading.Thread(
+                target=_warmup_reranker_background,
+                name="rerank-warmup",
+                daemon=True,
+            ).start()
 
     yield
 
@@ -465,7 +470,7 @@ def healthz() -> dict[str, str]:
 
 
 @app.get("/health", dependencies=[Depends(require_agent_access)])
-def health(usage: bool = False) -> dict[str, Any]:
+def health(usage: bool = False, deep: bool = False) -> dict[str, Any]:
     """Liveness plus dependency checks and optional vendor usage snapshots.
 
     Always HTTP 200 when this process is up. ``status`` is ``ok`` or ``degraded``
@@ -473,12 +478,15 @@ def health(usage: bool = False) -> dict[str, Any]:
     and remaining-quota meters for Render / Pinecone / OpenAI / Gemini.
 
     Defaults to ``usage=false`` so anonymous probes skip vendor billing APIs.
-    Pass ``usage=true`` (or ``usage=1``) for spend/quota meters. Rate-limited
-    per client IP. Use ``GET /healthz`` for process liveness with no vendor calls.
+    Pass ``usage=true`` (or ``usage=1``) for spend/quota meters. The Gemini
+    ``generateContent`` smoke test is skipped unless ``deep=true`` (or
+    ``usage=true``) so routine health polling does not make per-minute Gemini
+    calls. Rate-limited per client IP. Use ``GET /healthz`` for process liveness
+    with no vendor calls.
     """
     from health_checks import collect_health
 
-    return collect_health(include_usage=usage)
+    return collect_health(include_usage=usage, deep=deep)
 
 
 @app.post(

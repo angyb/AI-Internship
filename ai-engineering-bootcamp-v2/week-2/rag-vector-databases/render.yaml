@@ -6,6 +6,9 @@ services:
     # Paid Render (>=1GB RAM): full deps include CPU-only PyTorch + cross-encoder rerank.
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+    # Liveness only — no vendor/DB calls. Do NOT use /health here (it runs Pinecone/
+    # Gemini/DB checks and would hammer them on every platform probe).
+    healthCheckPath: /healthz
     envVars:
       # Secrets — set values in Render Dashboard (never commit)
       - key: OPENAI_API_KEY

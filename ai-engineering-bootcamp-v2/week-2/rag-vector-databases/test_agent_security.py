@@ -80,6 +80,28 @@ def test_rate_limit_trips(monkeypatch: pytest.MonkeyPatch) -> None:
     assert exc.value.status_code == 429
 
 
+def test_rate_buckets_pruned_after_window(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Idle per-IP buckets must not accumulate forever (memory-leak guard)."""
+    _clear_rate_buckets()
+    monkeypatch.setattr("agent_security._last_sweep", 0.0)
+    monkeypatch.setenv("AGENT_RATE_LIMIT_ENABLED", "true")
+    monkeypatch.setenv("AGENT_RATE_LIMIT_PER_MINUTE", "100")
+
+    clock = {"t": 0.0}
+    monkeypatch.setattr("agent_security.time.monotonic", lambda: clock["t"])
+
+    # Many distinct IPs at t=0 — each creates a bucket; no sweep runs yet at t=0.
+    for i in range(50):
+        enforce_agent_rate_limit(_request(f"203.0.113.{i}"), x_install_id="x")
+    assert len(_rate_buckets) == 50
+
+    # Advance past the 60s window; the next request triggers the throttled sweep,
+    # which drops every bucket whose newest timestamp is now stale.
+    clock["t"] = 120.0
+    enforce_agent_rate_limit(_request("198.51.100.1"), x_install_id="x")
+    assert len(_rate_buckets) == 1
+
+
 def test_rate_limit_is_ip_not_install_id(monkeypatch: pytest.MonkeyPatch) -> None:
     _clear_rate_buckets()
     monkeypatch.setenv("AGENT_RATE_LIMIT_ENABLED", "true")

@@ -490,6 +490,12 @@ if run_clicked and question.strip():
         st.session_state.agent_history.append(
             {"role": "assistant", "content": answer.strip()}
         )
+        # Cap history so a long-lived session does not grow client memory and the
+        # /agent payload (re-seeded server-side) without bound. Keep last N turns.
+        max_history_turns = int(os.getenv("AGENT_HISTORY_MAX_TURNS", "20"))
+        st.session_state.agent_history = st.session_state.agent_history[
+            -2 * max_history_turns :
+        ]
 
     st.markdown("---")
     st.subheader("Think → Act → Observe")
